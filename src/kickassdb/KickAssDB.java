@@ -16,6 +16,11 @@ public class KickAssDB {
     public static void main(String[] args) {
         // TODO code application logic here
         
-        System.out.println("Esta es una prueba");
-    }
-}
+        //System.out.println("Esta es una prueba");
+        
+        MainWindow m = new MainWindow();
+        m.setLocationRelativeTo(null);
+        m.setVisible((true));
+        
+    }//End public static void main(String[] args)
+}//End public class KickAssDB
