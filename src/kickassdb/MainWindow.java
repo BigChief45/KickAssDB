@@ -4,19 +4,61 @@
  */
 package kickassdb;
 
+import java.util.Hashtable;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+
 /**
  *
  * @author Otto
  */
 public class MainWindow extends javax.swing.JFrame {
 
+	private Hashtable attributes;    
+    
     /**
      * Creates new form MainWindow
      */
     public MainWindow() {
         initComponents();
-    }
+    }//End MainWindow()
 
+    // Create some different font styles
+    public void createStyles( StyleContext sc )
+    {
+            Style myStyle;
+
+            // Allocate a hashtasble for our styles
+            attributes = new Hashtable();
+
+            // No style
+            myStyle = sc.addStyle( null, null );
+            attributes.put( "none", myStyle ); 
+
+            // Normal
+            myStyle = sc.addStyle( null, null );
+            StyleConstants.setLeftIndent( myStyle, 10 );
+            StyleConstants.setRightIndent( myStyle, 10 );
+            StyleConstants.setFontFamily( myStyle, "Helvetica" );
+            StyleConstants.setFontSize( myStyle, 14 );
+            StyleConstants.setSpaceAbove( myStyle, 4 );
+            StyleConstants.setSpaceBelow( myStyle, 4 );
+            attributes.put( "normal", myStyle ); 
+
+            // Big
+            myStyle = sc.addStyle( null, null );
+            StyleConstants.setFontFamily( myStyle, "Dialog" );
+            StyleConstants.setFontSize( myStyle, 28 );
+            attributes.put( "big", myStyle ); 
+
+            // Bold
+            myStyle = sc.addStyle( null, null );
+            StyleConstants.setBold( myStyle, true );
+            attributes.put( "bold", myStyle ); 
+                        
+    }//End public void createStyles( StyleContext sc ) 
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -26,14 +68,24 @@ public class MainWindow extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         itemNewSql = new javax.swing.JMenuItem();
         itemExit = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
+        jMenuItem1.setText("jMenuItem1");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Kick Ass Database");
+
+        jScrollPane1.setViewportView(jTextPane1);
+
+        jTabbedPane1.addTab("sql1", jScrollPane1);
 
         jMenu1.setText("File");
 
@@ -56,11 +108,11 @@ public class MainWindow extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 919, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 581, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 581, Short.MAX_VALUE)
         );
 
         pack();
@@ -106,5 +158,9 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTextPane jTextPane1;
     // End of variables declaration//GEN-END:variables
 }
