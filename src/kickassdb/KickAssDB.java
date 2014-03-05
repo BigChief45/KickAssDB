@@ -19,8 +19,9 @@ public class KickAssDB {
     public static void main(String[] args) {
         // TODO code application logic here
         
-        String path = "C:/Users/Jaime Andres/Documents/NetBeansProjects/KickAssDB/src/kickassdb/Lexer.flex";
+        String path = "src\\kickassdb\\lexer.flex";
         generateLexer(path);
+        generarCup();
         
         MainWindow m = new MainWindow();
         m.setLocationRelativeTo(null);
@@ -32,5 +33,28 @@ public class KickAssDB {
     {
         File f = new File(path);
         jflex.Main.generate(f);
+    }
+    
+    private static void generarCup()
+    {
+        String opciones[] = new String[5];
+        opciones[0] = "-destdir";
+        opciones[1] = "src\\kickassdb\\";
+        opciones[2] = "-parser";
+        opciones[3] = "parser";
+        opciones[4] = "src\\kickassdb\\parser.cup";
+
+        try
+        {
+            System.out.println(""); // Clear
+            System.out.println("Compilando archivo .cup ... \n");
+            java_cup.Main.main(opciones);
+            System.out.println("archivo .cup compilado exitosamente. \n");
+
+        }
+        catch ( Exception e )
+        {
+            System.out.println(e.getMessage());
+        }
     }
 }//End public class KickAssDB

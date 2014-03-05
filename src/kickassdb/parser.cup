@@ -1,0 +1,367 @@
+package kickassdb;
+
+import java.io.*;
+import java_cup.runtime.*;
+
+parser code
+{:
+	public static void main(String args[]) throws Exception {
+		//new parser(new Lexer(new FileInputStream(args[0]))).parse();
+		new parser(new Lexer(System.in)).parse();
+	}
+	public void syntax_error(Symbol s) {
+		report_error("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"", null);
+                //Interfaz.outputArea.append("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"" + "\n");
+	}
+
+	public void unrecovered_syntax_error(Symbol s) {
+		System.out.println("Error fatal de sintaxis. Se ha detenido el parseo.");
+                //Interfaz.outputArea.append("Error fatal de sintaxis. Se ha detenido el parseo.");
+
+	}
+:}
+
+/* Terminales */
+terminal PROCEDURE, FUNCTION, RETURN, IS, BEGIN, END, IF, THEN, ELSE, ELSIF, FOR, IN, OUT, WHILE, LOOP, ARRAY, OF, RANGE, AND, OR, XOR, TRUE, FALSE, EXIT, WHEN;
+terminal String INT, BOOLEAN, FLOAT;
+terminal String OPDEC, OPASG, OPREL, OPSUM, OPMULT, PARIZQ, PARDER, DOSPUNTOS, COMA, PYC, CAJA;
+terminal PUT, GET;
+terminal String ID;
+terminal Integer NUM;
+terminal STR;
+
+/* No Terminales */
+non terminal cuerpo_principal, begin_cuerpo_principal;
+non terminal lista_declaracion, declaracion_procedimiento, declaracion_variable, declaracion_funcion, declaracion_arreglo, dimension_arreglo, procedimiento, funcion;
+non terminal parametros_principal, parametros, especificacion_parametros, lista_identificadores, modoParametro;
+non terminal codigo;
+non terminal lista_asignacion, asignacion;
+non terminal bloque_loop, bloque_for, bloque_while, salir_ciclo, bloque_if, bloque_elsif, bloque_else;
+non terminal put, get;
+non terminal llamada_subprograma, llamar_subprograma, valores_parametros;
+non terminal tipoVar;
+non terminal condicion, operando_rel, expresion_booleana;
+non terminal expresion_matematica, t, ep, tp, f;
+non terminal fin_parseo;
+
+precedence left OPREL;
+precedence left OPSUM;
+precedence left OPMULT;
+
+
+start with cuerpo_principal;
+
+
+/* Gramatica */
+
+cuerpo_principal ::= PROCEDURE ID parametros_principal IS begin_cuerpo_principal fin_parseo
+		/* PRODUCCIONES ERROR */
+		| error ID parametros_principal IS begin_cuerpo_principal
+		| PROCEDURE error parametros_principal IS begin_cuerpo_principal
+		| PROCEDURE ID parametros_principal error begin_cuerpo_principal
+		/* --------------------------------------------------------------------- */
+		| FUNCTION ID parametros_principal RETURN tipoVar IS begin_cuerpo_principal fin_parseo
+		/* PRODUCCIONES ERROR */
+		| FUNCTION error parametros_principal IS begin_cuerpo_principal
+		| FUNCTION ID parametros_principal error begin_cuerpo_principal
+		/* --------------------------------------------------------------------- */
+		;
+
+			begin_cuerpo_principal ::= lista_declaracion BEGIN codigo END ID PYC
+						/* PRODUCCIONES ERROR */
+						| lista_declaracion error codigo END ID PYC
+						| lista_declaracion BEGIN codigo error ID PYC
+						| lista_declaracion BEGIN codigo END error PYC
+						| lista_declaracion BEGIN codigo END ID error
+						/* ----------------------------------------- */
+						| BEGIN codigo END ID PYC
+						/* PRODUCCIONES ERROR */
+						| error codigo END ID PYC
+						| BEGIN codigo error ID PYC
+						| BEGIN codigo END error PYC
+						| BEGIN codigo END ID error
+						;
+
+                                                fin_parseo ::= {: System.out.println("Parseo ha finalizado.");
+                                                                /*Interfaz.outputArea.append("Parseo ha finalizado \n"); */:};
+
+/* DECLARACIONES PRINCIPALES */
+lista_declaracion ::= declaracion_procedimiento lista_declaracion
+		| declaracion_procedimiento
+		| declaracion_variable lista_declaracion
+		| declaracion_variable
+		| declaracion_funcion lista_declaracion
+		| declaracion_funcion
+		| declaracion_arreglo lista_declaracion
+		| declaracion_arreglo
+		| procedimiento lista_declaracion
+		| procedimiento
+		| funcion lista_declaracion
+		| funcion
+		;
+
+		tipoVar ::= INT | BOOLEAN | FLOAT
+			| error
+			;
+
+declaracion_procedimiento ::= PROCEDURE ID parametros PYC
+				/* PRODUCCIONES ERROR */
+				| PROCEDURE error parametros PYC
+				| PROCEDURE ID parametros error
+				/* ------------------------------ */
+			;
+
+declaracion_variable ::= ID COMA declaracion_variable
+			/* PRODUCCIONES ERROR */
+			| ID error declaracion_variable
+			/* --------------------------- */
+			| ID OPDEC tipoVar PYC
+			/* PRODUCCIONES ERROR */
+			| ID error tipoVar PYC
+			| ID OPDEC tipoVar error
+			/* --------------------------- */
+			;
+
+declaracion_funcion ::= FUNCTION ID parametros RETURN tipoVar PYC
+			/* PRODUCCIONES ERROR */
+			| FUNCTION error parametros RETURN tipoVar PYC
+			| FUNCTION ID parametros error tipoVar PYC
+			| FUNCTION ID parametros RETURN tipoVar error
+			;
+
+declaracion_arreglo ::= ID OPDEC ARRAY PARIZQ dimension_arreglo PARDER OF tipoVar PYC
+			/* PRODUCCIONES ERROR */
+			| ID error ARRAY PARIZQ dimension_arreglo PARDER OF tipoVar PYC
+			| ID OPDEC error PARIZQ dimension_arreglo PARDER OF tipoVar PYC
+			| ID OPDEC ARRAY error dimension_arreglo PARDER OF tipoVar PYC
+			| ID OPDEC ARRAY PARIZQ dimension_arreglo error OF tipoVar PYC
+			| ID OPDEC ARRAY PARIZQ dimension_arreglo PARDER error tipoVar PYC
+			| ID OPDEC ARRAY PARIZQ dimension_arreglo PARDER OF tipoVar error
+			;
+
+	dimension_arreglo ::= tipoVar COMA dimension_arreglo | tipoVar
+				| NUM DOSPUNTOS NUM COMA dimension_arreglo | NUM DOSPUNTOS NUM
+				| tipoVar RANGE CAJA
+				/* PRODUCCIONES ERROR */
+				| tipoVar RANGE error
+				;
+
+/* DECLARACION Y DEFINICIONES DE PROCEDIMIENTOS Y FUNCIONES */
+procedimiento ::= PROCEDURE ID parametros IS lista_declaracion BEGIN codigo END ID PYC
+		/* PRODUCCIONES ERROR */
+		| PROCEDURE error parametros IS lista_declaracion BEGIN codigo END ID PYC
+		| PROCEDURE ID parametros IS lista_declaracion error codigo END ID PYC
+		| PROCEDURE ID parametros IS lista_declaracion BEGIN codigo error ID PYC
+		| PROCEDURE ID parametros IS lista_declaracion BEGIN codigo END error PYC
+		| PROCEDURE ID parametros IS lista_declaracion BEGIN codigo END ID error
+		;
+
+funcion ::= FUNCTION ID parametros RETURN tipoVar IS lista_declaracion BEGIN codigo END ID PYC
+		/* PRODUCCIONES ERROR */
+		| FUNCTION error parametros RETURN tipoVar IS lista_declaracion BEGIN codigo END ID PYC
+		| FUNCTION ID parametros error tipoVar IS lista_declaracion BEGIN codigo END ID PYC
+		| FUNCTION ID parametros RETURN tipoVar IS lista_declaracion error codigo END ID PYC
+		| FUNCTION ID parametros RETURN tipoVar IS lista_declaracion BEGIN codigo error ID PYC
+		| FUNCTION ID parametros RETURN tipoVar IS lista_declaracion BEGIN codigo END error PYC
+		| FUNCTION ID parametros RETURN tipoVar IS lista_declaracion BEGIN codigo END ID error
+		;
+
+	parametros_principal ::= PARIZQ especificacion_parametros PARDER
+				|
+				/* PRODUCCIONES ERROR */
+				| PARDER especificacion_parametros error
+				;
+
+	parametros ::= PARIZQ especificacion_parametros PARDER
+			/* PRODUCCIONES ERROR */
+			| error especificacion_parametros PARDER
+			| PARIZQ especificacion_parametros error
+			;
+
+		especificacion_parametros ::= lista_identificadores OPDEC modoParametro tipoVar PYC especificacion_parametros
+						/* PRODUCCIONES ERROR */
+						| lista_identificadores error modoParametro tipoVar PYC especificacion_parametros
+						/* ----------------------------------------------------------------------- */
+
+						| lista_identificadores OPDEC modoParametro tipoVar
+						/* PRODUCCIONES ERROR */
+						| lista_identificadores error modoParametro tipoVar
+						/* ------------------------------------------------- */
+					;
+
+		lista_identificadores ::= ID COMA lista_identificadores
+					| ID
+					/* PRODUCCIONES ERROR */
+					| error
+					| error COMA lista_identificadores
+					;
+
+		modoParametro ::= IN | OUT | IN OUT
+			|
+		;
+
+
+codigo ::= asignacion codigo | asignacion
+	| bloque_for codigo | bloque_for
+	| bloque_while codigo | bloque_while
+	| bloque_loop codigo | bloque_loop
+	| bloque_if codigo | bloque_if
+	| put codigo | put
+	| get codigo | get
+	| llamada_subprograma codigo | llamada_subprograma
+	;
+
+
+/* ASIGNACIONES */
+lista_asignacion ::= lista_asignacion asignacion | asignacion
+		;
+
+	asignacion ::= ID OPASG expresion_matematica PYC /* Tambien cubre asignaciones de id */
+			/* PRODUCCIONES ERROR */
+			| ID error expresion_matematica PYC
+			| ID OPASG expresion_matematica error
+			/* --------------------------------- */
+			| ID OPASG llamar_subprograma PYC
+			/* PRODUCCIONES ERROR */
+			| ID error llamar_subprograma PYC
+			| ID OPASG llamar_subprograma error
+			/* --------------------------- */
+			| ID OPASG STR PYC
+			/* PRODUCCIONES ERROR */
+			| ID error STR PYC
+			| ID OPASG error PYC
+			| ID OPASG STR error
+			/* ----------------------------- */
+			| ID OPASG TRUE PYC
+			/* PRODUCCIONES ERROR */
+			| ID error TRUE PYC
+			| ID OPASG TRUE error
+			/* ----------------------------- */
+			| ID OPASG FALSE PYC
+			/* PRODUCCIONES ERROR */
+			| ID error FALSE PYC
+			| ID OPASG FALSE error
+			/* ----------------------------- */
+
+			;
+
+		expresion_matematica ::= t ep ;
+		ep ::= OPSUM t ep | ;
+		t ::= f tp ;
+		tp ::= OPMULT f tp | ;
+		f ::= ID | NUM | PARIZQ expresion_matematica PARDER ;
+
+/* BLOQUE LOOP */
+bloque_loop ::= LOOP codigo salir_ciclo END LOOP PYC
+		/* PRODUCCIONES ERROR */
+		| LOOP codigo salir_ciclo error LOOP PYC
+		| LOOP codigo salir_ciclo END LOOP error
+		/* -------------------------------- */
+		;
+
+/* BLOQUE FOR */
+bloque_for ::= FOR ID IN NUM DOSPUNTOS NUM LOOP codigo salir_ciclo END LOOP PYC
+		/* PRODUCCIONES ERROR */
+		| FOR error IN NUM DOSPUNTOS NUM LOOP codigo salir_ciclo END LOOP PYC
+		| FOR ID error NUM DOSPUNTOS NUM LOOP codigo salir_ciclo END LOOP PYC
+		| FOR ID IN error DOSPUNTOS NUM LOOP codigo salir_ciclo END LOOP PYC
+		| FOR ID IN NUM error NUM LOOP codigo salir_ciclo END LOOP PYC
+		| FOR ID IN NUM DOSPUNTOS error LOOP codigo salir_ciclo END LOOP PYC
+		| FOR ID IN NUM DOSPUNTOS NUM error codigo salir_ciclo END LOOP PYC
+		| FOR ID IN NUM DOSPUNTOS NUM LOOP codigo salir_ciclo error LOOP PYC
+		| FOR ID IN NUM DOSPUNTOS NUM LOOP codigo salir_ciclo END error PYC
+		| FOR ID IN NUM DOSPUNTOS NUM LOOP codigo salir_ciclo END LOOP error
+		;
+
+/* BLOQUE WHILE */
+bloque_while ::= WHILE condicion LOOP codigo salir_ciclo END LOOP PYC
+		/* PRODUCCIONES ERROR */
+		| WHILE condicion error codigo salir_ciclo END LOOP PYC
+		| WHILE condicion LOOP codigo salir_ciclo error LOOP PYC
+		| WHILE condicion LOOP codigo salir_ciclo END error PYC
+		| WHILE condicion LOOP codigo salir_ciclo END LOOP error
+		;
+
+	salir_ciclo ::= EXIT WHEN condicion PYC
+		|
+		/* PRODUCCIONES ERROR */
+		| EXIT error condicion PYC
+		| EXIT WHEN condicion error
+		;
+
+/* BLOQUE IF */
+bloque_if ::= IF condicion THEN codigo bloque_elsif bloque_else END IF PYC
+		/* PRODUCCIONES ERROR */
+		| ID condicion error codigo bloque_elsif bloque_else END IF PYC
+		| ID condicion THEN codigo bloque_elsif bloque_else error IF PYC
+		| ID condicion THEN codigo bloque_elsif bloque_else END error PYC
+		| ID condicion THEN codigo bloque_elsif bloque_else END IF error
+		;
+
+	/* BLOQUE ELSIF */
+	bloque_elsif ::= ELSIF condicion THEN codigo bloque_elsif
+			|
+			/* PRODUCCIONES ERROR */
+			| ELSIF condicion error codigo bloque_elsif
+			;
+
+	/* BLOQUE ELSE */
+	bloque_else ::= ELSE codigo
+			|
+			/* PRODUCCIONES ERROR */
+			;
+
+		condicion ::= expresion_booleana OR condicion
+				| expresion_booleana AND condicion
+				| expresion_booleana XOR condicion
+				| expresion_booleana
+				/* PRODUCCIONES ERROR */
+				| error
+				;
+
+			expresion_booleana ::= operando_rel OPREL operando_rel
+					;
+
+				operando_rel ::= ID | NUM | llamar_subprograma
+					| error
+					;
+
+/* FUNCIONES PUT y GET */
+put ::= PUT PARIZQ NUM PARDER PYC
+	| PUT PARIZQ STR PARDER PYC
+	/* PRODUCCIONES ERROR */
+	| PUT error NUM PARDER PYC
+	| PUT PARIZQ error PARDER PYC
+	| PUT PARIZQ NUM error PYC
+	| PUT PARIZQ NUM PARDER error
+	;
+
+get ::= GET PARIZQ ID PARDER PYC
+	/* PRODUCCIONES ERROR */
+	| GET error ID PARDER PYC
+	| GET PARIZQ error PARDER PYC
+	| GET PARIZQ ID error PYC
+	| GET PARIZQ ID PARDER error
+	;
+
+/* LLAMADAS A FUNCIONES Y PROCEDIMIENTOS */
+llamada_subprograma ::= llamar_subprograma PYC
+			/* PRODUCCIONES ERROR */
+			| llamar_subprograma error
+			;
+
+	llamar_subprograma ::= ID PARIZQ valores_parametros PARDER
+				/* PRODUCCIONES ERROR */
+				| ID PARIZQ valores_parametros error
+				;
+
+		valores_parametros ::= ID COMA valores_parametros
+					| ID
+					/* PRODUCCIONES DE ERROR */
+					| error COMA valores_parametros
+					| error
+					/* -------------------------- */
+
+					| NUM COMA valores_parametros
+					| NUM
+					;
