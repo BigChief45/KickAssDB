@@ -15,7 +15,9 @@ import javax.swing.text.StyleContext;
  */
 public class MainWindow extends javax.swing.JFrame {
 
-	private Hashtable attributes;    
+	private Hashtable attributes;
+        private int table_counnter = 0;
+                
     
     /**
      * Creates new form MainWindow
