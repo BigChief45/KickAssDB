@@ -18,6 +18,7 @@ public class KickAssDB {
         
         //System.out.println("Esta es una prueba");
         
+        System.out.println("BUM BUM BUM BUM");
         MainWindow m = new MainWindow();
         m.setLocationRelativeTo(null);
         m.setVisible((true));
