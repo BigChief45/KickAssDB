@@ -37,6 +37,8 @@ public class KickAssDB {
         
         System.out.println("Prueba");
         
+        System.out.println("Prueba");
+        
         MainWindow m = new MainWindow();
         m.setLocationRelativeTo(null);
         m.setVisible((true));
