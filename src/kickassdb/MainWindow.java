@@ -73,9 +73,16 @@ public class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenuItem1 = new javax.swing.JMenuItem();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        queryTabPane = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextPane1 = new javax.swing.JTextPane();
+        jToolBar1 = new javax.swing.JToolBar();
+        executeQuery = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
+        compileLexer = new javax.swing.JButton();
+        compileCup = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         itemNewSql = new javax.swing.JMenuItem();
@@ -86,10 +93,53 @@ public class MainWindow extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Kick Ass Database");
+        setResizable(false);
 
         jScrollPane1.setViewportView(jTextPane1);
 
-        jTabbedPane1.addTab("sql1", jScrollPane1);
+        queryTabPane.addTab("sql1", jScrollPane1);
+
+        jToolBar1.setFloatable(false);
+        jToolBar1.setRollover(true);
+
+        executeQuery.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        executeQuery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/script_go.png"))); // NOI18N
+        executeQuery.setText("Run Query");
+        executeQuery.setFocusable(false);
+        executeQuery.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        executeQuery.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(executeQuery);
+        jToolBar1.add(jSeparator1);
+
+        compileLexer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        compileLexer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/directory_listing.png"))); // NOI18N
+        compileLexer.setText("Compiler Lexer");
+        compileLexer.setFocusable(false);
+        compileLexer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        compileLexer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        compileLexer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                compileLexerActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(compileLexer);
+
+        compileCup.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        compileCup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/cup.png"))); // NOI18N
+        compileCup.setText("Compile Cup");
+        compileCup.setFocusable(false);
+        compileCup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        compileCup.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        compileCup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                compileCupActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(compileCup);
+
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane2.setViewportView(jTextArea1);
 
         jMenu1.setText("File");
 
@@ -112,15 +162,40 @@ public class MainWindow extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 919, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 920, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addComponent(queryTabPane))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 581, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(queryTabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void compileLexerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileLexerActionPerformed
+        
+        // Call Compile Lexer Method
+        String path = "src\\kickassdb\\lexer.flex";
+        KickAssDB.generateLexer(path);        
+    }//GEN-LAST:event_compileLexerActionPerformed
+
+    private void compileCupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileCupActionPerformed
+        
+        // Call Compile CUP method
+        KickAssDB.generateCup();
+    }//GEN-LAST:event_compileCupActionPerformed
 
     /**
      * @param args the command line arguments
@@ -157,6 +232,9 @@ public class MainWindow extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton compileCup;
+    private javax.swing.JButton compileLexer;
+    private javax.swing.JButton executeQuery;
     private javax.swing.JMenuItem itemExit;
     private javax.swing.JMenuItem itemNewSql;
     private javax.swing.JMenu jMenu1;
@@ -164,7 +242,11 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JTabbedPane queryTabPane;
     // End of variables declaration//GEN-END:variables
 }

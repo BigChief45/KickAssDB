@@ -20,8 +20,8 @@ public class KickAssDB {
         // TODO code application logic here
         
         String path = "src\\kickassdb\\lexer.flex";
-        generateLexer(path);
-        generarCup();
+        //generateLexer(path);
+        //generateCup();
         
         MainWindow m = new MainWindow();
         m.setLocationRelativeTo(null);
@@ -29,13 +29,15 @@ public class KickAssDB {
         
     }//End public static void main(String[] args)
     
-    private static void generateLexer(String path)
+    protected static void generateLexer(String path)
     {
+        System.out.println("Compiling Lexer file... \n");
         File f = new File(path);
         jflex.Main.generate(f);
+        System.out.println("Lexer file compiled successfully.");
     }
     
-    private static void generarCup()
+    protected static void generateCup()
     {
         String opciones[] = new String[5];
         opciones[0] = "-destdir";
@@ -47,9 +49,9 @@ public class KickAssDB {
         try
         {
             System.out.println(""); // Clear
-            System.out.println("Compilando archivo .cup ... \n");
+            System.out.println("Compiling CUP file... \n");
             java_cup.Main.main(opciones);
-            System.out.println("archivo .cup compilado exitosamente. \n");
+            System.out.println("CUP file compiled successfully. \n");
 
         }
         catch ( Exception e )
