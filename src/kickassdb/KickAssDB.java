@@ -23,6 +23,8 @@ public class KickAssDB {
         generateLexer(path);
         generarCup();
         
+        System.out.println("Prueba");
+        
         MainWindow m = new MainWindow();
         m.setLocationRelativeTo(null);
         m.setVisible((true));
