@@ -5,7 +5,8 @@
 package kickassdb;
 
 import java.io.File;
-
+import javax.swing.UIManager;
+import javax.swing.UIManager.*;
 
 /**
  *
@@ -16,12 +17,23 @@ public class KickAssDB {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        // TODO code application logic here
-        
-        String path = "src\\kickassdb\\lexer.flex";
-        //generateLexer(path);
-        //generateCup();
+    public static void main(String[] args) 
+    {
+        try 
+        {
+            for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) 
+            {
+                if ("Nimbus".equals(info.getName())) 
+                {
+                    UIManager.setLookAndFeel(info.getClassName());                    
+                    break;
+                }
+            }
+        } 
+        catch (Exception e) 
+        {
+            // If Nimbus is not available, you can set the GUI to another look and feel.
+        }
         
         MainWindow m = new MainWindow();
         m.setLocationRelativeTo(null);

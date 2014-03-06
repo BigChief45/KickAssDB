@@ -1,0 +1,4 @@
+FileFilter ft = new FileNameExtensionFilter( "Text Files", "txt" );
+db.addChoosableFileFilter( ft );
+
+asdadsddasdasdassd

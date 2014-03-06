@@ -4,7 +4,15 @@
  */
 package kickassdb;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.Hashtable;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -17,6 +25,7 @@ public class MainWindow extends javax.swing.JFrame {
 
 	private Hashtable attributes;
         private int table_counnter = 0;
+        private File opened_file;
                 
     
     /**
@@ -73,16 +82,21 @@ public class MainWindow extends javax.swing.JFrame {
     private void initComponents() {
 
         jMenuItem1 = new javax.swing.JMenuItem();
-        queryTabPane = new javax.swing.JTabbedPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextPane1 = new javax.swing.JTextPane();
         jToolBar1 = new javax.swing.JToolBar();
+        newQuery = new javax.swing.JButton();
+        openQuery = new javax.swing.JButton();
+        saveQuery = new javax.swing.JButton();
         executeQuery = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
+        clearOutput = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
         compileLexer = new javax.swing.JButton();
         compileCup = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        outputText = new javax.swing.JTextArea();
+        queryTabs = new javax.swing.JTabbedPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        queryText = new javax.swing.JTextPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         itemNewSql = new javax.swing.JMenuItem();
@@ -95,21 +109,76 @@ public class MainWindow extends javax.swing.JFrame {
         setTitle("Kick Ass Database");
         setResizable(false);
 
-        jScrollPane1.setViewportView(jTextPane1);
-
-        queryTabPane.addTab("sql1", jScrollPane1);
-
         jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
+
+        newQuery.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        newQuery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/script_add.png"))); // NOI18N
+        newQuery.setText("New Query");
+        newQuery.setFocusable(false);
+        newQuery.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        newQuery.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        newQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newQueryActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(newQuery);
+
+        openQuery.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        openQuery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/folder_explore.png"))); // NOI18N
+        openQuery.setText("Open Query");
+        openQuery.setFocusable(false);
+        openQuery.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        openQuery.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        openQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openQueryActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(openQuery);
+
+        saveQuery.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        saveQuery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/script_save.png"))); // NOI18N
+        saveQuery.setText("Save Query");
+        saveQuery.setFocusable(false);
+        saveQuery.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        saveQuery.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        saveQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveQueryActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(saveQuery);
 
         executeQuery.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         executeQuery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/script_go.png"))); // NOI18N
         executeQuery.setText("Run Query");
+        executeQuery.setEnabled(false);
         executeQuery.setFocusable(false);
         executeQuery.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         executeQuery.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        executeQuery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                executeQueryActionPerformed(evt);
+            }
+        });
         jToolBar1.add(executeQuery);
         jToolBar1.add(jSeparator1);
+
+        clearOutput.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        clearOutput.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/page_white.png"))); // NOI18N
+        clearOutput.setText("Clear Output");
+        clearOutput.setFocusable(false);
+        clearOutput.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        clearOutput.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        clearOutput.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearOutputActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(clearOutput);
+        jToolBar1.add(jSeparator2);
 
         compileLexer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         compileLexer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/directory_listing.png"))); // NOI18N
@@ -137,9 +206,14 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jToolBar1.add(compileCup);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane2.setViewportView(jTextArea1);
+        outputText.setEditable(false);
+        outputText.setColumns(20);
+        outputText.setRows(5);
+        jScrollPane2.setViewportView(outputText);
+
+        jScrollPane1.setViewportView(queryText);
+
+        queryTabs.addTab("query1", jScrollPane1);
 
         jMenu1.setText("File");
 
@@ -167,7 +241,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2)
-                    .addComponent(queryTabPane))
+                    .addComponent(queryTabs, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -175,8 +249,8 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(queryTabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(queryTabs, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -196,6 +270,122 @@ public class MainWindow extends javax.swing.JFrame {
         // Call Compile CUP method
         KickAssDB.generateCup();
     }//GEN-LAST:event_compileCupActionPerformed
+
+    private void executeQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executeQueryActionPerformed
+        
+        /* Store the query as a string */
+        String query = queryText.getText();
+        
+        outputText.append("Executing Query... \n");
+        
+        /* Call the Parser */
+        try
+        {
+            //parser p = new parser(new Lexer(new java.io.FileInputStream(archivoAbierto.getAbsolutePath())));
+            //p.parse();
+        }
+
+        catch(Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+        
+    }//GEN-LAST:event_executeQueryActionPerformed
+
+    private void newQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newQueryActionPerformed
+        
+        /* Enabled components */
+        queryText.setText("");
+    }//GEN-LAST:event_newQueryActionPerformed
+
+    private void saveQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveQueryActionPerformed
+                        
+        try
+        {
+            // Check if an opened file will be saved
+            if ( opened_file != null )
+            {
+                // Save changes to the current file
+                FileWriter fw = new FileWriter(opened_file);
+                PrintWriter pw = new PrintWriter(fw);
+
+                pw.write(queryText.getText());
+                outputText.setText("File saved successfully. \n");
+                pw.close();
+            }
+            else
+            {
+                // Show File Chooser to save new file
+                JFileChooser fc = new JFileChooser();
+                FileFilter ft = new FileNameExtensionFilter( "Text Files", "txt" );                
+                fc.addChoosableFileFilter( ft );
+                int retVal = fc.showSaveDialog(null);
+
+                if ( retVal == fc.APPROVE_OPTION )
+                {
+                    File nuevoArchivo = new File( fc.getSelectedFile().getAbsolutePath());
+
+                    // Create file on selected directory
+                    FileWriter fw = new FileWriter(nuevoArchivo);
+                    PrintWriter pw = new PrintWriter(fw);
+
+                    pw.write(queryText.getText());
+                    outputText.setText("File " + nuevoArchivo.getName() + " has been saved successfully. \n");
+                    pw.close();
+
+                    opened_file = nuevoArchivo;
+                }
+            }
+        }
+        catch ( Exception e )
+        {
+            outputText.setText(e.getMessage());
+        }
+        
+        executeQuery.setEnabled(true);
+    }//GEN-LAST:event_saveQueryActionPerformed
+
+    private void openQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openQueryActionPerformed
+        
+        // Create File Chooser
+        JFileChooser fc = new JFileChooser("src\\queries");
+        
+        int seleccion = fc.showOpenDialog(null);
+
+        if ( seleccion == fc.APPROVE_OPTION )
+        {
+            // Select the file
+            opened_file = fc.getSelectedFile();
+            
+            // Add it to the text pane
+            try
+            {
+                FileReader fr = new FileReader(opened_file);
+                BufferedReader reader = new BufferedReader(fr);
+                
+                String line;
+                String input = "";
+                while ( (line = reader.readLine()) != null )
+                    input += line + "\n";
+
+                queryText.setText(input);
+                fr.close();
+                reader.close();
+                outputText.append("Opened file: " + opened_file.getName() + "\n");
+            }
+            catch (Exception e )
+            {
+                outputText.setText(e.getMessage());
+            }
+        }
+        
+        executeQuery.setEnabled(true);
+    }//GEN-LAST:event_openQueryActionPerformed
+
+    private void clearOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearOutputActionPerformed
+        
+        outputText.setText("");
+    }//GEN-LAST:event_clearOutputActionPerformed
 
     /**
      * @param args the command line arguments
@@ -232,6 +422,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton clearOutput;
     private javax.swing.JButton compileCup;
     private javax.swing.JButton compileLexer;
     private javax.swing.JButton executeQuery;
@@ -244,9 +435,13 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JToolBar.Separator jSeparator1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JTabbedPane queryTabPane;
+    private javax.swing.JButton newQuery;
+    private javax.swing.JButton openQuery;
+    private javax.swing.JTextArea outputText;
+    private javax.swing.JTabbedPane queryTabs;
+    private javax.swing.JTextPane queryText;
+    private javax.swing.JButton saveQuery;
     // End of variables declaration//GEN-END:variables
 }
