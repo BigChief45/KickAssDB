@@ -35,6 +35,8 @@ public class KickAssDB {
             // If Nimbus is not available, you can set the GUI to another look and feel.
         }
         
+        System.out.println("Prueba");
+        
         MainWindow m = new MainWindow();
         m.setLocationRelativeTo(null);
         m.setVisible((true));
