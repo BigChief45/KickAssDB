@@ -37,6 +37,7 @@ public class MainWindow extends javax.swing.JFrame {
         initComponents();
           
         System.out.println("Hello World");
+        System.out.println("Hello World 2");
         
         //JOptionPane.showMessageDialog(rootPane, this, "hola", WIDTH);
         
