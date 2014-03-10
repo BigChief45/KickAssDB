@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Hashtable;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.Style;
@@ -34,7 +35,11 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() 
     {
         initComponents();
-                        
+          
+        System.out.println("Hello World");
+        
+        //JOptionPane.showMessageDialog(rootPane, this, "hola", WIDTH);
+        
     }//End MainWindow()
 
     // Create some different font styles
