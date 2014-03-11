@@ -34,11 +34,26 @@ terminal Integer NUM;
 terminal STR;
 
 /* No Terminales */
-non terminal cuerpo_principal;
+non terminal create_table;
 
-start with cuerpo_principal;
+start with create_table;
 
 
 /* Gramatica */
-cuerpo_principal ::= CREATE TABLE ID
+create_table ::= CREATE TABLE ID PARLEFT table_attribute PARRIGHT SEMICOLON
                     ;
+
+                    table_attribute ::= ID attribute_type primary_key coma
+                                        ;
+
+                        attribute_type ::= INT |
+                                           VARCHAR PARLEFT NUM PARRIGHT
+                                           ;
+
+                        coma ::= COMA table_attribute
+                                 |
+                                 ;
+
+                        primary_key ::= PRIMARY KEY
+                                        |
+                                        ;

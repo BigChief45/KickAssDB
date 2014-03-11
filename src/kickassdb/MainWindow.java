@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.Hashtable;
+import java_cup.runtime.Symbol;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -27,6 +28,7 @@ public class MainWindow extends javax.swing.JFrame {
 	private Hashtable attributes;
         private int table_counnter = 0;
         private File opened_file;
+        String tempLexerText;
                 
     
     /**
@@ -282,18 +284,17 @@ public class MainWindow extends javax.swing.JFrame {
         /* Call the Parser */
         try
         {
-            Lexer lexer = new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath()));
-                        
-            while (true){
+            /* Lexer lexer = new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath()));                        
+            while (!lexer.next_token().value.equals("End of File.")){                            
+                this.tempLexerText += lexer.yytext() + "\n";                
+            } */
             
-                String temp = lexer.next_token().value.toString();
-                System.out.println(temp);
-                if (temp.equals("End of File."))
-                    break;
-            }
-            //parser p = new parser(new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath())));
-            //p.parse();
-            System.out.println("");
+            parser p = new parser(new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath())));
+            p.parse();
+            
+            //If parsing is succesful we show a message
+            outputText.setText(outputText.getText() + "Parsing Succesful");
+
         }
 
         catch(Exception e)
