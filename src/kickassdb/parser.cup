@@ -26,7 +26,7 @@ parser code
 :}
 
 /* Terminales */
-terminal CREATE, TABLE, PRIMARY, KEY;
+terminal CREATE, TABLE, PRIMARY, KEY, INSERT, INTO, VALUES;
 terminal String INT, VARCHAR;
 terminal String OPREL, OPSUM, OPMULT, PARLEFT, PARRIGHT, SEMICOLON, COMA;
 terminal String ID;
@@ -36,19 +36,30 @@ terminal STR;
 /* No Terminales */
 non terminal operation;
 non terminal create_table;
+non terminal insert_record;
+non terminal record_values;
 non terminal table_attribute;
 non terminal attribute_type;
 non terminal coma;
 non terminal primary_key;
 
-
 start with operation;
 
 
 /* Gramatica */
-operation ::= create_table semicolon operation
-               |
+operation ::= create_table SEMICOLON operation
+               | insert_record SEMICOLON operation
              ;
+
+insert_record ::= INSERT INTO ID VALUES PARLEFT record_values PARRIGHT
+                ; 
+
+
+    record_values ::= NUM COMA record_values
+                    | STR COMA record_values
+                    | NUM
+                    | STR
+                    ;       
 
 create_table ::= CREATE TABLE ID PARLEFT table_attribute PARRIGHT 
                     ;
@@ -65,10 +76,6 @@ create_table ::= CREATE TABLE ID PARLEFT table_attribute PARRIGHT
                                  ;
 
                         primary_key ::= PRIMARY KEY
-                                        |
-                                        ;
-
-                        semicolon ::= SEMICOLON
                                         |
                                         ;
 

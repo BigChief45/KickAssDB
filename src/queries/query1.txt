@@ -1,4 +1,9 @@
 CREATE TABLE Person (
-id int
+id int,
+name varchar(20)
+);
+
+CREATE TABLE Person (
+id int,
 name varchar(20)
 );
