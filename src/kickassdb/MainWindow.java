@@ -28,7 +28,7 @@ public class MainWindow extends javax.swing.JFrame {
 	private Hashtable attributes;
         private int table_counnter = 0;
         private File opened_file;
-        String tempLexerText;
+        String parserResult = "Parsing Successful";
                 
     
     /**
@@ -279,7 +279,8 @@ public class MainWindow extends javax.swing.JFrame {
         /* Store the query as a string */
         String query = queryText.getText();
         
-        outputText.append("Executing Query... \n");
+        getOutputText().append("Executing Query... \n");
+        this.parserResult = "Parsing Successful";
         
         /* Call the Parser */
         try
@@ -292,9 +293,8 @@ public class MainWindow extends javax.swing.JFrame {
             parser p = new parser(new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath())));
             p.parse();
             
-            //If parsing is succesful we show a message
-            outputText.setText(outputText.getText() + "Parsing Successful");
-
+            this.outputText.append(this.parserResult);
+            
         }
 
         catch(Exception e)
@@ -322,7 +322,7 @@ public class MainWindow extends javax.swing.JFrame {
                 PrintWriter pw = new PrintWriter(fw);
 
                 pw.write(queryText.getText());
-                outputText.setText("File saved successfully. \n");
+                getOutputText().setText("File saved successfully. \n");
                 pw.close();
             }
             else
@@ -342,7 +342,7 @@ public class MainWindow extends javax.swing.JFrame {
                     PrintWriter pw = new PrintWriter(fw);
 
                     pw.write(queryText.getText());
-                    outputText.setText("File " + nuevoArchivo.getName() + " has been saved successfully. \n");
+                    getOutputText().setText("File " + nuevoArchivo.getName() + " has been saved successfully. \n");
                     pw.close();
 
                     opened_file = nuevoArchivo;
@@ -351,7 +351,7 @@ public class MainWindow extends javax.swing.JFrame {
         }
         catch ( Exception e )
         {
-            outputText.setText(e.getMessage());
+            getOutputText().setText(e.getMessage());
         }
         
         executeQuery.setEnabled(true);
@@ -383,11 +383,11 @@ public class MainWindow extends javax.swing.JFrame {
                 queryText.setText(input);
                 fr.close();
                 reader.close();
-                outputText.append("Opened file: " + opened_file.getName() + "\n");
+                getOutputText().append("Opened file: " + opened_file.getName() + "\n");
             }
             catch (Exception e )
             {
-                outputText.setText(e.getMessage());
+                getOutputText().setText(e.getMessage());
             }
         }
         
@@ -396,7 +396,7 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void clearOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearOutputActionPerformed
         
-        outputText.setText("");
+        getOutputText().setText("");
     }//GEN-LAST:event_clearOutputActionPerformed
 
     /**
@@ -456,4 +456,11 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JTextPane queryText;
     private javax.swing.JButton saveQuery;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the outputText
+     */
+    public javax.swing.JTextArea getOutputText() {
+        return outputText;
+    }
 }

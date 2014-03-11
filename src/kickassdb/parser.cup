@@ -8,8 +8,7 @@ parser code
 	public static void main(String args[]) throws Exception 
         {
 		//new parser(new Lexer(new FileInputStream(args[0]))).parse();
-                System.out.println("Entro al cup para parsear");
-		new parser(new Lexer(System.in)).parse();
+		new parser(new Lexer(System.in)).parse();               
 	}
 
 	public void syntax_error(Symbol s) 
@@ -20,7 +19,7 @@ parser code
 
 	public void unrecovered_syntax_error(Symbol s) 
         {
-		System.out.println("Error fatal de sintaxis. Se ha detenido el parseo.");
+                KickAssDB.mainwindow.parserResult = "Error fatal de sintaxis. Se ha detenido el parseo.";
                 //Interfaz.outputArea.append("Error fatal de sintaxis. Se ha detenido el parseo.");
 	}
 :}

@@ -17,6 +17,9 @@ public class KickAssDB {
     /**
      * @param args the command line arguments
      */
+    
+    static MainWindow mainwindow;
+    
     public static void main(String[] args) 
     {
         try 
@@ -36,9 +39,9 @@ public class KickAssDB {
         }
         
         
-        MainWindow m = new MainWindow();
-        m.setLocationRelativeTo(null);
-        m.setVisible((true));
+        mainwindow = new MainWindow();
+        mainwindow.setLocationRelativeTo(null);
+        mainwindow.setVisible((true));
         
     }//End public static void main(String[] args)
     
