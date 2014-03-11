@@ -42,23 +42,35 @@ non terminal table_attribute;
 non terminal attribute_type;
 non terminal coma;
 non terminal primary_key;
+non terminal attributes;
+non terminal attribute_names;
 
 start with operation;
 
 /* Grammar */
 operation ::= create_table SEMICOLON operation
                | insert_record SEMICOLON operation
+               | create_table
+               | insert_record
                |
              ;
 
-insert_record ::= INSERT INTO ID VALUES PARLEFT record_values PARRIGHT
+insert_record ::= INSERT INTO ID attributes VALUES PARLEFT record_values PARRIGHT
                 ; 
+
+    attributes ::= PARLEFT attribute_names PARRIGHT
+               |
+                    ;
+
+    attribute_names ::= ID COMA attribute_names
+                    | ID                    
+                    ;         
 
     record_values ::= NUM COMA record_values
                     | STR COMA record_values
                     | NUM
                     | STR
-                    ;       
+                    ;
 
 create_table ::= CREATE TABLE ID PARLEFT table_attribute PARRIGHT 
                     ;

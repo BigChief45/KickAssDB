@@ -293,7 +293,7 @@ public class MainWindow extends javax.swing.JFrame {
             p.parse();
             
             //If parsing is succesful we show a message
-            outputText.setText(outputText.getText() + "Parsing Succesful");
+            outputText.setText(outputText.getText() + "Parsing Successful");
 
         }
 
