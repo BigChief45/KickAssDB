@@ -34,17 +34,23 @@ terminal Integer NUM;
 terminal STR;
 
 /* No Terminales */
+non terminal operation;
 non terminal create_table;
 non terminal table_attribute;
 non terminal attribute_type;
 non terminal coma;
 non terminal primary_key;
 
-start with create_table;
+
+start with operation;
 
 
 /* Gramatica */
-create_table ::= CREATE TABLE ID PARLEFT table_attribute PARRIGHT SEMICOLON
+operation ::= create_table semicolon operation
+               |
+             ;
+
+create_table ::= CREATE TABLE ID PARLEFT table_attribute PARRIGHT 
                     ;
 
                     table_attribute ::= ID attribute_type primary_key coma
@@ -61,3 +67,8 @@ create_table ::= CREATE TABLE ID PARLEFT table_attribute PARRIGHT SEMICOLON
                         primary_key ::= PRIMARY KEY
                                         |
                                         ;
+
+                        semicolon ::= SEMICOLON
+                                        |
+                                        ;
+
