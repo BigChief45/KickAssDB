@@ -23,9 +23,9 @@ space = \t | \f | " " | \r | \n
 specials = "!" | "?"
 
 // Delimiters 
-op_rel = "=" | "/=" | "<" | "<=" | ">" | ">="
-op_sum = "+" | "-"
-op_mult = "*" | "/"
+//op_rel = "=" | "/=" | "<" | "<=" | ">" | ">="
+//op_sum = "+" | "-"
+//op_mult = "*" | "/"
 parenthesis_left = "("
 parenthesis_right = ")"
 semicolon = ";"
@@ -53,16 +53,13 @@ str = ("\"" | "\'") ({letter} | {digit} | {space} | {specials} )* ("\"" | "\'")
 	"TABLE" { return new Symbol(sym.TABLE, yycolumn, yyline, yytext()); }
         "PRIMARY" { return new Symbol(sym.PRIMARY, yycolumn, yyline, yytext()); }
         "KEY" { return new Symbol(sym.KEY, yycolumn, yyline, yytext()); }
-        "INSERT" { return new Symbol(sym.INSERT, yycolumn, yyline, yytext(); }
-        "INTO" { return new Symbol(sym.INTO, yycolumn, yyline, yytext(); } 
-        "VALUES" { return new Symbol(sym.VALUES, yycolumn, yyline, yytext(); }
+        "INSERT" { return new Symbol(sym.INSERT, yycolumn, yyline, yytext()); }
+        "INTO" { return new Symbol(sym.INTO, yycolumn, yyline, yytext()); } 
+        "VALUES" { return new Symbol(sym.VALUES, yycolumn, yyline, yytext()); }
 
         "int" { return new Symbol(sym.INT, yycolumn, yyline, yytext()); }
         "varchar" { return new Symbol(sym.VARCHAR, yycolumn, yyline, yytext()); }
 	
-	{op_rel} { return new Symbol(sym.OPREL, yycolumn, yyline, yytext()); }
-	{op_sum} { return new Symbol(sym.OPSUM, yycolumn, yyline, yytext()); }
-	{op_mult} { return new Symbol(sym.OPMULT, yycolumn, yyline, yytext()); }
 	{parenthesis_left} { return new Symbol(sym.PARLEFT, yycolumn, yyline, yytext()); }
 	{parenthesis_right} { return new Symbol(sym.PARRIGHT, yycolumn, yyline, yytext()); }	
 	{semicolon} { return new Symbol(sym.SEMICOLON, yycolumn, yyline, yytext()); }
