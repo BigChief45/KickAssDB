@@ -196,7 +196,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/Images/directory_listing.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Compiler Lexer"/>
+            <Property name="text" type="java.lang.String" value="Compile Lexer"/>
             <Property name="focusable" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
             <Property name="verticalTextPosition" type="int" value="3"/>

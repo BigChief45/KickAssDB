@@ -31,7 +31,7 @@ parenthesis_right = ")"
 semicolon = ";"
 coma = ","
 
-// Identificadores
+// Identifiers
 id = {letter}+("_"({letter}|{number})+)*({letter}|{number})*
 
 // Numbers
@@ -43,7 +43,7 @@ number = ({negative_sign}|""){digit}+(({point}{digit}+)|"")
 comment = "--"({letter}|{digit}|" ")+
 
 // Strings
-str = "\"" ({letter} | {digit} | {space} | {specials} )* "\""
+str = ("\"" | "\'") ({letter} | {digit} | {space} | {specials} )* ("\"" | "\'")
 
 %%
 

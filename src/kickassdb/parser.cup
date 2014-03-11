@@ -40,5 +40,5 @@ start with cuerpo_principal;
 
 
 /* Gramatica */
-cuerpo_principal ::= TABLE
+cuerpo_principal ::= CREATE TABLE ID
                     ;

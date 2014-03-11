@@ -35,12 +35,7 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() 
     {
         initComponents();
-          
-        System.out.println("Hello World");
-        System.out.println("Hello World 2");
-        
-        //JOptionPane.showMessageDialog(rootPane, this, "hola", WIDTH);
-        
+                  
     }//End MainWindow()
 
     // Create some different font styles
@@ -188,7 +183,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         compileLexer.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         compileLexer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/directory_listing.png"))); // NOI18N
-        compileLexer.setText("Compiler Lexer");
+        compileLexer.setText("Compile Lexer");
         compileLexer.setFocusable(false);
         compileLexer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         compileLexer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -287,8 +282,18 @@ public class MainWindow extends javax.swing.JFrame {
         /* Call the Parser */
         try
         {
-            //parser p = new parser(new Lexer(new java.io.FileInputStream(archivoAbierto.getAbsolutePath())));
+            Lexer lexer = new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath()));
+                        
+            while (true){
+            
+                String temp = lexer.next_token().value.toString();
+                System.out.println(temp);
+                if (temp.equals("End of File."))
+                    break;
+            }
+            //parser p = new parser(new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath())));
             //p.parse();
+            System.out.println("");
         }
 
         catch(Exception e)
