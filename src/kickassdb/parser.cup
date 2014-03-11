@@ -35,6 +35,10 @@ terminal STR;
 
 /* No Terminales */
 non terminal create_table;
+non terminal table_attribute;
+non terminal attribute_type;
+non terminal coma;
+non terminal primary_key;
 
 start with create_table;
 
