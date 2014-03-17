@@ -26,10 +26,9 @@ import javax.swing.text.StyleContext;
 public class MainWindow extends javax.swing.JFrame {
 
 	private Hashtable attributes;
-        private int table_counnter = 0;
         private File opened_file;
-        String parserResult = "Parsing Successful";
-                
+        public String parserResult = "Parsing Successful";
+        private Schema default_schema;
     
     /**
      * Creates new form MainWindow
@@ -37,9 +36,22 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() 
     {
         initComponents();
+        this.createDefaultSchema();                
+        
                   
     }//End MainWindow()
 
+    private void createDefaultSchema()
+    {
+        /* Create a default schema for the application */
+        setDefault_schema(new Schema());
+        
+        
+        //this.default_schema.addTable(new Table(this.default_schema.getTable_count(), ));       
+        
+    }
+    
+    
     // Create some different font styles
     public void createStyles( StyleContext sc )
     {
@@ -299,7 +311,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         catch(Exception e)
         {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
         
     }//GEN-LAST:event_executeQueryActionPerformed
@@ -462,5 +474,19 @@ public class MainWindow extends javax.swing.JFrame {
      */
     public javax.swing.JTextArea getOutputText() {
         return outputText;
+    }
+
+    /**
+     * @return the default_schema
+     */
+    public Schema getDefault_schema() {
+        return default_schema;
+    }
+
+    /**
+     * @param default_schema the default_schema to set
+     */
+    public void setDefault_schema(Schema default_schema) {
+        this.default_schema = default_schema;
     }
 }

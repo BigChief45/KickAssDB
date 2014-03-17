@@ -23,18 +23,10 @@ public class Table {
         this.table_id = ID;
         this.table_name = name;
         this.table_domain = domain;        
-        this.primary_key = this.table_domain.get(prIndex);
+        this.primary_key = this.table_domain.get(prIndex);                
     
     }//End
-    
-    
-    
-    
-    
-    
-    
-    
-    
+                                     
     /**
      * @return the table_id
      */
@@ -105,6 +97,16 @@ public class Table {
         this.primary_key = primary_key;
     }
     
+    public void printTable(){
     
+        System.out.println(this.table_name);
+        System.out.println("=============");
+        for (Attribute attribute : table_domain) 
+        {            
+            System.out.println("Name: "+attribute.getAttribute_name()+", Type:"+attribute.getType().name());   
+        }                
+        
+        System.out.println("");
+    }
     
 }//End Table

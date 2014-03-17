@@ -2,13 +2,16 @@ package kickassdb;
 
 import java.io.*;
 import java_cup.runtime.*;
+import java.util.ArrayList;
+
+
 
 parser code
-{:
+{:              
 	public static void main(String args[]) throws Exception 
         {
 		//new parser(new Lexer(new FileInputStream(args[0]))).parse();
-		new parser(new Lexer(System.in)).parse();               
+		new parser(new Lexer(System.in)).parse();                
 	}
 
 	public void syntax_error(Symbol s) 
@@ -18,11 +21,17 @@ parser code
 	}
 
 	public void unrecovered_syntax_error(Symbol s) 
-        {
+        {                
                 KickAssDB.mainwindow.parserResult = "Error fatal de sintaxis. Se ha detenido el parseo.";
                 //Interfaz.outputArea.append("Error fatal de sintaxis. Se ha detenido el parseo.");
 	}
 :}
+
+action code
+{:
+    private static ArrayList<Attribute> domain_temp = new ArrayList<Attribute>();
+    
+:};
 
 /* Terminals */
 terminal CREATE, TABLE, PRIMARY, KEY, INSERT, INTO, VALUES;
@@ -71,18 +80,50 @@ insert_record ::= INSERT INTO ID attributes VALUES PARLEFT record_values PARRIGH
                     | STR
                     ;
 
-create_table ::= CREATE TABLE ID PARLEFT table_attribute PARRIGHT 
-                    ;
+create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT                  
+                 {:                        
+                        /* Create a new instance of Table */
+                        
+                        // Get current table count for default schema
+                        int table_count = KickAssDB.mainwindow.getDefault_schema().getTable_count();                                                
+                        ArrayList<Attribute> temp = new ArrayList<Attribute>();
+                        
+                        for (int i = domain_temp.size() - 1; i >= 0; i-- )
+                        {
+                            temp.add(domain_temp.get(i));
+                        }
 
-    table_attribute ::= ID attribute_type primary_key coma
-                                        ;
+                        domain_temp = temp;
+                                                                   
+                        Table table = new Table(table_count, id.toString(), domain_temp, 1);
+                        table.printTable();
 
-        attribute_type ::= INT |
-                        VARCHAR PARLEFT NUM PARRIGHT
-                                           ;
+                        // Reset the temporal domain
+                        domain_temp = new ArrayList<Attribute>();
 
-        coma ::= COMA table_attribute|
-                                 ;
+                 :};
 
-        primary_key ::= PRIMARY KEY|
-                                   ;
+    table_attribute ::= ID:name attribute_type:type primary_key coma
+                        {: 
+                               /* Get current Attribute's name */                               
+                               Attribute current_attribute = new Attribute(name.toString(), (Attribute.Type)type);
+
+                               domain_temp.add(current_attribute);                               
+                        :};
+
+            attribute_type ::= INT 
+                               {: 
+                                    /* Attribute type is Integer */
+                                    RESULT = Attribute.Type.INTEGER;
+                               :} |
+                               VARCHAR PARLEFT NUM PARRIGHT
+                               {: 
+                                    /* Attribute's type is Varchar */
+                                    RESULT = Attribute.Type.VARCHAR;
+                               :};
+
+                coma ::= COMA table_attribute |
+                         ;
+
+                    primary_key ::= PRIMARY KEY |
+                                    ;

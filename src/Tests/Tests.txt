@@ -19,7 +19,7 @@ Product_id int PRImaRY KEY,product_name varchar(26));
 INSERT INTO Person
 VALUES (154, 'John', 'M');
 
-Insert into person (person_id, name, gender) values (155, 'Mary', 'F');
+Insert into person values (155, 'Mary', "G");
 
 INSERT INTO Department
 VALUES ('Physics', 'S', 45, 'ZRH 1354 G9Q', 'Hsinchu')

@@ -43,5 +43,11 @@ public class Schema {
         this.table_count = table_count;
     }
     
+    public void addTable(Table t){
+    
+        this.schema.add(t);
+    
+    }
+    
     
 }
