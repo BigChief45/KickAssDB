@@ -19,6 +19,7 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+
 /**
  *
  * @author Otto
@@ -36,22 +37,13 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() 
     {
         initComponents();
-        this.createDefaultSchema();                
+        
+        /* Instantiate Application's Default Schema */
+        default_schema = new Schema();
         
                   
     }//End MainWindow()
 
-    private void createDefaultSchema()
-    {
-        /* Create a default schema for the application */
-        setDefault_schema(new Schema());
-        
-        
-        //this.default_schema.addTable(new Table(this.default_schema.getTable_count(), ));       
-        
-    }
-    
-    
     // Create some different font styles
     public void createStyles( StyleContext sc )
     {
@@ -288,7 +280,9 @@ public class MainWindow extends javax.swing.JFrame {
     private void compileCupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileCupActionPerformed
         
         // Call Compile CUP method
+        outputText.append("Compiling CUP file... \n");
         KickAssDB.generateCup();
+        outputText.append("CUP file compiled successfully. \n");
     }//GEN-LAST:event_compileCupActionPerformed
 
     private void executeQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executeQueryActionPerformed
@@ -297,7 +291,7 @@ public class MainWindow extends javax.swing.JFrame {
         String query = queryText.getText();
         
         getOutputText().append("Executing Query... \n");
-        this.parserResult = "Parsing Successful";
+        this.parserResult = "Parsing Successful \n";
         
         /* Call the Parser */
         try
@@ -477,7 +471,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton newQuery;
     private javax.swing.JButton openQuery;
-    private javax.swing.JTextArea outputText;
+    protected static javax.swing.JTextArea outputText;
     private javax.swing.JTabbedPane queryTabs;
     private javax.swing.JTextPane queryText;
     private javax.swing.JButton saveQuery;

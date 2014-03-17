@@ -1,10 +1,1 @@
-CREATE TABLE Person (
-person_id int PRIMARY KEY,
-name varchar(20),
-gender varchar(1)
-);
-
-CREATE TABLE Car (
-car_id int PRIMARY KEY,
-name varchar(20)
-);
+INSERT INTO Car VALUES (11231, 'susuki', 'asdad')
