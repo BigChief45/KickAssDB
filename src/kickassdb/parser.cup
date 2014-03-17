@@ -22,8 +22,7 @@ parser code
 
 	public void unrecovered_syntax_error(Symbol s) 
         {                
-                KickAssDB.mainwindow.parserResult = "Error fatal de sintaxis. Se ha detenido el parseo.";
-                //Interfaz.outputArea.append("Error fatal de sintaxis. Se ha detenido el parseo.");
+                KickAssDB.mainwindow.parserResult = "Fatal Sintax Error. Parsing has been stopped.";                
 	}
 :}
 

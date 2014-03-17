@@ -226,6 +226,11 @@ public class MainWindow extends javax.swing.JFrame {
         outputText.setRows(5);
         jScrollPane2.setViewportView(outputText);
 
+        queryText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                queryTextKeyTyped(evt);
+            }
+        });
         jScrollPane1.setViewportView(queryText);
 
         queryTabs.addTab("query1", jScrollPane1);
@@ -320,6 +325,8 @@ public class MainWindow extends javax.swing.JFrame {
         
         /* Enabled components */
         queryText.setText("");
+        
+        executeQuery.setEnabled(false);
     }//GEN-LAST:event_newQueryActionPerformed
 
     private void saveQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveQueryActionPerformed
@@ -334,7 +341,7 @@ public class MainWindow extends javax.swing.JFrame {
                 PrintWriter pw = new PrintWriter(fw);
 
                 pw.write(queryText.getText());
-                getOutputText().setText("File saved successfully. \n");
+                getOutputText().setText("File " + opened_file.getName() + " saved successfully. \n");
                 pw.close();
             }
             else
@@ -396,6 +403,8 @@ public class MainWindow extends javax.swing.JFrame {
                 fr.close();
                 reader.close();
                 getOutputText().append("Opened file: " + opened_file.getName() + "\n");
+                                
+                queryTabs.setTitleAt(0, opened_file.getName());
             }
             catch (Exception e )
             {
@@ -410,6 +419,11 @@ public class MainWindow extends javax.swing.JFrame {
         
         getOutputText().setText("");
     }//GEN-LAST:event_clearOutputActionPerformed
+
+    private void queryTextKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_queryTextKeyTyped
+        /* Disable Run Query Button */
+        executeQuery.setEnabled(false);
+    }//GEN-LAST:event_queryTextKeyTyped
 
     /**
      * @param args the command line arguments
