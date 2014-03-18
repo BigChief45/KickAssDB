@@ -4,17 +4,23 @@
  */
 package kickassdb;
 
+import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java_cup.runtime.Symbol;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.TableColumn;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -25,7 +31,7 @@ import javax.swing.text.StyleContext;
  * @author Otto
  */
 public class MainWindow extends javax.swing.JFrame {
-
+        
 	private Hashtable attributes;
         private File opened_file;
         public String parserResult = "Parsing Successful";
@@ -44,6 +50,65 @@ public class MainWindow extends javax.swing.JFrame {
                   
     }//End MainWindow()
 
+    private void printDatabase(){
+    
+        this.ResultsPanel.removeAll();
+        
+        for (Table table : this.default_schema.getSchema()) {
+            
+            System.out.println("///////////////////");
+            System.out.println("Table Name: "+table.getTable_name());
+            System.out.println("///////////////////");
+            
+            //We add the table to the jTable
+            String[] columnNames = new String[table.getTable_domain().size()];
+            Object[][] data = new Object[table.getTable_tuples().size()][columnNames.length]; 
+            
+            int i = 0;
+            for (Attribute domain : table.getTable_domain()) {
+                                
+                columnNames[i] = domain.getAttribute_name();
+                System.out.println("Attribute: "+domain.getAttribute_name());
+                i++;
+                
+            }
+            
+            System.out.println("----------------------");
+            
+            i = 0;
+            for (Tuple tuple : table.getTable_tuples()) {
+
+                int j = 0;
+                for (Value value : tuple.getTuple_values()) {
+                    
+                    data[i][j] = value.getValue().toString();
+                    System.out.print(value.getValue().toString()+";");
+                    j++;
+                }
+                
+                System.out.println("");
+                i++;
+            }            
+         
+            System.out.println("----------------------");
+                        
+            JTable tempTable = new JTable(data, columnNames);            
+            JScrollPane tempscrollPane = new JScrollPane(tempTable);
+            tempTable.setFillsViewportHeight(true);
+            
+//            KickAssTable kaTable = new KickAssTable();
+//            kaTable.getTableName().setText(table.getTable_name());
+//            kaTable.setTable(new JTable(data,columnNames));
+//            
+//            //Add to panel
+//            this.ResultsPanel.add(kaTable);                
+            
+            this.ResultsPanel.add(tempscrollPane);
+            
+        }
+    
+    }//End private void printDatabase()
+    
     // Create some different font styles
     public void createStyles( StyleContext sc )
     {
@@ -99,11 +164,14 @@ public class MainWindow extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JToolBar.Separator();
         compileLexer = new javax.swing.JButton();
         compileCup = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        outputText = new javax.swing.JTextArea();
         queryTabs = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         queryText = new javax.swing.JTextPane();
+        ReviewTab = new javax.swing.JTabbedPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        outputText = new javax.swing.JTextArea();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        ResultsPanel = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         itemNewSql = new javax.swing.JMenuItem();
@@ -213,11 +281,6 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jToolBar1.add(compileCup);
 
-        outputText.setEditable(false);
-        outputText.setColumns(20);
-        outputText.setRows(5);
-        jScrollPane2.setViewportView(outputText);
-
         queryText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 queryTextKeyTyped(evt);
@@ -226,6 +289,21 @@ public class MainWindow extends javax.swing.JFrame {
         jScrollPane1.setViewportView(queryText);
 
         queryTabs.addTab("query1", jScrollPane1);
+
+        ReviewTab.setToolTipText("");
+        ReviewTab.setName(""); // NOI18N
+
+        outputText.setEditable(false);
+        outputText.setColumns(20);
+        outputText.setRows(5);
+        jScrollPane2.setViewportView(outputText);
+
+        ReviewTab.addTab("Output", jScrollPane2);
+
+        ResultsPanel.setLayout(new javax.swing.BoxLayout(ResultsPanel, javax.swing.BoxLayout.PAGE_AXIS));
+        jScrollPane5.setViewportView(ResultsPanel);
+
+        ReviewTab.addTab("Result", jScrollPane5);
 
         jMenu1.setText("File");
 
@@ -252,8 +330,8 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
-                    .addComponent(queryTabs, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(queryTabs, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(ReviewTab, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -262,9 +340,9 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(queryTabs, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ReviewTab, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
@@ -312,6 +390,8 @@ public class MainWindow extends javax.swing.JFrame {
         {
             System.err.println(e.getMessage());
         }
+        
+        this.printDatabase();
         
     }//GEN-LAST:event_executeQueryActionPerformed
 
@@ -454,6 +534,8 @@ public class MainWindow extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel ResultsPanel;
+    private javax.swing.JTabbedPane ReviewTab;
     private javax.swing.JButton clearOutput;
     private javax.swing.JButton compileCup;
     private javax.swing.JButton compileLexer;
@@ -466,6 +548,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar jToolBar1;
