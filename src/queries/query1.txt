@@ -10,6 +10,7 @@ type varchar(1),
 num_employees int,
 code varchar(10),
 city varchar(15)
-)
+);
 
+insert into person values (1,2,'pedo');
 
