@@ -19,6 +19,7 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+
 /**
  *
  * @author Otto
@@ -26,10 +27,9 @@ import javax.swing.text.StyleContext;
 public class MainWindow extends javax.swing.JFrame {
 
 	private Hashtable attributes;
-        private int table_counnter = 0;
         private File opened_file;
-        String parserResult = "Parsing Successful";
-                
+        public String parserResult = "Parsing Successful";
+        private Schema default_schema;
     
     /**
      * Creates new form MainWindow
@@ -37,6 +37,10 @@ public class MainWindow extends javax.swing.JFrame {
     public MainWindow() 
     {
         initComponents();
+        
+        /* Instantiate Application's Default Schema */
+        default_schema = new Schema();
+        
                   
     }//End MainWindow()
 
@@ -214,6 +218,11 @@ public class MainWindow extends javax.swing.JFrame {
         outputText.setRows(5);
         jScrollPane2.setViewportView(outputText);
 
+        queryText.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                queryTextKeyTyped(evt);
+            }
+        });
         jScrollPane1.setViewportView(queryText);
 
         queryTabs.addTab("query1", jScrollPane1);
@@ -271,7 +280,9 @@ public class MainWindow extends javax.swing.JFrame {
     private void compileCupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_compileCupActionPerformed
         
         // Call Compile CUP method
+        outputText.append("Compiling CUP file... \n");
         KickAssDB.generateCup();
+        outputText.append("CUP file compiled successfully. \n");
     }//GEN-LAST:event_compileCupActionPerformed
 
     private void executeQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executeQueryActionPerformed
@@ -280,7 +291,7 @@ public class MainWindow extends javax.swing.JFrame {
         String query = queryText.getText();
         
         getOutputText().append("Executing Query... \n");
-        this.parserResult = "Parsing Successful";
+        this.parserResult = "Parsing Successful \n";
         
         /* Call the Parser */
         try
@@ -299,7 +310,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         catch(Exception e)
         {
-            System.out.println(e.getMessage());
+            System.err.println(e.getMessage());
         }
         
     }//GEN-LAST:event_executeQueryActionPerformed
@@ -308,6 +319,8 @@ public class MainWindow extends javax.swing.JFrame {
         
         /* Enabled components */
         queryText.setText("");
+        
+        executeQuery.setEnabled(false);
     }//GEN-LAST:event_newQueryActionPerformed
 
     private void saveQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveQueryActionPerformed
@@ -322,7 +335,7 @@ public class MainWindow extends javax.swing.JFrame {
                 PrintWriter pw = new PrintWriter(fw);
 
                 pw.write(queryText.getText());
-                getOutputText().setText("File saved successfully. \n");
+                getOutputText().setText("File " + opened_file.getName() + " saved successfully. \n");
                 pw.close();
             }
             else
@@ -384,6 +397,8 @@ public class MainWindow extends javax.swing.JFrame {
                 fr.close();
                 reader.close();
                 getOutputText().append("Opened file: " + opened_file.getName() + "\n");
+                                
+                queryTabs.setTitleAt(0, opened_file.getName());
             }
             catch (Exception e )
             {
@@ -398,6 +413,11 @@ public class MainWindow extends javax.swing.JFrame {
         
         getOutputText().setText("");
     }//GEN-LAST:event_clearOutputActionPerformed
+
+    private void queryTextKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_queryTextKeyTyped
+        /* Disable Run Query Button */
+        executeQuery.setEnabled(false);
+    }//GEN-LAST:event_queryTextKeyTyped
 
     /**
      * @param args the command line arguments
@@ -451,7 +471,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton newQuery;
     private javax.swing.JButton openQuery;
-    private javax.swing.JTextArea outputText;
+    protected static javax.swing.JTextArea outputText;
     private javax.swing.JTabbedPane queryTabs;
     private javax.swing.JTextPane queryText;
     private javax.swing.JButton saveQuery;
@@ -462,5 +482,19 @@ public class MainWindow extends javax.swing.JFrame {
      */
     public javax.swing.JTextArea getOutputText() {
         return outputText;
+    }
+
+    /**
+     * @return the default_schema
+     */
+    public Schema getDefault_schema() {
+        return default_schema;
+    }
+
+    /**
+     * @param default_schema the default_schema to set
+     */
+    public void setDefault_schema(Schema default_schema) {
+        this.default_schema = default_schema;
     }
 }

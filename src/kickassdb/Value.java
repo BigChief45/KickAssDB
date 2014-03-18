@@ -1,30 +1,47 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kickassdb;
 
-/**
- *
- * @author Otto
- */
-public class Value {
+public class Value 
+{
     
     private Object value;
+    
+    public Value()
+    {
+        
+    }
 
-    /**
-     * @return the value
-     */
-    public Object getValue() {
+    public Value(Object v)
+    {
+        value = v;
+    }
+    
+    public Value(String v)
+    {
+        value = v;
+    }
+    
+    public Value(Integer v)
+    {
+        value = v;
+    }
+        
+    public Object getValue() 
+    {
         return value;
     }
 
-    /**
-     * @param value the value to set
-     */
-    public void setValue(Object value) {
+    public void setValue(Object value) 
+    {
         this.value = value;
     }
     
+    public void setValue(String value)
+    {
+        this.value = value;
+    }
     
+    public void setValue(int value)
+    {
+        this.value = value;
+    }
 }
