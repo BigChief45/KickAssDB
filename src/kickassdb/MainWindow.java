@@ -399,7 +399,7 @@ public class MainWindow extends javax.swing.JFrame {
         
         /* Enabled components */
         queryText.setText("");
-        
+        opened_file = null;
         executeQuery.setEnabled(false);
     }//GEN-LAST:event_newQueryActionPerformed
 

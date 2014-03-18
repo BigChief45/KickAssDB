@@ -1,18 +1,1 @@
-CREATE TABLE Celular (
-person_id int PRIMARY KEY,
-name varchar(20),
-gender varchar(1)
-);
-
-CREATE TABLE Department (
-department_id int PRIMARY KEY,
-name varchar(20),
-numberEmployees int,
-observation varchar(10)
-);
-
-insert into Celular values (1,2,'pedo');
-insert into Celular values (3,4,'culo');
-insert into Celular values (5,6,'el rio san juan es nica');
-
-insert into Department values (5,'isa',6,'el rio san juan es tico');
+-- INSERT INTO Consolador VALUES (123123, 'asdassd', 123123)

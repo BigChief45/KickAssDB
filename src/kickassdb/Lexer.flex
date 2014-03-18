@@ -40,10 +40,12 @@ negative_sign = "-"
 number = ({negative_sign}|""){digit}+(({point}{digit}+)|"")
 
 // Comments
-comment = "--"({letter}|{digit}|" ")+
+comment = "--"( {letter} | {digit} | {str} | {parenthesis_left} | {parenthesis_right} | {semicolon} | {coma} | {point} | (" ") )+
 
 // Strings
 str = ("\"" | "\'") ({letter} | {digit} | {space} | {specials} )* ("\"" | "\'")
+
+
 
 %%
 
@@ -73,6 +75,6 @@ str = ("\"" | "\'") ({letter} | {digit} | {space} | {specials} )* ("\"" | "\'")
 	{space} {}
 	{comment} {}
 		
-	. { System.out.println("Caracter ilegal: " + yytext()); }
+	. { System.out.println("Illegal Character: " + yytext()); }
 
 }
