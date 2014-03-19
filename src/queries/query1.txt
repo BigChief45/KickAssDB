@@ -1,1 +1,30 @@
--- INSERT INTO Consolador VALUES (123123, 'asdassd', 123123)
+CREATE TABLE Student (
+student_id varchar(20) PRIMARY KEY,
+student_name varchar(30)
+);
+
+CREATE TABLE Person (
+person_id varchar(20) PRIMARY KEY,
+person_name varchar(30)
+);
+
+CREATE TABLE Vehicle (
+vehicle_id varchar(20) PRIMARY KEY,
+vehicle_name varchar(30)
+);
+
+CREATE TABLE Course (
+course_id varchar(20) PRIMARY KEY,
+courset_name varchar(30)
+);
+
+CREATE TABLE Semester (
+semester_id varchar(20) PRIMARY KEY,
+semester_name varchar(30)
+);
+
+INSERT INTO Student VALUES ("SC2319092", "Morgan");
+INSERT INTO Student VALUES ("SC2312123", "Dumbledore");
+INSERT INTO Student VALUES ("SC2312567", "Hagrid");
+INSERT INTO Student VALUES ("SC2312567", "Harry");
+INSERT INTO Student VALUES ("SC2312567", "Henry")

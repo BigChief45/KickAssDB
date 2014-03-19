@@ -1,0 +1,5 @@
+CREATE TABLE Person (
+person_id varchar(20),
+person_name varchar(20) PRIMARY KEY,
+person_age varchar(20) PRIMARY KEY
+)

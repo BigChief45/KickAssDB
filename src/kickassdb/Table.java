@@ -14,8 +14,8 @@ public class Table {
  
     private int table_id;
     private String table_name;
-    private Attribute primary_key;
     
+    private Attribute primary_key;    
     private ArrayList<Attribute> table_domain;
     private ArrayList<Tuple> table_tuples;
     
@@ -25,15 +25,14 @@ public class Table {
         
     }
     
-    public Table(int ID, String name, ArrayList<Attribute> domain, int prIndex)
+    public Table(int ID, String name, ArrayList<Attribute> domain)
     {
     
         this.table_id = ID;
         this.table_name = name;
         this.table_domain = domain;        
-        this.primary_key = this.table_domain.get(prIndex);
                 
-        table_tuples = new ArrayList<Tuple>();
+        table_tuples = new ArrayList<Tuple>();        
     
     }
     
@@ -92,10 +91,10 @@ public class Table {
     {
         return primary_key;
     }
-
-    public void setPrimary_key(Attribute primary_key) 
+    
+    public void setPrimary_key(Attribute pk)
     {
-        this.primary_key = primary_key;
+        primary_key = pk;
     }
     
     public void printDomain()
@@ -108,7 +107,10 @@ public class Table {
             System.out.println("Name: " + attribute.getAttribute_name() + ", Type:" + attribute.getType().name());   
         }                
         
+        System.out.println("Primary Key: " + primary_key.getAttribute_name());
+        
         System.out.println("");
+                
     }
     
     public void printTuples()

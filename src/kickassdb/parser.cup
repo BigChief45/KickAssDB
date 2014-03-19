@@ -30,7 +30,10 @@ parser code
 action code
 {:
     private static ArrayList<Attribute> domain_temp = new ArrayList<Attribute>();
+    private static ArrayList<Attribute> primaryKey_temp = new ArrayList<Attribute>();
     private static Tuple temp_tuple = new Tuple();
+    private static Attribute temp_pk = null;
+    private static int pk_count = 0;
     
 :};
 
@@ -85,7 +88,7 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                                 }
                             }
                         }
-                                   
+
                         /* If table name does not exist, proceed */
                         ArrayList<Attribute> temp = new ArrayList<Attribute>();
                         
@@ -98,25 +101,43 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                         domain_temp = temp;
                                         
                         /* Instance a new table */
-                        Table table = new Table(table_count, id.toString(), domain_temp, 1);
+                        Table table = new Table(table_count, id.toString(), domain_temp);
 
-                        /* Add table to default schema */
-                        schema.addTable(table);
-                        
-                        table.printDomain();
+                        /* If there is primary key, set it */
+                        if ( pk_count == 1 )
+                        {
+                            table.setPrimary_key(temp_pk);
 
-                        /* Reset the temporal domain */
-                        domain_temp = new ArrayList<Attribute>();
+                            /* Add table to default schema */
+                            schema.addTable(table);
 
+                            table.printDomain();                        
+
+                            /* Reset the temporal domain and primary key */
+                            domain_temp = new ArrayList<Attribute>();
+                            temp_pk = new Attribute();
+                            pk_count = 0;
+                        }
+                        else if ( pk_count > 1 )
+                        {
+                            /* If there is already more than one PK Statement, display error */
+                            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table cannot contain more than one Primary Key.", "Error", JOptionPane.ERROR_MESSAGE);                                                                    
+                        }
                  :};
 
-    table_attribute ::= ID:name attribute_type:type primary_key coma
+    table_attribute ::= ID:name attribute_type:type primary_key:pk
                         {: 
                                /* Get current Attribute's name */                               
                                Attribute current_attribute = new Attribute(name.toString(), (Attribute.Type)type);
+                               domain_temp.add(current_attribute);
 
-                               domain_temp.add(current_attribute);                               
-                        :};
+                               /* Check if this attribute is possible primary key */
+                               if ( (boolean) pk == true )
+                               {
+                                   temp_pk = current_attribute;  
+                               }
+                        :} coma
+                        ;
 
             attribute_type ::= INT 
                                {: 
@@ -133,8 +154,17 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                          |
                          ;
 
-                    primary_key ::= PRIMARY KEY 
+                    primary_key ::= PRIMARY KEY
+                                    {:       
+                                        /* Primary Key Production true */                                        
+                                        RESULT = true;
+                                        pk_count++;
+                                    :}
                                     |
+                                    {:             
+                                        /* Primary Key Production false */                           
+                                        RESULT = false;
+                                    :}
                                     ;
 
 insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_values PARRIGHT
@@ -183,7 +213,7 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
 
             attribute_names ::= ID COMA attribute_names
                                 | ID                    
-                                ;         
+                                ;
 
                 record_values ::= NUM:val
                                   {:                                        
