@@ -228,14 +228,14 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
       <SubComponents>
-        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+        <Container class="javax.swing.JScrollPane" name="queryScrollPane">
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="query1">
-                <Property name="tabTitle" type="java.lang.String" value="query1"/>
+              <JTabbedPaneConstraints tabName="new_query">
+                <Property name="tabTitle" type="java.lang.String" value="new_query"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

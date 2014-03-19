@@ -4,6 +4,7 @@
  */
 package kickassdb;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,6 +47,14 @@ public class MainWindow extends javax.swing.JFrame {
         
         /* Instantiate Application's Default Schema */
         default_schema = new Schema();
+        
+        /* Set Text Line Numbers */
+        TextLineNumber tln = new TextLineNumber(this.queryText);
+        tln.setUpdateFont(true);
+        tln.setBackground(Color.DARK_GRAY);
+        tln.setForeground(Color.LIGHT_GRAY);
+        tln.setCurrentLineForeground(Color.WHITE);
+        this.queryScrollPane.setRowHeaderView(tln);
         
                   
     }//End MainWindow()
@@ -165,7 +174,7 @@ public class MainWindow extends javax.swing.JFrame {
         compileLexer = new javax.swing.JButton();
         compileCup = new javax.swing.JButton();
         queryTabs = new javax.swing.JTabbedPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        queryScrollPane = new javax.swing.JScrollPane();
         queryText = new javax.swing.JTextPane();
         ReviewTab = new javax.swing.JTabbedPane();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -286,9 +295,9 @@ public class MainWindow extends javax.swing.JFrame {
                 queryTextKeyTyped(evt);
             }
         });
-        jScrollPane1.setViewportView(queryText);
+        queryScrollPane.setViewportView(queryText);
 
-        queryTabs.addTab("query1", jScrollPane1);
+        queryTabs.addTab("new_query", queryScrollPane);
 
         ReviewTab.setToolTipText("");
         ReviewTab.setName(""); // NOI18N
@@ -546,7 +555,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JToolBar.Separator jSeparator1;
@@ -555,6 +563,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JButton newQuery;
     private javax.swing.JButton openQuery;
     protected static javax.swing.JTextArea outputText;
+    private javax.swing.JScrollPane queryScrollPane;
     private javax.swing.JTabbedPane queryTabs;
     private javax.swing.JTextPane queryText;
     private javax.swing.JButton saveQuery;
