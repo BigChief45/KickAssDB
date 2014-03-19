@@ -290,6 +290,7 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jToolBar1.add(compileCup);
 
+        queryText.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         queryText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 queryTextKeyTyped(evt);
@@ -304,6 +305,7 @@ public class MainWindow extends javax.swing.JFrame {
 
         outputText.setEditable(false);
         outputText.setColumns(20);
+        outputText.setFont(new java.awt.Font("Courier New", 0, 13)); // NOI18N
         outputText.setRows(5);
         jScrollPane2.setViewportView(outputText);
 
@@ -410,6 +412,7 @@ public class MainWindow extends javax.swing.JFrame {
         queryText.setText("");
         opened_file = null;
         executeQuery.setEnabled(false);
+        queryTabs.setTitleAt(0, "new_query");
     }//GEN-LAST:event_newQueryActionPerformed
 
     private void saveQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveQueryActionPerformed

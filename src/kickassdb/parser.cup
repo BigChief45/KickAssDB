@@ -173,13 +173,19 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                         Schema schema = KickAssDB.mainwindow.getDefault_schema();
                         boolean finished_loop = true;
                         
+                        /* Check if any tables exist */
                         if ( schema.getTable_count() > 0 )
                         {
+                            /* Look on all tables and search for the table */
                             for ( Table t : schema.getSchema() )
                             {
                                 if ( t.getTable_name().toLowerCase().equals(table_name.toString().toLowerCase()) )
                                 {
-                                    /* Table found, Insert tuple into the table */
+                                    /* Table found, validate tuple before inserting */
+                                    boolean val;
+                                    val = Validations.validateInsertingTuple(temp_tuple, t.getTable_domain());
+                                    
+                                    /* Insert tuple into the table */
                                     t.addTuple(temp_tuple);
 
                                     t.printTuples();
