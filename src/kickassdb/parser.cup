@@ -34,6 +34,9 @@ action code
     private static Tuple temp_tuple = new Tuple();
     private static Attribute temp_pk = null;
     private static int pk_count = 0;
+    private static ArrayList<String> attName = new ArrayList<String>();
+    private static ArrayList<String> attType = new ArrayList<String>();
+    private static ArrayList<String> valType = new ArrayList<String>();
     
 :};
 
@@ -69,13 +72,13 @@ operation ::= create_table SEMICOLON operation
 
 
 create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT                  
-                 {:                                                
+                 {:
                         /* Get the current default schema */
                         Schema schema = KickAssDB.mainwindow.getDefault_schema();
 
                         /* Get current table count for default schema */
                         int table_count = schema.getTable_count();
-
+                                         
                         /* Check if table name is already taken */
                         if ( table_count > 0 )
                         {
@@ -84,6 +87,7 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                                 if ( t.getTable_name().equals(id.toString()) )
                                 {
                                     JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table '" + id.toString() + "' Already Exists.", "Error", JOptionPane.ERROR_MESSAGE);
+                                    //System.out.print("error here2");
                                     return null; // ???
                                 }
                             }
@@ -104,7 +108,7 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                         Table table = new Table(table_count, id.toString(), domain_temp);
 
                         /* If there is primary key, set it */
-                        if ( pk_count == 1 )
+                        if ( pk_count == 1 || pk_count == 0)
                         {
                             table.setPrimary_key(temp_pk);
 
@@ -182,11 +186,31 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                 if ( t.getTable_name().toLowerCase().equals(table_name.toString().toLowerCase()) )
                                 {
                                     /* Table found, validate tuple before inserting */
-                                    boolean val;
-                                    val = Validations.validateInsertingTuple(temp_tuple, t.getTable_domain());
+
+                                    //changed here
+                                    for ( String str : attName )
+                                    {
+                                        attType.add(t.getAttType(str));
+                                    }
                                     
+                                    //for debug
+                                    for ( String str : valType )
+                                    {
+                                        System.out.println("print val type: " + str);
+                                    }
+
+                                    boolean val;
+                                    val = Validations.validateInsertingTuple(attType, valType);  
+                                    if ( val && t.getPrimary_key() != null ) 
+                                        val = Validations.validatePrimaryKey(temp_tuple, t);
+                                    
+                                    attName.clear();
+                                    attType.clear();
+                                    valType.clear();
+
                                     /* Insert tuple into the table */
-                                    t.addTuple(temp_tuple);
+                                    if(val)
+                                        t.addTuple(temp_tuple);
 
                                     t.printTuples();
 
@@ -214,31 +238,35 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                   ;
 
         attributes ::= PARLEFT attribute_names PARRIGHT
-                       |
+                       | 
                        ;
 
-            attribute_names ::= ID COMA attribute_names
-                                | ID                    
+            attribute_names ::= ID:id {: attName.add(id); :} COMA attribute_names
+                                | ID:id {: attName.add(id); :}
                                 ;
 
                 record_values ::= NUM:val
                                   {:                                        
                                         Value v = new Value(val);
-                                        temp_tuple.addValue(v);                                        
+                                        temp_tuple.addValue(v);
+                                        valType.add("INTEGER");
                                   :} COMA record_values
                                   | STR:val
                                   {:
                                         Value v = new Value(val);
                                         temp_tuple.addValue(v);
+                                        valType.add("VARCHAR");
                                   :} COMA record_values
                                   | NUM:val
                                   {:
                                         Value v = new Value(val);
                                         temp_tuple.addValue(v);
+                                        valType.add("INTEGER");
                                   :}
                                   | STR:val
                                   {:
                                         Value v = new Value(val);
                                         temp_tuple.addValue(v);
+                                        valType.add("VARCHAR");
                                   :}
                                   ;

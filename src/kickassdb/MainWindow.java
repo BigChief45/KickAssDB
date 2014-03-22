@@ -402,7 +402,7 @@ public class MainWindow extends javax.swing.JFrame {
             System.err.println(e.getMessage());
         }
         
-        this.printDatabase();
+        //this.printDatabase();         //changed here
         
     }//GEN-LAST:event_executeQueryActionPerformed
 

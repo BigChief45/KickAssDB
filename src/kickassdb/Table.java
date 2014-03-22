@@ -97,6 +97,25 @@ public class Table {
         primary_key = pk;
     }
     
+    //changed here
+    /**
+     * using name to get the type of an attribute
+     * 
+     * @param name
+     * @return type
+     */
+    public String getAttType(String name) {
+        String type = null;
+        for (Attribute attribute : table_domain) {
+            if(attribute.getAttribute_name().equals(name)) {
+                type = attribute.getType().name();         
+                System.out.printf("The type of %s is %s.\n", name, type);
+                return type;
+            }
+        }
+        return null;
+    }
+    
     public void printDomain()
     {
     

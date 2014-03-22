@@ -56,12 +56,18 @@ public class KickAssDB {
     protected static void generateCup()
     {
         String opciones[] = new String[5];
+//        opciones[0] = "-destdir";
+//        opciones[1] = "src\\kickassdb\\";
+//        opciones[2] = "-parser";
+//        opciones[3] = "parser";
+//        opciones[4] = "src\\kickassdb\\parser.cup";
+        
         opciones[0] = "-destdir";
-        opciones[1] = "src\\kickassdb\\";
+        opciones[1] = "src/kickassdb/";
         opciones[2] = "-parser";
         opciones[3] = "parser";
-        opciones[4] = "src\\kickassdb\\parser.cup";
-
+        opciones[4] = "src/kickassdb/parser.cup";
+        
         try
         {
             System.out.println(""); // Clear
