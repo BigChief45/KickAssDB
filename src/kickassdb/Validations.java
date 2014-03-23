@@ -13,27 +13,33 @@ public class Validations
 //        System.out.println("~~~~~~~validating Inserting Tuple");
         int index = 0;
         
-        if(attType.size() != valType.size()) {
-            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "The number of the records doesn't match with the attributes!", "Error", JOptionPane.ERROR_MESSAGE);                                          
+        if(attType.size() != valType.size()) 
+        {
+            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "The number of values does not match the number of attributes in the table domain.", "Error", JOptionPane.ERROR_MESSAGE);                                          
             return false;
         }
         
-        for( String s : attType) {
+        for( String s : attType) 
+        {
             if(valType.get(index).equals(s))
                 index ++;
-            else {
-                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Invalid data type!", "Error", JOptionPane.ERROR_MESSAGE);                                          
+            else 
+            {
+                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "One of the values to be inserted is of invalid data type.", "Error", JOptionPane.ERROR_MESSAGE);                                          
                 return false;
             }
         }
         return true;
     }
     
-    public static boolean validateColumnSize(Tuple tuple) {
-        for(Value value : tuple.getTuple_values()) {
+    public static boolean validateColumnSize(Tuple tuple) 
+    {
+        for(Value value : tuple.getTuple_values()) 
+        {
             int len = value.getValue().toString().length();
             System.out.println("len: " + len);
-            if (len > 4) {
+            if (len > 40) 
+            {
                 JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Can't exceed the max size 40!", "Error", JOptionPane.ERROR_MESSAGE);                                          
                 return false;
             }
@@ -48,7 +54,8 @@ public class Validations
         Attribute tmp_pk = t.getPrimary_key();
         
         //find out the index of the primary key in the table
-        for ( Attribute att : t.getTable_domain() ) {
+        for ( Attribute att : t.getTable_domain() ) 
+        {
             if (att.getAttribute_name().equals(tmp_pk.getAttribute_name()))
                 break;
             else

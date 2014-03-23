@@ -95,16 +95,7 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
 
                         /* If table name does not exist, proceed */
                         ArrayList<Attribute> temp = new ArrayList<Attribute>();
-                        
-                        /* Invert the arraylist elements */
-                        //changed here
-                        /*for (int i = domain_temp.size() - 1; i >= 0; i-- )
-                        {
-                            temp.add(domain_temp.get(i));
-                        }
-
-                        domain_temp = temp;*/
-                                        
+                                                                                        
                         /* Instance a new table */
                         Table table = new Table(table_count, id.toString(), domain_temp);
 
@@ -116,18 +107,18 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                             /* Add table to default schema */
                             schema.addTable(table);
 
-                            table.printDomain();                        
-
-                            /* Reset the temporal domain and primary key */
-                            domain_temp = new ArrayList<Attribute>();
-                            temp_pk = new Attribute();
-                            pk_count = 0;
+                            table.printDomain();                                                    
                         }
                         else if ( pk_count > 1 )
                         {
                             /* If there is already more than one PK Statement, display error */
                             JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table cannot contain more than one Primary Key.", "Error", JOptionPane.ERROR_MESSAGE);                                                                    
                         }
+
+                        /* Reset the temporal domain and PK References */
+                        domain_temp = new ArrayList<Attribute>();
+                        temp_pk = new Attribute();
+                        pk_count = 0;
                  :};
 
     table_attribute ::= ID:name attribute_type:type primary_key:pk

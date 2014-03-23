@@ -1,16 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kickassdb;
 
 import java.util.ArrayList;
 
-/**
- *
- * @author Otto
- */
-public class Table {
+public class Table 
+{
  
     private int table_id;
     private String table_name;
@@ -149,4 +142,4 @@ public class Table {
         System.out.println("");
     }
     
-}//End Table
+}
