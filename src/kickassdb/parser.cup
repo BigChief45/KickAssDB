@@ -8,23 +8,23 @@ import javax.swing.JOptionPane;
 
 
 parser code
-{:              
-	public static void main(String args[]) throws Exception 
+{:             
+     public static void main(String args[]) throws Exception
         {
-		//new parser(new Lexer(new FileInputStream(args[0]))).parse();
-		new parser(new Lexer(System.in)).parse();                
-	}
+          //new parser(new Lexer(new FileInputStream(args[0]))).parse();
+          new parser(new Lexer(System.in)).parse();               
+     }
 
-	public void syntax_error(Symbol s) 
+     public void syntax_error(Symbol s)
         {
-		//report_error("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"", null);
+          //report_error("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"", null);
                 KickAssDB.mainwindow.parserResult = "Syntax Error. Line: " + (s.right + 1) + " Column: " + s.left + ". Text: \"" + s.value + "\"" + "\n";
-	}
+     }
 
-	public void unrecovered_syntax_error(Symbol s) 
-        {                
-                KickAssDB.mainwindow.parserResult = "Fatal Syntax Error. Line: " + (s.right + 1) + " Column: " + s.left + ". Text: \"" + s.value + "\"" + "\n";                
-	}
+     public void unrecovered_syntax_error(Symbol s)
+        {               
+                KickAssDB.mainwindow.parserResult = "Fatal Syntax Error. Line: " + (s.right + 1) + " Column: " + s.left + ". Text: \"" + s.value + "\"" + "\n";               
+     }
 :}
 
 action code
@@ -35,9 +35,8 @@ action code
     private static Attribute temp_pk = null;
     private static int pk_count = 0;
     private static ArrayList<String> attName = new ArrayList<String>();
-    private static ArrayList<String> attType = new ArrayList<String>();
     private static ArrayList<String> valType = new ArrayList<String>();
-    
+   
 :};
 
 /* Terminals */
@@ -71,14 +70,14 @@ operation ::= create_table SEMICOLON operation
               ;
 
 
-create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT                  
+create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT                 
                  {:
                         /* Get the current default schema */
                         Schema schema = KickAssDB.mainwindow.getDefault_schema();
 
                         /* Get current table count for default schema */
                         int table_count = schema.getTable_count();
-                                         
+                                        
                         /* Check if table name is already taken */
                         if ( table_count > 0 )
                         {
@@ -95,7 +94,7 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
 
                         /* If table name does not exist, proceed */
                         ArrayList<Attribute> temp = new ArrayList<Attribute>();
-                                                                                        
+                       
                         /* Instance a new table */
                         Table table = new Table(table_count, id.toString(), domain_temp);
 
@@ -107,68 +106,70 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                             /* Add table to default schema */
                             schema.addTable(table);
 
-                            table.printDomain();                                                    
+                            table.printDomain();                       
+
                         }
                         else if ( pk_count > 1 )
                         {
                             /* If there is already more than one PK Statement, display error */
-                            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table cannot contain more than one Primary Key.", "Error", JOptionPane.ERROR_MESSAGE);                                                                    
+                            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table cannot contain more than one Primary Key.", "Error", JOptionPane.ERROR_MESSAGE);                                                                   
                         }
 
-                        /* Reset the temporal domain and PK References */
-                        domain_temp = new ArrayList<Attribute>();
-                        temp_pk = new Attribute();
-                        pk_count = 0;
+                            /* Reset the temporal domain and primary key */
+                            domain_temp = new ArrayList<Attribute>();
+                            temp_pk = new Attribute();
+                            pk_count = 0;
+
                  :};
 
     table_attribute ::= ID:name attribute_type:type primary_key:pk
-                        {: 
-                               /* Get current Attribute's name */                               
+                        {:
+                               /* Get current Attribute's name */                              
                                Attribute current_attribute = new Attribute(name.toString(), (Attribute.Type)type);
                                domain_temp.add(current_attribute);
 
                                /* Check if this attribute is possible primary key */
                                if ( (boolean) pk == true )
                                {
-                                   temp_pk = current_attribute;  
+                                   temp_pk = current_attribute; 
                                }
                         :} coma
                         ;
 
-            attribute_type ::= INT 
-                               {: 
+            attribute_type ::= INT
+                               {:
                                     /* Attribute type is Integer */
                                     RESULT = Attribute.Type.INTEGER;
                                :} |
                                VARCHAR PARLEFT NUM PARRIGHT
-                               {: 
+                               {:
                                     /* Attribute's type is Varchar */
                                     RESULT = Attribute.Type.VARCHAR;
                                :};
 
-                coma ::= COMA table_attribute 
+                coma ::= COMA table_attribute
                          |
                          ;
 
                     primary_key ::= PRIMARY KEY
-                                    {:       
-                                        /* Primary Key Production true */                                        
+                                    {:      
+                                        /* Primary Key Production true */                                       
                                         RESULT = true;
                                         pk_count++;
                                     :}
                                     |
-                                    {:             
-                                        /* Primary Key Production false */                           
+                                    {:            
+                                        /* Primary Key Production false */                          
                                         RESULT = false;
                                     :}
                                     ;
 
 insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_values PARRIGHT
-                  {: 
-                        /* Find the table to insert */                        
+                  {:
+                        /* Find the table to insert */                       
                         Schema schema = KickAssDB.mainwindow.getDefault_schema();
                         boolean finished_loop = true;
-                        
+                       
                         /* Check if any tables exist */
                         if ( schema.getTable_count() > 0 )
                         {
@@ -178,35 +179,21 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                 if ( t.getTable_name().toLowerCase().equals(table_name.toString().toLowerCase()) )
                                 {
                                     /* Table found, validate tuple before inserting */
-
-                                    //changed here
-                                    for ( String str : attName )
-                                    {
-                                        attType.add(t.getAttType(str));
-                                    }
-                                    
+                                   
                                     /* Obtain a new tuple with correct attribute value ordering */
                                     Tuple new_tuple;
                                     new_tuple = Tuple.setTuple_order(attName, t.getTable_domain(), temp_tuple);
 
                                     boolean val;
-                                    if(attType.size() == 0) 
-                                    {
-                                        for( Attribute att : t.getTable_domain() )
-                                            attType.add(att.getType().toString());
-                                    }
-                                    
-                                    val = Validations.validateInsertingTuple(attType, valType) && Validations.validateColumnSize(temp_tuple);  
-
-                                    if ( val && t.getPrimary_key() != null ) 
+                                    val = Validations.validateInsertingTuple(attName, valType, t) && Validations.validateColumnSize(temp_tuple); 
+                                    if ( val && t.getPrimary_key() != null )
                                         val = Validations.validatePrimaryKey(new_tuple, t);
-                                    
+                                   
                                     attName.clear();
-                                    attType.clear();
                                     valType.clear();
 
                                     /* Insert tuple into the table */
-                                    if(val)
+                                    if(val) 
                                     {
                                         t.addTuple(new_tuple);
                                         t.printTuples();
@@ -218,25 +205,25 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                     /* Exit from the cycle */
                                     finished_loop = false;
                                     break;
-                                }                                                                                                                                    
+                                }                                                                                                                                   
                             }
 
                             if ( finished_loop == true )
                             {
                                 /* Table Not Found */
-                                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table '" + table_name.toString() + "' does not exist. Record was not inserted.", "Error", JOptionPane.ERROR_MESSAGE);                                          
+                                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table '" + table_name.toString() + "' does not exist. Record was not inserted.", "Error", JOptionPane.ERROR_MESSAGE);                                         
                             }
                          }
                          else
                          {
                             /* Table Not Found */
-                            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table '" + table_name.toString() + "' does not exist. Record was not inserted.", "Error", JOptionPane.ERROR_MESSAGE);                                          
+                            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table '" + table_name.toString() + "' does not exist. Record was not inserted.", "Error", JOptionPane.ERROR_MESSAGE);                                         
                          }
                   :}
                   ;
 
         attributes ::= PARLEFT attribute_names PARRIGHT
-                       | 
+                       |
                        ;
 
             attribute_names ::= ID:id {: attName.add(id); :} COMA attribute_names
@@ -244,7 +231,7 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                 ;
 
                 record_values ::= NUM:val
-                                  {:                                        
+                                  {:                                       
                                         Value v = new Value(val);
                                         temp_tuple.addValue(v);
                                         valType.add("INTEGER");
