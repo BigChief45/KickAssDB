@@ -109,7 +109,7 @@ public class Table {
         for (Attribute attribute : table_domain) {
             if(attribute.getAttribute_name().equals(name)) {
                 type = attribute.getType().name();         
-                System.out.printf("The type of %s is %s.\n", name, type);
+                //System.out.printf("The type of %s is %s.\n", name, type);
                 return type;
             }
         }

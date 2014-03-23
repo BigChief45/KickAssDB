@@ -97,12 +97,13 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                         ArrayList<Attribute> temp = new ArrayList<Attribute>();
                         
                         /* Invert the arraylist elements */
-                        for (int i = domain_temp.size() - 1; i >= 0; i-- )
+                        //changed here
+                        /*for (int i = domain_temp.size() - 1; i >= 0; i-- )
                         {
                             temp.add(domain_temp.get(i));
                         }
 
-                        domain_temp = temp;
+                        domain_temp = temp;*/
                                         
                         /* Instance a new table */
                         Table table = new Table(table_count, id.toString(), domain_temp);
@@ -193,16 +194,13 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                         attType.add(t.getAttType(str));
                                     }
                                     
-                                    //for debug
-                                    for ( String str : valType )
-                                    {
-                                        System.out.println("print val type: " + str);
-                                    }
+                                    Tuple new_tuple;
+                                    new_tuple = Tuple.setTuple_order(attName, t.getTable_domain(), temp_tuple);
 
                                     boolean val;
                                     val = Validations.validateInsertingTuple(attType, valType);  
                                     if ( val && t.getPrimary_key() != null ) 
-                                        val = Validations.validatePrimaryKey(temp_tuple, t);
+                                        val = Validations.validatePrimaryKey(new_tuple, t);
                                     
                                     attName.clear();
                                     attType.clear();
@@ -210,7 +208,7 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
 
                                     /* Insert tuple into the table */
                                     if(val)
-                                        t.addTuple(temp_tuple);
+                                        t.addTuple(new_tuple);
 
                                     t.printTuples();
 

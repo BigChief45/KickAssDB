@@ -33,10 +33,14 @@ public class Validations
             else
                 pk_index++;
         }
-        pk_index = t.getTable_domain().size() - 1 - pk_index;
+        //pk_index = t.getTable_domain().size() - 1 - pk_index;
         
         //contrast the tuple with the existed tuples to see if the primary key already existed
         Object cur_pk = tuple.getValue(pk_index).getValue();
+        if (cur_pk.equals("") ) {
+            System.out.println("Primary key can't be null");
+            return false;
+        }
         for ( Tuple tmp_tuple : t.getTable_tuples() ) {
             
             Object existed_pk = tmp_tuple.getValue(pk_index).getValue();
