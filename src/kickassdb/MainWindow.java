@@ -63,33 +63,29 @@ public class MainWindow extends javax.swing.JFrame {
     
         this.ResultsPanel.removeAll();
         
-        for (Table table : this.default_schema.getSchema()) {
-            
-            System.out.println("///////////////////");
-            System.out.println("Table Name: "+table.getTable_name());
-            System.out.println("///////////////////");
-            
+        for (Table table : this.default_schema.getSchema()) 
+        {                        
             //We add the table to the jTable
             String[] columnNames = new String[table.getTable_domain().size()];
             Object[][] data = new Object[table.getTable_tuples().size()][columnNames.length]; 
             
             int i = 0;
-            for (Attribute domain : table.getTable_domain()) {
+            for (Attribute domain : table.getTable_domain()) 
+            {
                                 
                 columnNames[i] = domain.getAttribute_name();
                 System.out.println("Attribute: "+domain.getAttribute_name());
-                i++;
-                
+                i++;                
             }
             
             System.out.println("----------------------");
             
             i = 0;
-            for (Tuple tuple : table.getTable_tuples()) {
-
+            for (Tuple tuple : table.getTable_tuples()) 
+            {
                 int j = 0;
-                for (Value value : tuple.getTuple_values()) {
-                    
+                for (Value value : tuple.getTuple_values()) 
+                {                    
                     data[i][j] = value.getValue().toString();
                     System.out.print(value.getValue().toString()+";");
                     j++;

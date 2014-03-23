@@ -10,9 +10,8 @@ public class Validations
 {
     public static boolean validateInsertingTuple(ArrayList<String> attType, ArrayList<String> valType)
     {
-//        System.out.println("~~~~~~~validating Inserting Tuple");
         int index = 0;
-        
+                
         if(attType.size() != valType.size()) 
         {
             JOptionPane.showMessageDialog(KickAssDB.mainwindow, "The number of values does not match the number of attributes in the table domain.", "Error", JOptionPane.ERROR_MESSAGE);                                          
