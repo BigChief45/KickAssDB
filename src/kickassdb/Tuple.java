@@ -32,6 +32,10 @@ public class Tuple
      
     //set the temp_tuple in the right order
     public static Tuple setTuple_order(ArrayList<String> attName, ArrayList<Attribute> domain, Tuple temp_tuple) {
+        
+        if(attName.size() == 0)
+            return temp_tuple;
+        
         Tuple new_tuple = new Tuple();
         int valIndex = 0, pos = 0;
         
