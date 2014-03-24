@@ -9,10 +9,10 @@ import javax.swing.JOptionPane;
 public class Validations
 {
     public static boolean validateInsertingTuple(ArrayList<String> attName, ArrayList<String> valType, Table t)
-    {
+    {        
         ArrayList<String> attType = new ArrayList<String>();
         int index = 0;
-       
+
         /* get the types of the attributes */
         for ( String name : attName )
             attType.add(t.getAttType(name));
@@ -22,7 +22,7 @@ public class Validations
             for( Attribute att : t.getTable_domain() )
                 attType.add(att.getType().toString());
         }
-       
+
         /* check if the attribute names are valid */
         boolean flag = false;       //if flag is set to false, it means the attribute name doesn't exist in the table
         for( String  name : attName) 

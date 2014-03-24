@@ -185,6 +185,7 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                     new_tuple = Tuple.setTuple_order(attName, t.getTable_domain(), temp_tuple);
 
                                     boolean val;
+
                                     val = Validations.validateInsertingTuple(attName, valType, t) && Validations.validateColumnSize(temp_tuple); 
                                     if ( val && t.getPrimary_key() != null )
                                         val = Validations.validatePrimaryKey(new_tuple, t);
