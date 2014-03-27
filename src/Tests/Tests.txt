@@ -21,6 +21,3 @@ VALUES (154, 'John', 'M');
 
 Insert into person values (155, 'Mary', "G");
 
-
-INSERT INTO Departmento
-VALUES ('Physics', 'S', 45, 'ZRH 1354 G9Q', 'Hsinchu')
