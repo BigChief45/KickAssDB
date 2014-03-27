@@ -1,1 +1,1 @@
-INSERT INTO Person VALUES (1, "Jo", "sd");
+INSERT INTO Person (person_name, person_last) VALUES ("John", "Salchichon");

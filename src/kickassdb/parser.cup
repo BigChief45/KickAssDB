@@ -29,6 +29,8 @@ parser code
 
 action code
 {:
+    private static final int max_varchar_size = 40;
+
     private static ArrayList<Attribute> domain_temp = new ArrayList<Attribute>();
     private static ArrayList<Attribute> primaryKey_temp = new ArrayList<Attribute>();
     private static Tuple temp_tuple = new Tuple();
@@ -150,7 +152,15 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                                     RESULT = Attribute.Type.VARCHAR;
 
                                     /* Get the attribute's size */
-                                    current_attribute_size = Integer.parseInt(size.toString());
+                                    /* Check if it doesn't exceed max size */
+                                    if ( Integer.parseInt(size.toString()) <= max_varchar_size )
+                                    {
+                                        current_attribute_size = Integer.parseInt(size.toString());
+                                    }
+                                    else
+                                    {
+                                        //JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Varchar type can't exceed a max size of 40.", "Error", JOptionPane.ERROR_MESSAGE);                                         
+                                    }
                                :};
 
                 coma ::= COMA table_attribute
