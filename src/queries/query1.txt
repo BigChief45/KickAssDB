@@ -1,1 +1,1 @@
-insert into Student values ('1','pedo')
+INSERT INTO Person VALUES (1, "Jo", "sd");

@@ -70,7 +70,7 @@ public class Validations
         for(Value value : tuple.getTuple_values()) 
         {
             int len = value.getValue().toString().length();
-            System.out.println("len: " + len);
+            //System.out.println("len: " + len);
             if (len > 40) 
             {
                 JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Can't exceed the max size 40!", "Error", JOptionPane.ERROR_MESSAGE);                                         
@@ -114,5 +114,36 @@ public class Validations
         }
 
         return true;
+    }
+    
+    
+    public static boolean validateVarcharSize(Tuple tuple, ArrayList<Attribute> table_domain)
+    {
+        /* Run through the whole tuple */
+        for ( int i = 0; i < table_domain.size(); i++ )
+        {
+            /* Compare each String value of the tuple to the size specifized in the domain
+               Assuming the the tuple column size is the same as the domain column size (which
+               indeed should be)
+            */
+            
+            if ( table_domain.get(i).getType() == Attribute.Type.VARCHAR)
+            {
+                /* If the Attribute type is VARCHAR, Proceed to check the size */
+                int value_size = tuple.getValue(i).getValue().toString().length();
+                //System.out.println("String: " + tuple.getValue(i).getValue().toString() + "/t | Length = " + value_size);
+                
+                if ( value_size > table_domain.get(i).getAttributeSize() )
+                {
+                    /* Value to be inserted in tuple exceeds the size specified in the domain,
+                       display error
+                    */
+                    JOptionPane.showMessageDialog(KickAssDB.mainwindow, "One of the values to be inserted exceeds the length specified in the table domain.", "Error", JOptionPane.ERROR_MESSAGE);                                         
+                    return false;
+                }
+            }
+        }
+        
+        return true;                
     }
 }

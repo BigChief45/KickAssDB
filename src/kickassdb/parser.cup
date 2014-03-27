@@ -36,6 +36,7 @@ action code
     private static int pk_count = 0;
     private static ArrayList<String> attName = new ArrayList<String>();
     private static ArrayList<String> valType = new ArrayList<String>();
+    private static int current_attribute_size = 0;
    
 :};
 
@@ -85,8 +86,7 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                             {
                                 if ( t.getTable_name().equals(id.toString()) )
                                 {
-                                    JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table '" + id.toString() + "' Already Exists.", "Error", JOptionPane.ERROR_MESSAGE);
-                                    //System.out.print("error here2");
+                                    JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table '" + id.toString() + "' Already Exists.", "Error", JOptionPane.ERROR_MESSAGE);                                    
                                     return null; // ???
                                 }
                             }
@@ -125,26 +125,32 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
     table_attribute ::= ID:name attribute_type:type primary_key:pk
                         {:
                                /* Get current Attribute's name */                              
-                               Attribute current_attribute = new Attribute(name.toString(), (Attribute.Type)type);
-                               domain_temp.add(current_attribute);
+                               Attribute current_attribute = new Attribute(name.toString(), (Attribute.Type)type, current_attribute_size);
+                               domain_temp.add(current_attribute);                               
 
                                /* Check if this attribute is possible primary key */
                                if ( (boolean) pk == true )
                                {
                                    temp_pk = current_attribute; 
                                }
+
+                               /* Reset attribute size variable */
+                               current_attribute_size = 0;
                         :} coma
                         ;
 
             attribute_type ::= INT
                                {:
                                     /* Attribute type is Integer */
-                                    RESULT = Attribute.Type.INTEGER;
+                                    RESULT = Attribute.Type.INTEGER;                                    
                                :} |
-                               VARCHAR PARLEFT NUM PARRIGHT
+                               VARCHAR PARLEFT NUM:size PARRIGHT
                                {:
                                     /* Attribute's type is Varchar */
                                     RESULT = Attribute.Type.VARCHAR;
+
+                                    /* Get the attribute's size */
+                                    current_attribute_size = Integer.parseInt(size.toString());
                                :};
 
                 coma ::= COMA table_attribute
@@ -186,7 +192,10 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
 
                                     boolean val;
 
-                                    val = Validations.validateInsertingTuple(attName, valType, t) && Validations.validateColumnSize(temp_tuple); 
+                                    val = Validations.validateInsertingTuple(attName, valType, t) && 
+                                          Validations.validateColumnSize(temp_tuple) && 
+                                          Validations.validateVarcharSize(new_tuple, t.getTable_domain()); 
+                                    
                                     if ( val && t.getPrimary_key() != null )
                                         val = Validations.validatePrimaryKey(new_tuple, t);
                                    
