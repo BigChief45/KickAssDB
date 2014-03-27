@@ -55,8 +55,7 @@ public class MainWindow extends javax.swing.JFrame {
         tln.setForeground(Color.LIGHT_GRAY);
         tln.setCurrentLineForeground(Color.WHITE);
         this.queryScrollPane.setRowHeaderView(tln);
-        
-        // HOLA
+                
     }//End MainWindow()
 
     private void printDatabase(){
