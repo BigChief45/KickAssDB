@@ -353,11 +353,16 @@ public class MainWindow extends javax.swing.JFrame {
 
         itemExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Exit_Icon.png"))); // NOI18N
         itemExit.setText("Exit");
+        itemExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                itemExitActionPerformed(evt);
+            }
+        });
         jMenu1.add(itemExit);
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Edit");
+        jMenu2.setText("Tools");
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -548,6 +553,10 @@ public class MainWindow extends javax.swing.JFrame {
         vs.setLocationRelativeTo(null);
         vs.setVisible(true);
     }//GEN-LAST:event_viewSchemaActionPerformed
+
+    private void itemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemExitActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_itemExitActionPerformed
 
     
     protected static Schema getDefaultSchema()

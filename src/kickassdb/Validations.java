@@ -17,7 +17,7 @@ public class Validations
         for ( String name : attName )
             attType.add(t.getAttType(name));
        
-        if(attType.size() == 0) 
+        if( attType.size() == 0) 
         {
             for( Attribute att : t.getTable_domain() )
                 attType.add(att.getType().toString());
@@ -45,7 +45,7 @@ public class Validations
 
  
         /* check if the two array sizes match */
-        if(attType.size() != valType.size()) 
+        if( attType.size() != valType.size()) 
         {
             JOptionPane.showMessageDialog(KickAssDB.mainwindow, "The number of the records doesn't match with the attributes!", "Error", JOptionPane.ERROR_MESSAGE);                                         
             return false;
@@ -67,7 +67,7 @@ public class Validations
    
     public static boolean validateColumnSize(Tuple tuple) 
     {
-        for(Value value : tuple.getTuple_values()) 
+        for( Value value : tuple.getTuple_values()) 
         {
             int len = value.getValue().toString().length();
             //System.out.println("len: " + len);
@@ -88,7 +88,7 @@ public class Validations
         /* find out the index of the primary key in the table */
         for ( Attribute att : t.getTable_domain() ) 
         {
-            if (att.getAttribute_name().equals(tmp_pk.getAttribute_name()))
+            if ( att.getAttribute_name().equals(tmp_pk.getAttribute_name()))
                 break;
             else
                 pk_index++;
@@ -96,9 +96,9 @@ public class Validations
        
         /* contrast the tuple with the existed tuples to see if the primary key already existed */
         Object cur_pk = tuple.getValue(pk_index).getValue();
-        if (cur_pk.equals("") ) 
+        if ( cur_pk.equals("") ) 
         {
-            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Primary key can't be null!", "Error", JOptionPane.ERROR_MESSAGE);                                         
+            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Primary Key cannot be null.", "Error", JOptionPane.ERROR_MESSAGE);                                         
             return false;
         }
         for ( Tuple tmp_tuple : t.getTable_tuples() ) 
@@ -108,7 +108,7 @@ public class Validations
            
             if (existed_pk.equals(cur_pk)) 
             {
-                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "primary key already existed: " + existed_pk, "Error", JOptionPane.ERROR_MESSAGE);                                         
+                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Primary Key already exists: " + existed_pk, "Error", JOptionPane.ERROR_MESSAGE);                                         
                 return false;
             }
         }

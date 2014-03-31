@@ -46,7 +46,6 @@ comment = "--"( {letter} | {digit} | {str} | {parenthesis_left} | {parenthesis_r
 str = ("\"" | "\'") ({letter} | {digit} | {space} | {specials} )* ("\"" | "\'")
 
 
-
 %%
 
 <YYINITIAL>

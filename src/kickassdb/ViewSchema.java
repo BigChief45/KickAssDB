@@ -131,8 +131,7 @@ public class ViewSchema extends javax.swing.JFrame
             int j = 0;
             
             for ( Tuple tuple : selectedTable.getTable_tuples() )
-            {
-                System.out.println("i = " + i);
+            {                
                 for ( Value v : tuple.getTuple_values() )
                 {
                     data[i][j] = v.getValue();

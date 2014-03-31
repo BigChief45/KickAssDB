@@ -1,7 +1,13 @@
 CREATE TABLE Person (
 person_id INT PRIMARY KEY,
 person_name VARCHAR(20),
-person_last VARCHAR(30)
+person_last VARCHAR(30),
+age INT,
+salary INT,
+birthday VARCHAR(10),
+comment VARCHAR(30),
+nationality VARCHAR(20),
+security int
 );
 
 CREATE TABLE Vehicle (
@@ -10,11 +16,11 @@ plate_number VARCHAR(20),
 model VARCHAR(30)
 );
 
-INSERT INTO Person VALUES (1, "Jaime", "Alvarez");
-INSERT INTO Person VALUES (2, "John", "Salchichon");
-INSERT INTO Person VALUES (3, "Paul", "Vazo");
+INSERT INTO Person (person_id, person_name, person_last) VALUES (1, 'Jaime', 'Alvarez');
+INSERT INTO Person (person_id, person_name, person_last) VALUES (2, 'John', 'Salchichon');
+INSERT INTO Person (person_id, person_name, person_last) VALUES (3, 'Paul', 'Vazo');
 
-INSERT INTO Vehicle VALUES (1, "AS231", "Camry");
-INSERT INTO Vehicle VALUES (2, "DG334", "Yaris");
-INSERT INTO Vehicle VALUES (3, "ZXG334", "Montero");
-INSERT INTO Vehicle VALUES (4, "HGH43", "Supra")
+INSERT INTO Vehicle VALUES (1, 'AS231', 'Camry');
+INSERT INTO Vehicle VALUES (2, 'DG334', 'Yaris');
+INSERT INTO Vehicle VALUES (3, 'ZXG334', 'Montero');
+INSERT INTO Vehicle VALUES (4, 'HGH43', 'Supra')

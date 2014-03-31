@@ -6,7 +6,7 @@ public class Attribute
     private Type type;
     private String attribute_name;
     private int attribute_size;
-    
+        
     public enum Type 
     {
         INTEGER, VARCHAR
