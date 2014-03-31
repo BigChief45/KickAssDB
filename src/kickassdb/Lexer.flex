@@ -57,8 +57,7 @@ str = ("\"" | "\'") ({letter} | {digit} | {space} | {specials} )* ("\"" | "\'")
         "KEY" { return new Symbol(sym.KEY, yycolumn, yyline, yytext()); }
         "INSERT" { return new Symbol(sym.INSERT, yycolumn, yyline, yytext()); }
         "INTO" { return new Symbol(sym.INTO, yycolumn, yyline, yytext()); } 
-        "VALUES" { return new Symbol(sym.VALUES, yycolumn, yyline, yytext()); }
-        "NULL" { return new Symbol(sym.NULL, yycolumn, yyline, yytext()); }
+        "VALUES" { return new Symbol(sym.VALUES, yycolumn, yyline, yytext()); }        
 
         "int" { return new Symbol(sym.INT, yycolumn, yyline, yytext()); }
         "varchar" { return new Symbol(sym.VARCHAR, yycolumn, yyline, yytext()); }

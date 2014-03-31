@@ -36,7 +36,7 @@ public class MainWindow extends javax.swing.JFrame {
 	private Hashtable attributes;
         private File opened_file;
         public String parserResult = "Parsing Successful";
-        private Schema default_schema;
+        private static Schema default_schema;
     
     /**
      * Creates new form MainWindow
@@ -164,6 +164,10 @@ public class MainWindow extends javax.swing.JFrame {
         saveQuery = new javax.swing.JButton();
         executeQuery = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
+        openSchema = new javax.swing.JButton();
+        saveSchema = new javax.swing.JButton();
+        viewSchema = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
         clearOutput = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         compileLexer = new javax.swing.JButton();
@@ -244,6 +248,36 @@ public class MainWindow extends javax.swing.JFrame {
         });
         jToolBar1.add(executeQuery);
         jToolBar1.add(jSeparator1);
+
+        openSchema.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        openSchema.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/database_edit.png"))); // NOI18N
+        openSchema.setText("Open Schema");
+        openSchema.setFocusable(false);
+        openSchema.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        openSchema.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(openSchema);
+
+        saveSchema.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        saveSchema.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/database_save.png"))); // NOI18N
+        saveSchema.setText("Save Schema");
+        saveSchema.setFocusable(false);
+        saveSchema.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        saveSchema.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(saveSchema);
+
+        viewSchema.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        viewSchema.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/database_table.png"))); // NOI18N
+        viewSchema.setText("View Schema");
+        viewSchema.setFocusable(false);
+        viewSchema.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        viewSchema.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        viewSchema.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                viewSchemaActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(viewSchema);
+        jToolBar1.add(jSeparator3);
 
         clearOutput.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         clearOutput.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/page_white.png"))); // NOI18N
@@ -506,6 +540,21 @@ public class MainWindow extends javax.swing.JFrame {
         executeQuery.setEnabled(false);
     }//GEN-LAST:event_queryTextKeyTyped
 
+    private void viewSchemaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_viewSchemaActionPerformed
+        
+        /* Open View Schema window */
+        ViewSchema vs = new ViewSchema();
+        
+        vs.setLocationRelativeTo(null);
+        vs.setVisible(true);
+    }//GEN-LAST:event_viewSchemaActionPerformed
+
+    
+    protected static Schema getDefaultSchema()
+    {
+        return default_schema;
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -557,14 +606,18 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JButton newQuery;
     private javax.swing.JButton openQuery;
+    private javax.swing.JButton openSchema;
     protected static javax.swing.JTextArea outputText;
     private javax.swing.JScrollPane queryScrollPane;
     private javax.swing.JTabbedPane queryTabs;
     private javax.swing.JTextPane queryText;
     private javax.swing.JButton saveQuery;
+    private javax.swing.JButton saveSchema;
+    private javax.swing.JButton viewSchema;
     // End of variables declaration//GEN-END:variables
 
     /**

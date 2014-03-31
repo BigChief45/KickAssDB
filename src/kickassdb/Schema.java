@@ -9,10 +9,12 @@ public class Schema
     
     private ArrayList<Table> schema;
     private int table_count = 0;
+    private String schema_name;
 
     public Schema()
     {
         schema = new ArrayList<Table>();
+        schema_name = "New Schema";
     }
     
     
@@ -44,5 +46,13 @@ public class Schema
         MainWindow.outputText.append("Table " + t.getTable_name() + " was created. \n");
     }
     
+   public void setName(String name)
+   {
+       schema_name = name;
+   }
    
+   public String getName()
+   {
+       return schema_name;
+   }
 }
