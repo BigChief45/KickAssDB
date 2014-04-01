@@ -116,7 +116,7 @@ public class Table
         System.out.println("=============");
         for (Attribute attribute : table_domain) 
         {            
-            System.out.println("Name: " + attribute.getAttribute_name() + ", Type:" + attribute.getType().name());   
+            System.out.println("Name: " + attribute.getAttribute_name() + ", Type:" + attribute.getType().name() + ", Size: " + attribute.getAttributeSize());   
         }                
         
         System.out.println("Primary Key: " + primary_key.getAttribute_name());
@@ -134,8 +134,11 @@ public class Table
         {            
               for ( Value tuple_value : tuple.getTuple_values() )
               {
-                  System.out.print(tuple_value.getValue() + "\t");
-              }
+                  String value = tuple_value.getValue().toString();
+                  if(value.charAt(0) == '\'')
+                      value = value.substring(1, value.length() - 1);
+                  System.out.print(value + "\t");
+                                }
               System.out.println("");
         }                
         

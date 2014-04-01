@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 public class Validations
 {
     public static boolean validateInsertingTuple(ArrayList<String> attName, ArrayList<String> valType, Table t)
-    {        
+    {
         ArrayList<String> attType = new ArrayList<String>();
         int index = 0;
 
@@ -96,7 +96,7 @@ public class Validations
        
         /* contrast the tuple with the existed tuples to see if the primary key already existed */
         Object cur_pk = tuple.getValue(pk_index).getValue();
-        if ( cur_pk.equals("") ) 
+        if ( cur_pk.equals("") || cur_pk.equals("''")) 
         {
             JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Primary Key cannot be null.", "Error", JOptionPane.ERROR_MESSAGE);                                         
             return false;
@@ -133,7 +133,7 @@ public class Validations
                 int value_size = tuple.getValue(i).getValue().toString().length();
                 //System.out.println("String: " + tuple.getValue(i).getValue().toString() + "/t | Length = " + value_size);
                 
-                if ( value_size > table_domain.get(i).getAttributeSize() )
+                if ( value_size > table_domain.get(i).getAttributeSize() + 2 )
                 {
                     /* Value to be inserted in tuple exceeds the size specified in the domain,
                        display error
