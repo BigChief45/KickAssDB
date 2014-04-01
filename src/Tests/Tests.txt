@@ -1,7 +1,7 @@
 CREATE TABLE Person (
 person_id int PRIMARY KEY,
 name varchar(20),
-gender varchar(1)
+gender varchar(10)
 );
 
 create table department (
@@ -19,5 +19,5 @@ Product_id int PRImaRY KEY,product_name varchar(26));
 INSERT INTO Person
 VALUES (154, 'John', 'M');
 
-Insert into person values (155, 'Mary', "G");
+Insert into person values (155, 'Mary', 'G');
 
