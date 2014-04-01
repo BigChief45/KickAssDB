@@ -36,6 +36,7 @@ public class Validations
                     break;
                 }
             }
+            
             if(!flag) 
             {
                 JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Attribute " + name + " doesn't exist in the table!", "Error", JOptionPane.ERROR_MESSAGE);                                         
@@ -45,8 +46,10 @@ public class Validations
 
  
         /* check if the two array sizes match */
+        
         if( attType.size() != valType.size()) 
         {
+            //System.out.println("~~~~~~~~~" + attType.size() + " " + valType.size());
             JOptionPane.showMessageDialog(KickAssDB.mainwindow, "The number of the records doesn't match with the attributes!", "Error", JOptionPane.ERROR_MESSAGE);                                         
             return false;
         }

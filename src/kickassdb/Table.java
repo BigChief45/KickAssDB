@@ -112,7 +112,7 @@ public class Table
     public void printDomain()
     {
     
-        System.out.println(this.table_name);
+        System.out.println(this.table_name + table_domain.size());
         System.out.println("=============");
         for (Attribute attribute : table_domain) 
         {            

@@ -99,7 +99,8 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                        
                         /* Instance a new table */
                         Table table = new Table(table_count, id.toString(), domain_temp);
-
+                        domain_temp = new ArrayList<Attribute>();
+                        
                         /* If there is primary key, set it */
                         if ( pk_count == 1 || pk_count == 0)
                         {
@@ -117,10 +118,10 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                             JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Table cannot contain more than one Primary Key.", "Error", JOptionPane.ERROR_MESSAGE);                                                                   
                         }
 
-                            /* Reset the temporal domain and primary key */
-                            domain_temp = new ArrayList<Attribute>();
-                            temp_pk = new Attribute();
-                            pk_count = 0;
+                        /* Reset the temporal domain and primary key */
+                        domain_temp = new ArrayList<Attribute>();
+                        temp_pk = new Attribute();
+                        pk_count = 0;
 
                  :};
 
@@ -134,6 +135,7 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                                if ( (boolean) pk == true )
                                {
                                    temp_pk = current_attribute; 
+                                   //System.out.println("~~~der");
                                }
 
                                /* Reset attribute size variable */
@@ -200,15 +202,16 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                     Tuple new_tuple;
                                     new_tuple = Tuple.setTuple_order(attName, t.getTable_domain(), temp_tuple);
 
-                                    boolean val;
+                                    boolean val = true;
 
                                     val = Validations.validateInsertingTuple(attName, valType, t) && 
                                           Validations.validateColumnSize(temp_tuple) && 
                                           Validations.validateVarcharSize(new_tuple, t.getTable_domain()); 
-                                    
-                                    if ( val && t.getPrimary_key() != null )
+
+                                    if ( val && t.getPrimary_key().getAttribute_name() != null ) 
                                         val = Validations.validatePrimaryKey(new_tuple, t);
-                                   
+
+
                                     attName.clear();
                                     valType.clear();
 
@@ -253,11 +256,20 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                 record_values ::= NUM:val
                                   {:                                       
                                         Value v = new Value(val);
-                                        if(val instanceof Integer) System.out.println("hey");
-                                        else if(val instanceof String) System.out.println("what");
-                                        else  System.out.println("fuck");
-                                        temp_tuple.addValue(v);
-                                        valType.add("INTEGER");
+                                        try
+                                        {
+                                            Integer n = Integer.parseInt(val.toString());
+                                            temp_tuple.addValue(v);
+                                            valType.add("INTEGER");
+
+                                        }
+                                        catch(Exception e)
+                                        {
+                                            System.err.println(e.getMessage());
+                                            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Integer too large or too small!", "Error", JOptionPane.ERROR_MESSAGE);                                         
+                                            
+                                        }
+
                                   :} COMA record_values
                                   | STR:val
                                   {:
@@ -268,8 +280,17 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                   | NUM:val
                                   {:
                                         Value v = new Value(val);
-                                        temp_tuple.addValue(v);
-                                        valType.add("INTEGER");
+                                        try
+                                        {
+                                            Integer n = Integer.parseInt(val.toString());
+                                            temp_tuple.addValue(v);
+                                            valType.add("INTEGER");
+                                        }
+                                        catch(Exception e)
+                                        {
+                                            System.err.println(e.getMessage());
+                                            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Integer too large or too small!", "Error", JOptionPane.ERROR_MESSAGE);                                         
+                                        }
                                   :}
                                   | STR:val
                                   {:

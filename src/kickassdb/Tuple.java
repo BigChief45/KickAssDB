@@ -13,6 +13,7 @@ public class Tuple
     }
     
     public ArrayList<Value> getTuple_values() {
+
         return tuple_values;
     }
 
