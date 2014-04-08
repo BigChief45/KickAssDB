@@ -22,6 +22,11 @@ public class KickAssDB {
     
     public static void main(String[] args) 
     {
+//        String s = "\"Hola\"";
+//        s = s.replaceAll("\"", "");
+//        System.out.println("Length: " + s.length());
+//        System.out.println(s);                
+//        System.exit(0);
         try 
         {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) 

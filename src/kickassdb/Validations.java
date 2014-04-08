@@ -133,10 +133,9 @@ public class Validations
             if ( table_domain.get(i).getType() == Attribute.Type.VARCHAR)
             {
                 /* If the Attribute type is VARCHAR, Proceed to check the size */
-                int value_size = tuple.getValue(i).getValue().toString().length();
-                //System.out.println("String: " + tuple.getValue(i).getValue().toString() + "/t | Length = " + value_size);
+                int value_size = tuple.getValue(i).getValue().toString().length();                
                 
-                if ( value_size > table_domain.get(i).getAttributeSize() + 2 )
+                if ( value_size > table_domain.get(i).getAttributeSize() )
                 {
                     /* Value to be inserted in tuple exceeds the size specified in the domain,
                        display error
@@ -149,4 +148,5 @@ public class Validations
         
         return true;                
     }
+    
 }

@@ -43,9 +43,9 @@ action code
 :};
 
 /* Terminals */
-terminal CREATE, TABLE, PRIMARY, KEY, INSERT, INTO, VALUES, NULL;
+terminal CREATE, TABLE, PRIMARY, KEY, INSERT, INTO, VALUES, NULL, SELECT, FROM, WHERE, AND, OR;
 terminal String INT, VARCHAR;
-terminal String PARLEFT, PARRIGHT, SEMICOLON, COMA;
+terminal String PARLEFT, PARRIGHT, SEMICOLON, COMA, ASTERISK, OPREL;
 terminal String ID;
 terminal NUM;
 terminal STR;
@@ -61,14 +61,17 @@ non terminal coma;
 non terminal primary_key;
 non terminal attributes;
 non terminal attribute_names;
+non terminal select, select_tables, select_fields, select_more_fields, where, filter, add_where;
 
 start with operation;
 
 /* Grammar */
 operation ::= create_table SEMICOLON operation
-              | insert_record SEMICOLON operation
               | create_table
+              | insert_record SEMICOLON operation             
               | insert_record
+              | select SEMICOLON operation
+              | select
               |
               ;
 
@@ -299,3 +302,33 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                         valType.add("VARCHAR");
                                   :}
                                   ;
+
+
+select ::= SELECT select_fields FROM select_tables where           
+           ;
+
+           select_fields ::= ASTERISK
+                             | ID:table_id
+                             | ID COMA select_more_fields
+                             ;
+                             
+                             select_more_fields ::= ID:table_id COMA select_more_fields
+                                                    | ID:table_id
+                                                    ;
+
+           select_tables ::= ID:table_id COMA select_tables
+                             | ID
+                             ;
+
+           where ::= WHERE ID OPREL filter add_where
+                     |
+                     ;
+
+                     filter ::= STR
+                                | NUM
+                                ;
+
+                                add_where ::= AND ID OPREL filter add_where
+                                              | OR ID OPREL filter add_where
+                                              |
+                                              ;

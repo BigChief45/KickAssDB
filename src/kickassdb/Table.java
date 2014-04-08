@@ -112,7 +112,7 @@ public class Table
     public void printDomain()
     {
     
-        System.out.println(this.table_name + table_domain.size());
+        System.out.println(this.table_name);
         System.out.println("=============");
         for (Attribute attribute : table_domain) 
         {            
@@ -134,12 +134,10 @@ public class Table
         {            
               for ( Value tuple_value : tuple.getTuple_values() )
               {
-                  String value = tuple_value.getValue().toString();
-                  if(value.charAt(0) == '\'')
-                      value = value.substring(1, value.length() - 1);
+                  String value = tuple_value.getValue().toString();                  
                   System.out.print(value + "\t");
-                                }
-              System.out.println("");
+              }
+              System.out.println();
         }                
         
         System.out.println("");

@@ -1,5 +1,5 @@
-CREATE TABLE Person (
-person_id INT PRIMARY KEY,
-person_name VARCHAR(20),
-person_last VARCHAR(30) PRIMARY KEY
+CREATE TABLE Vehicle (
+vehicle_id INT PRIMARY KEY,
+plate_number VARCHAR(20),
+model VARCHAR(30)
 )
