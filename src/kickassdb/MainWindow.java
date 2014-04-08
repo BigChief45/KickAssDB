@@ -1,20 +1,24 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package kickassdb;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java_cup.runtime.Symbol;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,21 +26,25 @@ import javax.swing.JTable;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableColumn;
+import javax.swing.text.Document;
+import javax.swing.text.EditorKit;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+import javax.swing.text.StyledEditorKit;
 
-
-/**
- *
- * @author Otto
- */
-public class MainWindow extends javax.swing.JFrame {
+public class MainWindow extends javax.swing.JFrame 
+{
         
 	private Hashtable attributes;
         private File opened_file;
         public String parserResult = "Parsing Successful";
         private static Schema default_schema;
+        
+        
+        
     
     /**
      * Creates new form MainWindow
@@ -55,9 +63,64 @@ public class MainWindow extends javax.swing.JFrame {
         tln.setForeground(Color.LIGHT_GRAY);
         tln.setCurrentLineForeground(Color.WHITE);
         this.queryScrollPane.setRowHeaderView(tln);
+        
+        /* Load Syntax Highlighter */
+        loadSyntaxHighlighter();
                 
     }//End MainWindow()
 
+    private void loadSyntaxHighlighter()
+    {
+        EditorKit editorKit = new StyledEditorKit()
+        {
+            public Document createDefaultDocument()
+            {
+                MutableAttributeSet attr = MultiSyntaxDocument.DEFAULT_KEYWORD;
+                HashMap<String, MutableAttributeSet> keywords = new HashMap<String, MutableAttributeSet>();
+                
+                /* Get Keywords and add them to the Highlighter */
+                Keywords kws = new Keywords();
+                
+                for ( String s : kws.getKeywords() )
+                {
+                    keywords.put( s,   attr );
+                }
+                                
+                SimpleAttributeSet operatorTest = new SimpleAttributeSet();
+                MultiSyntaxDocument.setAttributeColor( operatorTest, new Color( 255, 0, 0 ) );
+                MultiSyntaxDocument.setAttributeFont( operatorTest, new Font( "Courier New", Font.BOLD, 11 ) );
+                keywords.put( "dound",         operatorTest );
+                
+                MultiSyntaxDocument doc = new MultiSyntaxDocument( keywords );
+                doc.setTabs( 4 );
+                
+                return doc;
+            }
+        };
+        
+        queryText.setEditorKitForContentType("text/java", editorKit);
+        queryText.setContentType("text/java");
+                
+        JButton button = new JButton("Load Java File");
+        button.addActionListener( new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                try
+                {
+                    String fn = "MultiSyntaxDocument.java";
+                    FileInputStream fis = new FileInputStream( fn );
+                    queryText.read(fis, null);
+                    queryText.requestFocus();
+                }
+                catch(Exception e2) 
+                {
+                    System.out.println( e2.getMessage() + "\n" + e2.getStackTrace() );
+                }
+            }
+        });	
+    }
+    
     private void printDatabase(){
     
         this.ResultsPanel.removeAll();
