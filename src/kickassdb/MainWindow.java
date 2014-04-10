@@ -36,16 +36,12 @@ import javax.swing.text.StyleContext;
 import javax.swing.text.StyledEditorKit;
 
 public class MainWindow extends javax.swing.JFrame 
-{
-        
+{        
 	private Hashtable attributes;
         private File opened_file;
         public String parserResult = "Parsing Successful";
         private static Schema default_schema;
-        
-        
-        
-    
+                       
     /**
      * Creates new form MainWindow
      */
@@ -54,7 +50,7 @@ public class MainWindow extends javax.swing.JFrame
         initComponents();
         
         /* Instantiate Application's Default Schema */
-        default_schema = new Schema();
+        default_schema = new Schema("Untitled Schema");
         
         /* Set Text Line Numbers */
         TextLineNumber tln = new TextLineNumber(this.queryText);
@@ -121,61 +117,48 @@ public class MainWindow extends javax.swing.JFrame
         });	
     }
     
-    private void printDatabase(){
-    
-        this.ResultsPanel.removeAll();
-        
-        for (Table table : this.default_schema.getSchema()) 
-        {                        
-            //We add the table to the jTable
-            String[] columnNames = new String[table.getTable_domain().size()];
-            Object[][] data = new Object[table.getTable_tuples().size()][columnNames.length]; 
-            
-            int i = 0;
-            for (Attribute domain : table.getTable_domain()) 
-            {
+    protected static void showQueryOutput(Table table)
+    {    
+        ResultsPanel.removeAll();
                                 
-                columnNames[i] = domain.getAttribute_name();
-                System.out.println("Attribute: "+domain.getAttribute_name());
-                i++;                
-            }
-            
-            System.out.println("----------------------");
-            
-            i = 0;
-            for (Tuple tuple : table.getTable_tuples()) 
-            {
-                int j = 0;
-                for (Value value : tuple.getTuple_values()) 
-                {                    
-                    data[i][j] = value.getValue().toString();
-                    System.out.print(value.getValue().toString()+";");
-                    j++;
-                }
-                
-                System.out.println("");
-                i++;
-            }            
-         
-            System.out.println("----------------------");
-                        
-            JTable tempTable = new JTable(data, columnNames);            
-            JScrollPane tempscrollPane = new JScrollPane(tempTable);
-            tempTable.setFillsViewportHeight(true);
-            
-//            KickAssTable kaTable = new KickAssTable();
-//            kaTable.getTableName().setText(table.getTable_name());
-//            kaTable.setTable(new JTable(data,columnNames));
-//            
-//            //Add to panel
-//            this.ResultsPanel.add(kaTable);                
-            
-            this.ResultsPanel.add(tempscrollPane);
-            
+        /* Assemble the data from the recieved table */
+        String[] columnNames = new String[table.getTable_domain().size()];
+        Object[][] data = new Object[table.getTable_tuples().size()][columnNames.length]; 
+
+        /* Add the domain attribute names */
+        int i = 0;
+        for (Attribute domain : table.getTable_domain()) 
+        {
+            columnNames[i] = domain.getAttribute_name();            
+            i++;                
         }
-    
-    }//End private void printDatabase()
-    
+        
+        /* Add the tuples */
+        i = 0;
+        for (Tuple tuple : table.getTable_tuples()) 
+        {
+            int j = 0;
+            for (Value value : tuple.getTuple_values()) 
+            {                    
+                data[i][j] = value.getValue().toString();                
+                j++;
+            }            
+            i++;
+        }            
+        
+        JTable tempTable = new JTable(data, columnNames);            
+        JScrollPane tempscrollPane = new JScrollPane(tempTable);
+        tempTable.setFillsViewportHeight(true);
+                               
+        ResultsPanel.add(tempscrollPane);
+        ResultsPanel.setLayout(new BorderLayout());
+        ResultsPanel.add(tempTable.getTableHeader(), BorderLayout.PAGE_START);
+        ResultsPanel.add(tempTable, BorderLayout.CENTER);
+        ResultsPanel.revalidate();
+        ResultsPanel.repaint();
+                        
+    }
+      
     // Create some different font styles
     public void createStyles( StyleContext sc )
     {
@@ -662,7 +645,7 @@ public class MainWindow extends javax.swing.JFrame
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel ResultsPanel;
+    private static javax.swing.JPanel ResultsPanel;
     private javax.swing.JTabbedPane ReviewTab;
     private javax.swing.JButton clearOutput;
     private javax.swing.JButton compileCup;

@@ -1,6 +1,7 @@
 package kickassdb;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Table 
 {
@@ -69,7 +70,7 @@ public class Table
     {
         this.table_domain = table_domain;
     }
-
+       
     public ArrayList<Tuple> getTable_tuples() 
     {
         return table_tuples;
@@ -143,4 +144,37 @@ public class Table
         System.out.println("");
     }
     
+    protected static Table mergeTables(ArrayList<Table> tables)
+    {
+        /* Merges the recieved tables into one single table. Merging all the domains
+           and data
+        */
+        
+        /* Reverse the array */
+        Collections.reverse(tables);
+        
+        Table new_table = new Table();
+        ArrayList<Attribute> new_domain = new ArrayList<Attribute>();
+        ArrayList<Tuple> new_tuples = new ArrayList<Tuple>();
+        
+        /* Construct the new domain */
+        for ( Table t : tables )
+            for ( Attribute a : t.getTable_domain() )
+                new_domain.add(a);
+               
+        /* Assign created domain to the new table */
+        new_table.setTable_domain(new_domain);
+        
+        /* Find the the maximum number of tuples after the merge */
+        int maxTuples = 1;
+        
+        for ( Table t : tables )
+            maxTuples = maxTuples * t.getTable_tuples().size();
+        
+        /* Merge all the data */
+        
+        new_table.setTable_tuples(new_tuples);
+        
+        return new_table;
+    }
 }

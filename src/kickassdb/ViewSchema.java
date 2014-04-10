@@ -7,12 +7,16 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
 public class ViewSchema extends javax.swing.JFrame 
 {
     public ViewSchema() 
     {
         initComponents();
+        
+        /* Allow only one table to be selected at a time */
+        schemaTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         
         /* Populate the tree */
         populateTree();
@@ -165,6 +169,9 @@ public class ViewSchema extends javax.swing.JFrame
         java.net.URL rootURL = ViewSchema.class.getClassLoader().getResource("Images/database.png");
         ImageIcon rootIcon = new ImageIcon(rootURL);
         
+        if ( MainWindow.getDefaultSchema().getSchema().size() == 0 )
+            leafIcon = rootIcon;
+            
         /* Assign icons to the tree renderer */
         DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
         renderer.setLeafIcon(leafIcon);

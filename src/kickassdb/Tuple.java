@@ -30,7 +30,12 @@ public class Tuple
     {
         return tuple_values.get(pos);
     }
-     
+    
+    public int getTupleSize()
+    {
+        return tuple_values.size();
+    }
+    
     /* set the temp_tuple in the right order */
     public static Tuple setTuple_order(ArrayList<String> attName, ArrayList<Attribute> domain, Tuple temp_tuple) {
         

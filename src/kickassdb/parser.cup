@@ -40,6 +40,8 @@ action code
     private static ArrayList<String> valType = new ArrayList<String>();
     private static int current_attribute_size = 0;
    
+    private static ArrayList<String> table_names = new ArrayList<String>();
+
 :};
 
 /* Terminals */
@@ -304,10 +306,36 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                   ;
 
 
-select ::= SELECT select_fields FROM select_tables where           
+select ::= SELECT select_fields:type FROM select_tables where
+           {:           
+                /* Get the current default schema */
+                Schema schema = KickAssDB.mainwindow.getDefault_schema();
+
+                /* Check what kind of select statement it is */
+                switch ( (int) type) 
+                {
+                    case 0:
+                    /* SELECT * */
+
+                    /* Get Table Objects using the recieved table names */
+                    ArrayList<Table> from_tables = new ArrayList<Table>();
+
+                    for ( String s : table_names )
+                    {
+                        if ( schema.getTable(s) != null )
+                            from_tables.add(schema.getTable(s));
+                    }
+
+                    Table new_table = Table.mergeTables(from_tables);
+                    MainWindow.showQueryOutput(new_table);
+                    
+                    break;
+                }
+           :}
            ;
 
            select_fields ::= ASTERISK
+                             {: RESULT = 0; :}
                              | ID:table_id
                              | ID COMA select_more_fields
                              ;
@@ -316,8 +344,14 @@ select ::= SELECT select_fields FROM select_tables where
                                                     | ID:table_id
                                                     ;
 
-           select_tables ::= ID:table_id COMA select_tables
-                             | ID
+           select_tables ::= ID:table_name COMA select_tables
+                             {:
+                                 table_names.add(table_name.toString());
+                             :}
+                             | ID:table_name
+                             {:
+                                 table_names.add(table_name.toString());
+                             :}
                              ;
 
            where ::= WHERE ID OPREL filter add_where

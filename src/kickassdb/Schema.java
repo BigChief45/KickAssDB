@@ -14,7 +14,12 @@ public class Schema
     public Schema()
     {
         schema = new ArrayList<Table>();
-        schema_name = "New Schema";
+    }
+    
+    public Schema(String name)
+    {
+        schema = new ArrayList<Table>();
+        schema_name = name;
     }
     
     
@@ -54,5 +59,14 @@ public class Schema
    public String getName()
    {
        return schema_name;
+   }
+   
+   public Table getTable(String table_name)
+   {
+       for ( Table t : schema )
+           if ( t.getTable_name().equals(table_name) )
+               return t;
+       
+       return null;
    }
 }
