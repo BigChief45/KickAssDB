@@ -4,6 +4,7 @@ public class Value
 {
     
     private Object value;
+    private Attribute a;
     
     public Value()
     {
@@ -43,5 +44,15 @@ public class Value
     public void setValue(int value)
     {
         this.value = value;
+    }
+    
+    public void setAttribute(Attribute at)
+    {
+        a = at;
+    }
+    
+    public Attribute getAttribute()
+    {
+        return a;
     }
 }

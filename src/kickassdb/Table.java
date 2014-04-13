@@ -71,7 +71,7 @@ public class Table
         this.table_domain = table_domain;
     }
        
-    public ArrayList<Tuple> getTable_tuples() 
+    public ArrayList<Tuple> getTable_tuples()
     {
         return table_tuples;
     }
@@ -89,6 +89,23 @@ public class Table
     public void setPrimary_key(Attribute pk)
     {
         primary_key = pk;
+    }
+    
+    public int getFieldPosition(String field_name)
+    {
+        /* Returns the field's position in the domain if it exists */
+        int position = 0;
+        
+        /* Loop through the domain */
+        for ( Attribute a : table_domain )
+        {
+            if ( field_name.equals(a.getAttribute_name()) )
+                return position;
+            
+            position++;
+        }
+        
+        return -1; // Field does not exist in domain
     }
     
     //changed here

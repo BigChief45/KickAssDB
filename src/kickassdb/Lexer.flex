@@ -63,6 +63,8 @@ str = ("\'") ({letter} | {digit} | {space} | {specials} )* ("\'")
         "WHERE" { return new Symbol(sym.WHERE, yycolumn, yyline, yytext()); }
         "AND" { return new Symbol(sym.AND, yycolumn, yyline, yytext()); }
         "OR" { return new Symbol(sym.OR, yycolumn, yyline, yytext()); }
+        "COUNT" { return new Symbol(sym.COUNT, yycolumn, yyline, yytext()); }
+        "SUM" { return new Symbol(sym.SUM, yycolumn, yyline, yytext()); }
 
 
         "int" { return new Symbol(sym.INT, yycolumn, yyline, yytext()); }

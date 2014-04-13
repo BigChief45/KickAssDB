@@ -40,12 +40,15 @@ action code
     private static ArrayList<String> valType = new ArrayList<String>();
     private static int current_attribute_size = 0;
    
+    /* SELECT OPERATIONS */
     private static ArrayList<String> table_names = new ArrayList<String>();
+    private static ArrayList<String> field_names = new ArrayList<String>();
+    private static ArrayList<QueryFilter> where_filters = new ArrayList<QueryFilter>();
 
 :};
 
 /* Terminals */
-terminal CREATE, TABLE, PRIMARY, KEY, INSERT, INTO, VALUES, NULL, SELECT, FROM, WHERE, AND, OR;
+terminal CREATE, TABLE, PRIMARY, KEY, INSERT, INTO, VALUES, NULL, SELECT, FROM, WHERE, AND, OR, COUNT, SUM;
 terminal String INT, VARCHAR;
 terminal String PARLEFT, PARRIGHT, SEMICOLON, COMA, ASTERISK, OPREL;
 terminal String ID;
@@ -311,37 +314,75 @@ select ::= SELECT select_fields:type FROM select_tables where
                 /* Get the current default schema */
                 Schema schema = KickAssDB.mainwindow.getDefault_schema();
 
+                /* Get Table Objects using the recieved table names in the FROM statement */
+                ArrayList<Table> from_tables = new ArrayList<Table>();
+
+                for ( String s : table_names )                
+                    if ( schema.getTable(s) != null )
+                        from_tables.add(schema.getTable(s));                
+
                 /* Check what kind of select statement it is */
                 switch ( (int) type) 
                 {
                     case 0:
-                    /* SELECT * */
+                        /* SELECT * */                   
+                        Table new_table = Table.mergeTables(from_tables);
+                        MainWindow.showQueryOutput(new_table);
 
-                    /* Get Table Objects using the recieved table names */
-                    ArrayList<Table> from_tables = new ArrayList<Table>();
+                        break;
 
-                    for ( String s : table_names )
-                    {
-                        if ( schema.getTable(s) != null )
-                            from_tables.add(schema.getTable(s));
-                    }
+                    case 2:
+                        /* SELECT COUNT (*) */
+                        Operations.operationSelect(2, null, from_tables, where_filters);
+                        break;
 
-                    Table new_table = Table.mergeTables(from_tables);
-                    MainWindow.showQueryOutput(new_table);
-                    
-                    break;
+                    case 3:
+                        /* SELECT SUM() */
+                        Operations.operationSelect(3, field_names, from_tables, where_filters);
+                        break;
                 }
+
+                /* Reset ArrayLists Names */
+                table_names = new ArrayList<String>();
+                field_names = new ArrayList<String>();
+                where_filters = new ArrayList<QueryFilter>();
+                
            :}
            ;
 
-           select_fields ::= ASTERISK
-                             {: RESULT = 0; :}
-                             | ID:table_id
-                             | ID COMA select_more_fields
+           select_fields ::= ASTERISK 
+                             {: 
+                                 RESULT = 0; 
+                             :}
+                             | ID:field_id
+                             {:
+                                 field_names.add(field_id);
+                                 RESULT = 1;
+                             :}
+                             | ID:field_id COMA select_more_fields 
+                             {: 
+                                 field_names.add(field_id);
+                                 RESULT = 1; 
+                             :}
+                             | COUNT PARLEFT ASTERISK PARRIGHT 
+                             {: 
+                                 RESULT = 2; 
+                             :}
+                             | SUM PARLEFT ID:field_id PARRIGHT 
+                             {: 
+                                 field_names.add(field_id);
+                                 RESULT = 3; 
+                             :}
                              ;
                              
-                             select_more_fields ::= ID:table_id COMA select_more_fields
-                                                    | ID:table_id
+                             select_more_fields ::= ID:field_id COMA select_more_fields
+                                                    {:
+                                                        field_names.add(field_id);
+                                                    :}
+                                                    | ID:field_id
+                                                    {:
+                                                        field_names.add(field_id);
+                                                    :}    
                                                     ;
 
            select_tables ::= ID:table_name COMA select_tables
@@ -354,15 +395,42 @@ select ::= SELECT select_fields:type FROM select_tables where
                              :}
                              ;
 
-           where ::= WHERE ID OPREL filter add_where
+           where ::= WHERE ID:field_id OPREL:operand filter:fv add_where
+                     {:
+                        /* Create a new Filter Object */
+                        QueryFilter qf = new QueryFilter(field_id.toString(), operand.toString(), fv, null);
+
+                        /* Add it to the list of filters for this query */
+                        where_filters.add(qf);
+                     :}
                      |
                      ;
 
-                     filter ::= STR
-                                | NUM
+                     filter ::= STR:value
+                                {:
+                                    RESULT = value;
+                                :}
+                                | NUM:value
+                                {:
+                                    RESULT = value;
+                                :}
                                 ;
 
-                                add_where ::= AND ID OPREL filter add_where
-                                              | OR ID OPREL filter add_where
+                                add_where ::= AND ID:field_id OPREL:operand filter:fv add_where
+                                              {:
+                                                  /* Create a new Filter Object */
+                                                  QueryFilter qf = new QueryFilter(field_id.toString(), operand.toString(), fv, "AND");
+
+                                                  /* Add it to the list of filters for this query */
+                                                  where_filters.add(qf);
+                                              :}
+                                              | OR ID:field_id OPREL:operand filter:fv add_where
+                                              {:
+                                                  /* Create a new Filter Object */
+                                                  QueryFilter qf = new QueryFilter(field_id.toString(), operand.toString(), fv, "OR");
+
+                                                  /* Add it to the list of filters for this query */
+                                                  where_filters.add(qf);
+                                              :}
                                               |
                                               ;

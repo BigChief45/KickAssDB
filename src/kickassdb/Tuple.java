@@ -30,7 +30,7 @@ public class Tuple
     {
         return tuple_values.get(pos);
     }
-    
+        
     public int getTupleSize()
     {
         return tuple_values.size();
