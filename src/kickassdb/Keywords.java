@@ -22,6 +22,7 @@ public class Keywords
         keywords.add("FROM");       keywords.add("WHERE");
         keywords.add("AND");        keywords.add("OR");
         keywords.add("INT");        keywords.add("VARCHAR");
+        keywords.add("SCHEMA");
         
         /* Add lower cases */
         createLowerCase();

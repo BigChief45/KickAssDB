@@ -48,7 +48,7 @@ action code
 :};
 
 /* Terminals */
-terminal CREATE, TABLE, PRIMARY, KEY, INSERT, INTO, VALUES, NULL, SELECT, FROM, WHERE, AND, OR, COUNT, SUM;
+terminal CREATE, SCHEMA, TABLE, PRIMARY, KEY, INSERT, INTO, VALUES, NULL, SELECT, FROM, WHERE, AND, OR, COUNT, SUM;
 terminal String INT, VARCHAR;
 terminal String PARLEFT, PARRIGHT, SEMICOLON, COMA, ASTERISK, OPREL;
 terminal String ID;
@@ -57,6 +57,7 @@ terminal STR;
 
 /* No Terminals */
 non terminal operation;
+non terminal create_schema;
 non terminal create_table;
 non terminal insert_record;
 non terminal record_values;
@@ -71,7 +72,9 @@ non terminal select, select_tables, select_fields, select_more_fields, where, fi
 start with operation;
 
 /* Grammar */
-operation ::= create_table SEMICOLON operation
+operation ::= create_schema SEMICOLON operation
+              | create_schema
+              | create_table SEMICOLON operation
               | create_table
               | insert_record SEMICOLON operation             
               | insert_record
@@ -80,6 +83,13 @@ operation ::= create_table SEMICOLON operation
               |
               ;
 
+create_schema ::= CREATE SCHEMA ID:schema_id
+                  {:
+                        Schema schema = new Schema(schema_id.toString());
+
+                        MainWindow.saveSchema(schema);
+                  :}
+                  ;
 
 create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT                 
                  {:

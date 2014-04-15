@@ -51,6 +51,7 @@ str = ("\'") ({letter} | {digit} | {space} | {specials} )* ("\'")
 <YYINITIAL>
 {	
 	"CREATE" { return new Symbol(sym.CREATE, yycolumn, yyline, yytext()); }
+        "SCHEMA" { return new Symbol(sym.SCHEMA, yycolumn, yyline, yytext()); }
 	"TABLE" { return new Symbol(sym.TABLE, yycolumn, yyline, yytext()); }
         "PRIMARY" { return new Symbol(sym.PRIMARY, yycolumn, yyline, yytext()); }
         "KEY" { return new Symbol(sym.KEY, yycolumn, yyline, yytext()); }

@@ -226,6 +226,7 @@ public class MainWindow extends javax.swing.JFrame
         outputText = new javax.swing.JTextArea();
         jScrollPane5 = new javax.swing.JScrollPane();
         ResultsPanel = new javax.swing.JPanel();
+        currentSchema_label = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         itemNewSql = new javax.swing.JMenuItem();
@@ -391,6 +392,9 @@ public class MainWindow extends javax.swing.JFrame
 
         ReviewTab.addTab("Result", jScrollPane5);
 
+        currentSchema_label.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        currentSchema_label.setText("Current Schema: Untitled Schema");
+
         jMenu1.setText("File");
 
         itemNewSql.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/SQL_Icon.png"))); // NOI18N
@@ -422,7 +426,10 @@ public class MainWindow extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(queryTabs, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(ReviewTab, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(ReviewTab, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(currentSchema_label)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -432,8 +439,10 @@ public class MainWindow extends javax.swing.JFrame
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(queryTabs, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ReviewTab, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-                .addGap(17, 17, 17))
+                .addComponent(ReviewTab, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                .addGap(3, 3, 3)
+                .addComponent(currentSchema_label, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -650,6 +659,7 @@ public class MainWindow extends javax.swing.JFrame
     private javax.swing.JButton clearOutput;
     private javax.swing.JButton compileCup;
     private javax.swing.JButton compileLexer;
+    private static javax.swing.JLabel currentSchema_label;
     private javax.swing.JButton executeQuery;
     private javax.swing.JMenuItem itemExit;
     private javax.swing.JMenuItem itemNewSql;
@@ -689,10 +699,21 @@ public class MainWindow extends javax.swing.JFrame
         return default_schema;
     }
 
-    /**
-     * @param default_schema the default_schema to set
-     */
-    public void setDefault_schema(Schema default_schema) {
-        this.default_schema = default_schema;
+    public static void setDefault_schema(Schema sc) {
+        default_schema = sc;
+        
+        currentSchema_label.setText("Current Schema: " + default_schema.getName());
+    }
+    
+    public static void saveSchema(Schema schema)
+    {
+        /* Create a folder with the schema name */
+        File folder = new File("src/schemas/" + schema.getName());
+        folder.mkdir();
+        
+        /* Create the Schema File inside the folder */
+        
+        /* Assign Default Schema */
+        setDefault_schema(schema);
     }
 }
