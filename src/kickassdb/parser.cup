@@ -332,9 +332,10 @@ select ::= SELECT select_fields:type FROM select_tables where
                         from_tables.add(schema.getTable(s));                
 
                 Collections.reverse(from_tables);
+                Collections.reverse(field_names);
 
                 /* Check what kind of select statement it is */
-                switch ( (int) type) 
+                switch ( (int) type ) 
                 {
                     case 0:
                         /* SELECT * */
@@ -345,21 +346,21 @@ select ::= SELECT select_fields:type FROM select_tables where
                             new_table = from_tables.get(0); // Only one table
 
                         MainWindow.showQueryOutput(new_table);
-
                         break;
 
                     case 1:
-                        
+                        /* SELECT -fields- */
+                        Operations.selectFields(field_names, from_tables);
                         break;
 
                     case 2:
                         /* SELECT COUNT (*) */
-                        Operations.operationSelect(2, null, from_tables, where_filters);
+                        Operations.selectCount(from_tables);
                         break;
 
                     case 3:
                         /* SELECT SUM() */
-                        Operations.operationSelect(3, field_names, from_tables, where_filters);
+                        Operations.selectSum(field_names, from_tables);
                         break;
                 }
 

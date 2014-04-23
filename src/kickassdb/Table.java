@@ -107,14 +107,7 @@ public class Table
         
         return -1; // Field does not exist in domain
     }
-    
-    //changed here
-    /**
-     * using name to get the type of an attribute
-     * 
-     * @param name
-     * @return type
-     */
+            
     public String getAttType(String name) {
         String type = null;
         for (Attribute attribute : table_domain) {
@@ -172,9 +165,17 @@ public class Table
         
         ArrayList<Attribute> table1_domain = table1.getTable_domain();
         ArrayList<Attribute> table2_domain = table2.getTable_domain();
-        table1_domain.addAll(table2_domain);
+        ArrayList<Attribute> d = new ArrayList();
         
-        crossproduct.setTable_domain(table1_domain);
+        for (Attribute attr : table1_domain) {
+            d.add(attr);
+        }
+        
+        for (Attribute attr : table2_domain) {
+            d.add(attr);
+        }
+                        
+        crossproduct.setTable_domain(d);
         
         for ( Tuple tuple : table1.getTable_tuples() )
         {
