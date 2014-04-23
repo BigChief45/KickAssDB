@@ -16,7 +16,7 @@ public class Table
 
     public Table()
     {
-        
+        table_tuples = new ArrayList<>();
     }
     
     public Table(int ID, String name, ArrayList<Attribute> domain)
@@ -26,7 +26,7 @@ public class Table
         this.table_name = name;
         this.table_domain = domain;        
                 
-        table_tuples = new ArrayList<Tuple>();        
+        table_tuples = new ArrayList<>();        
     
     }
     
@@ -161,37 +161,43 @@ public class Table
         System.out.println("");
     }
     
-    protected static Table mergeTables(ArrayList<Table> tables)
+    public static Table mergeTables(Table table1, Table table2)
     {
         /* Merges the recieved tables into one single table. Merging all the domains
            and data
-        */
-        
-        /* Reverse the array */
-        Collections.reverse(tables);
-        
-        Table new_table = new Table();
-        ArrayList<Attribute> new_domain = new ArrayList<Attribute>();
-        ArrayList<Tuple> new_tuples = new ArrayList<Tuple>();
-        
-        /* Construct the new domain */
-        for ( Table t : tables )
-            for ( Attribute a : t.getTable_domain() )
-                new_domain.add(a);
-               
-        /* Assign created domain to the new table */
-        new_table.setTable_domain(new_domain);
-        
-        /* Find the the maximum number of tuples after the merge */
-        int maxTuples = 1;
-        
-        for ( Table t : tables )
-            maxTuples = maxTuples * t.getTable_tuples().size();
+        */        
         
         /* Merge all the data */
+        Table crossproduct = new Table();
         
-        new_table.setTable_tuples(new_tuples);
+        ArrayList<Attribute> table1_domain = table1.getTable_domain();
+        ArrayList<Attribute> table2_domain = table2.getTable_domain();
+        table1_domain.addAll(table2_domain);
         
-        return new_table;
+        crossproduct.setTable_domain(table1_domain);
+        
+        for ( Tuple tuple : table1.getTable_tuples() )
+        {
+
+            for ( Tuple tuple2 : table2.getTable_tuples() )
+            {
+                Tuple new_tuple = new Tuple();
+
+                for (Value v : tuple.getTuple_values()) {
+                    new_tuple.addValue(v);
+                }
+                
+                for (Value v : tuple2.getTuple_values()) {
+                    new_tuple.addValue(v);
+                }
+                
+                //We add the tuple to the table crossproduct
+                crossproduct.addTuple(new_tuple);                
+                
+            }        
+        }
+                                       
+        return crossproduct;
     }
+
 }

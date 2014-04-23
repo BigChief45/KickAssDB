@@ -4,7 +4,7 @@ import java.io.*;
 import java_cup.runtime.*;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-
+import java.util.Collections;
 
 
 parser code
@@ -331,12 +331,14 @@ select ::= SELECT select_fields:type FROM select_tables where
                     if ( schema.getTable(s) != null )
                         from_tables.add(schema.getTable(s));                
 
+                Collections.reverse(from_tables);
+
                 /* Check what kind of select statement it is */
                 switch ( (int) type) 
                 {
                     case 0:
                         /* SELECT * */                   
-                        Table new_table = Table.mergeTables(from_tables);
+                        Table new_table = Table.mergeTables(from_tables.get(0), from_tables.get(1));
                         MainWindow.showQueryOutput(new_table);
 
                         break;

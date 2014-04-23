@@ -119,8 +119,10 @@ public class MainWindow extends javax.swing.JFrame
     
     protected static void showQueryOutput(Table table)
     {    
-        ResultsPanel.removeAll();
-                                
+        ReviewTab.setSelectedIndex(1);
+        
+        ResultsPanel.removeAll();                                        
+        
         /* Assemble the data from the recieved table */
         String[] columnNames = new String[table.getTable_domain().size()];
         Object[][] data = new Object[table.getTable_tuples().size()][columnNames.length]; 
@@ -156,6 +158,8 @@ public class MainWindow extends javax.swing.JFrame
         ResultsPanel.add(tempTable, BorderLayout.CENTER);
         ResultsPanel.revalidate();
         ResultsPanel.repaint();
+        
+       
                         
     }
       
@@ -655,7 +659,7 @@ public class MainWindow extends javax.swing.JFrame
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JPanel ResultsPanel;
-    private javax.swing.JTabbedPane ReviewTab;
+    private static javax.swing.JTabbedPane ReviewTab;
     private javax.swing.JButton clearOutput;
     private javax.swing.JButton compileCup;
     private javax.swing.JButton compileLexer;
