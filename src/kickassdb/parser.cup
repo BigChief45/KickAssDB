@@ -337,10 +337,19 @@ select ::= SELECT select_fields:type FROM select_tables where
                 switch ( (int) type) 
                 {
                     case 0:
-                        /* SELECT * */                   
-                        Table new_table = Table.mergeTables(from_tables.get(0), from_tables.get(1));
+                        /* SELECT * */
+                        Table new_table = new Table();
+                        if ( from_tables.size() > 1 )
+                            new_table = Table.mergeTables(from_tables.get(0), from_tables.get(1)); // More than 1 table
+                        else
+                            new_table = from_tables.get(0); // Only one table
+
                         MainWindow.showQueryOutput(new_table);
 
+                        break;
+
+                    case 1:
+                        
                         break;
 
                     case 2:

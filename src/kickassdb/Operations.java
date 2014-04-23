@@ -95,4 +95,9 @@ public class Operations
                 break;
         }
     }
+    
+    public static void selectFields()
+    {
+        
+    }
 }
