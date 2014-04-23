@@ -27,7 +27,7 @@ public class Operations
                 /* Calculate the count */
                 for ( Table t : tables )
                 {
-                    if ( has_filters = false )
+                    if ( has_filters == false )
                         count = count * t.getTable_tuples().size(); 
                     else
                     {
@@ -36,8 +36,18 @@ public class Operations
                     }
                 }
 
-                /* Print output */
-                MainWindow.outputText.append("Number of Records: " + count + "\n");
+                /* Prepare output */
+                Table output = new Table();
+                ArrayList<Attribute> output_d = new ArrayList<Attribute>();
+                Attribute output_a = new Attribute("Count", Attribute.Type.INTEGER, 0);
+                output_d.add(output_a);
+                Value output_v = new Value(count);
+                Tuple output_t = new Tuple();
+                output_t.addValue(output_v);
+                output.setTable_domain(output_d);
+                output.addTuple(output_t);
+                
+                MainWindow.showQueryOutput(output);
 
                 break;
             
@@ -69,8 +79,19 @@ public class Operations
                    sum = sum + ( Integer.parseInt(tuple.getValue(field_position).getValue().toString()) );
                     
                 
-                /* Print output */
-                MainWindow.outputText.append("Sum: " + sum + "\n");
+                /* Prepare output */
+                output = new Table();
+                output_d = new ArrayList<Attribute>();
+                output_a = new Attribute("Sum", Attribute.Type.INTEGER, 0);
+                output_d.add(output_a);
+                output_v = new Value(sum);
+                output_t = new Tuple();
+                output_t.addValue(output_v);
+                output.setTable_domain(output_d);
+                output.addTuple(output_t);
+                
+                MainWindow.showQueryOutput(output);
+                
                 break;
         }
     }

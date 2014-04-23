@@ -1,1 +1,1 @@
-SELECT * FROM Vehicle
+SELECT Sum(person_id) FROM Person
