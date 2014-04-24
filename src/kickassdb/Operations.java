@@ -35,62 +35,71 @@ public class Operations
     }
     
     public static void selectSum(ArrayList<String> field_names, ArrayList<Table> tables)            
-    {
-        int sum = 0;
+    {                
+        /* Check how many fields where specified for the SUM */
+        if ( field_names.size() > 1 )
+        {
+            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "SUM() operation can only contain one argument", "Error", JOptionPane.ERROR_MESSAGE);                                         
+            return;
+        }
                 
+        Table query_table = new Table();
+        int sum = 0;
+        
         /* Check how many tables are in the query */
         if ( tables.size() == 1 )
         {
-            Table query_table = tables.get(0);
-                        
-            /* Check how many fields where specified for the SUM */
-            if ( field_names.size() > 1 )
-            {
-                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "SUM() operation can only contain one argument", "Error", JOptionPane.ERROR_MESSAGE);                                         
-                return;
-            }
-
-            /* Get the field to perform the SUM, since SUM only operates with one
-               field, we can extract it directly from the arraylist */
-            String field = field_names.get(0);
-            int field_position = query_table.getFieldPosition(field);
-
-            /* Check if the attribute exists in the table domain */
-            if ( field_position == -1 )
-            {
-                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Attribute does not exist in the table domain", "Error", JOptionPane.ERROR_MESSAGE);                                         
-                return;
-            }
-
-            /* Check the attribute type for this field, only INTS are accepted for this SUM function */
-            Attribute this_attribute;
-            this_attribute = query_table.getTable_domain().get(field_position);
-            
-            if ( this_attribute.getType() != Attribute.Type.INTEGER )
-            {
-                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "SUM function can only recieve an INT type field", "Error", JOptionPane.ERROR_MESSAGE);                                         
-                return;
-            }
-
-            /* Loop through this column obtaining the total sum */
-            for ( Tuple tuple : query_table.getTable_tuples() )                
-               sum = sum + ( Integer.parseInt(tuple.getValue(field_position).getValue().toString()) );
-
-            /* Prepare output */
-            Table output = new Table();
-            ArrayList<Attribute> output_d = new ArrayList<Attribute>();
-            Attribute output_a = new Attribute("Sum", Attribute.Type.INTEGER, 0);
-            output_d.add(output_a);
-            Value output_v = new Value(sum);
-            Tuple output_t = new Tuple();
-            output_t.addValue(output_v);
-            output.setTable_domain(output_d);
-            output.addTuple(output_t);
-
-            System.out.println("");
-            
-            MainWindow.showQueryOutput(output);
+            query_table = tables.get(0); // Only one table
         }
+        else if ( tables.size() == 2 )
+        {
+            Table table1 = tables.get(0);
+            Table table2 = tables.get(1);
+                                                
+            /* Merge both tables */
+            query_table = Table.mergeTables(table1, table2);
+        }
+        
+        /* Get the field to perform the SUM, since SUM only operates with one
+           field, we can extract it directly from the arraylist */
+        String field = field_names.get(0);
+        int field_position = query_table.getFieldPosition(field);
+
+        /* Check if the attribute exists in the table domain */
+        if ( field_position == -1 )
+        {
+            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Attribute does not exist in the table domain", "Error", JOptionPane.ERROR_MESSAGE);                                         
+            return;
+        }
+
+        /* Check the attribute type for this field, only INTS are accepted for this SUM function */
+        Attribute this_attribute;
+        this_attribute = query_table.getTable_domain().get(field_position);
+
+        if ( this_attribute.getType() != Attribute.Type.INTEGER )
+        {
+            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "SUM function can only recieve an INT type field", "Error", JOptionPane.ERROR_MESSAGE);                                         
+            return;
+        }
+
+        /* Loop through this column obtaining the total sum */
+        for ( Tuple tuple : query_table.getTable_tuples() )                
+           sum = sum + ( Integer.parseInt(tuple.getValue(field_position).getValue().toString()) );
+
+        /* Prepare output */
+        Table output = new Table();
+        ArrayList<Attribute> output_d = new ArrayList<Attribute>();
+        Attribute output_a = new Attribute("Sum", Attribute.Type.INTEGER, 0);
+        output_d.add(output_a);
+        Value output_v = new Value(sum);
+        Tuple output_t = new Tuple();
+        output_t.addValue(output_v);
+        output.setTable_domain(output_d);
+        output.addTuple(output_t);
+
+        MainWindow.showQueryOutput(output);
+        
+        
     }
     
     public static void selectFields(ArrayList<String> field_names, ArrayList<Table> tables)
