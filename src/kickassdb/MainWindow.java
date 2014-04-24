@@ -478,21 +478,15 @@ public class MainWindow extends javax.swing.JFrame
         /* Call the Parser */
         try
         {
-            /* Lexer lexer = new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath()));                        
-            while (!lexer.next_token().value.equals("End of File.")){                            
-                this.tempLexerText += lexer.yytext() + "\n";                
-            } */
-            
             parser p = new parser(new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath())));
             p.parse();
             
-            this.outputText.append(this.parserResult);
-            
+            this.outputText.append(this.parserResult);            
         }
-
         catch(Exception e)
         {
             System.err.println(e.getMessage());
+            outputText.append("Query stopped.");
         }                
         
     }//GEN-LAST:event_executeQueryActionPerformed

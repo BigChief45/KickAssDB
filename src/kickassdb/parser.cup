@@ -324,6 +324,13 @@ select ::= SELECT select_fields:type FROM select_tables where
                 /* Get the current default schema */
                 Schema schema = KickAssDB.mainwindow.getDefault_schema();
 
+                /* Check if there are more than 2 tables in the query */
+                if ( table_names.size() > 2 )
+                {
+                    JOptionPane.showMessageDialog(KickAssDB.mainwindow, "FROM statement can only have a maximum of two tables.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return null;
+                }
+
                 /* Get Table Objects using the recieved table names in the FROM statement */
                 ArrayList<Table> from_tables = new ArrayList<Table>();
 

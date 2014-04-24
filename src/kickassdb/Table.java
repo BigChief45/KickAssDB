@@ -33,7 +33,10 @@ public class Table
     public void addTuple(Tuple tuple)
     {
         table_tuples.add(tuple);
-        MainWindow.outputText.append("New record added to " + table_name + " \n");
+        
+        /* Check if it is a real table or temporary table (query relation) */
+        if ( table_name != null )
+            MainWindow.outputText.append("New record added to " + table_name + " \n");
     }
     
     public Tuple getTuple(int pos) 
