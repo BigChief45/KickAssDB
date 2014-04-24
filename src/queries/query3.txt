@@ -1,1 +1,1 @@
-SELECT last_name FROM Person
+SELECT * FROM Person
