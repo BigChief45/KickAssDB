@@ -87,6 +87,8 @@ public class Operations
             output.setTable_domain(output_d);
             output.addTuple(output_t);
 
+            System.out.println("");
+            
             MainWindow.showQueryOutput(output);
         }
     }
