@@ -357,7 +357,7 @@ select ::= SELECT select_fields:type FROM select_tables where
 
                     case 1:
                         /* SELECT -fields- */
-                        Operations.selectFields(field_names, from_tables);
+                        Operations.selectFields(field_names, from_tables, where_filters);
                         break;
 
                     case 2:

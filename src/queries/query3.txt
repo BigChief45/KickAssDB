@@ -1,1 +1,2 @@
-SELECT * FROM Person
+SELECT person_id, person_name, model FROM Person
+WHERE person_id <> 2

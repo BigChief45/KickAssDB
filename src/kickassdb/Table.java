@@ -123,6 +123,19 @@ public class Table
         return null;
     }
     
+    public Attribute getAttributeByName(String name) {
+
+        for (Attribute attribute : table_domain) {
+            
+            if (attribute.getAttribute_name().equals(name))
+                return attribute;
+            
+        }//End for (Attribute attribute : table_domain)
+        
+        return null;
+        
+    }//End public Attribute getAttributeByName(String name)
+    
     public void printDomain()
     {
     

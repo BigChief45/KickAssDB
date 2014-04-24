@@ -102,7 +102,7 @@ public class Operations
         
     }
     
-    public static void selectFields(ArrayList<String> field_names, ArrayList<Table> tables)
+    public static void selectFields(ArrayList<String> field_names, ArrayList<Table> tables, ArrayList<QueryFilter> filters)
     {
         // Result table
         Table new_table = new Table();
@@ -111,7 +111,11 @@ public class Operations
         if ( tables.size() == 1 )
         {                       
             Table table1 = tables.get(0);
-                        
+            
+            /* Apply filters before selecting, if there are any */
+            if ( filters.size() > 0 )
+                table1 = QueryFilter.filterTable(table1, filters);
+                                    
             /* Get the domain for the table */
             ArrayList<Attribute> d = new ArrayList<Attribute>();
         
@@ -145,7 +149,7 @@ public class Operations
                     temp_Tuple.addValue(t.getValue(currentIndex));                    
                 }                
                 new_table.addTuple(temp_Tuple);                
-            }                                    
+            }                        
         }
         else if ( tables.size() == 2)
         {
@@ -208,7 +212,7 @@ public class Operations
             JOptionPane.showMessageDialog(KickAssDB.mainwindow, "FROM Clause cannot contain more than two tables.", "Error", JOptionPane.ERROR_MESSAGE);                                         
             return;
         }
-        
+                              
         /* Output the query */
         new_table.printTuples();
         MainWindow.showQueryOutput(new_table);
