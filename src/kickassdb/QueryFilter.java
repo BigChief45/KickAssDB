@@ -2,7 +2,7 @@ package kickassdb;
 
 import java.util.ArrayList;
 
-public class QueryFilter 
+public class QueryFilter
 {
     /* This class describes a WHERE query filter, specifying the field name
        operation, and filter contraint in a single object to be used later.
@@ -152,12 +152,24 @@ public class QueryFilter
         }
         else if ( filters.size() == 2 )
         {
+         
+            //First we will get the indexes of the columns which are part of the where clause
+            QueryFilter filter1 = filters.get(0);
+            QueryFilter filter2 = filters.get(1);
+            
+            
             
         }
         
         return new_table;              
     }
 
+   public Tuple getContainedTuple() {
+   
+       return new Tuple();
+   
+   }
+    
     /**
      * @return the field_name
      */
