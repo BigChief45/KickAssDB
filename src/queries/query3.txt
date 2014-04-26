@@ -1,2 +1,2 @@
-SELECT person_id, person_name, model FROM Person
-WHERE person_id <> 2
+SELECT * FROM Person, Vehicle
+WHERE person_id = 3 OR person_id = 1

@@ -6,24 +6,25 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import java.util.Collections;
 
-
 parser code
 {:             
      public static void main(String args[]) throws Exception
-        {
+     {
           //new parser(new Lexer(new FileInputStream(args[0]))).parse();
           new parser(new Lexer(System.in)).parse();               
      }
 
      public void syntax_error(Symbol s)
-        {
-          //report_error("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"", null);
-                KickAssDB.mainwindow.parserResult = "Syntax Error. Line: " + (s.right + 1) + " Column: " + s.left + ". Text: \"" + s.value + "\"" + "\n";
+     {
+         //report_error("Error de sintaxis. Linea: " + (s.right + 1) + " Columna: " + s.left + ". Texto: \"" + s.value + "\"", null);
+         MainWindow.ReviewTab.setSelectedIndex(0);
+         KickAssDB.mainwindow.parserResult = "Syntax Error. Line: " + (s.right + 1) + " Column: " + s.left + ". Text: \"" + s.value + "\"" + "\n";         
      }
 
      public void unrecovered_syntax_error(Symbol s)
-        {               
-                KickAssDB.mainwindow.parserResult = "Fatal Syntax Error. Line: " + (s.right + 1) + " Column: " + s.left + ". Text: \"" + s.value + "\"" + "\n";               
+     {               
+        MainWindow.ReviewTab.setSelectedIndex(0); 
+        KickAssDB.mainwindow.parserResult = "Fatal Syntax Error. Line: " + (s.right + 1) + " Column: " + s.left + ". Text: \"" + s.value + "\"" + "\n";        
      }
 :}
 
@@ -31,26 +32,39 @@ action code
 {:
     private static final int max_varchar_size = 40;
 
-    private static ArrayList<Attribute> domain_temp = new ArrayList<Attribute>();
-    private static ArrayList<Attribute> primaryKey_temp = new ArrayList<Attribute>();
-    private static Tuple temp_tuple = new Tuple();
-    private static Attribute temp_pk = null;
-    private static int pk_count = 0;
-    private static ArrayList<String> attName = new ArrayList<String>();
-    private static ArrayList<String> valType = new ArrayList<String>();
-    private static int current_attribute_size = 0;
+    private ArrayList<Attribute> domain_temp = new ArrayList<Attribute>();
+    private ArrayList<Attribute> primaryKey_temp = new ArrayList<Attribute>();
+    private Tuple temp_tuple = new Tuple();
+    private Attribute temp_pk = null;
+    private int pk_count = 0;
+    private ArrayList<String> attName = new ArrayList<String>();
+    private ArrayList<String> valType = new ArrayList<String>();
+    private int current_attribute_size = 0;
    
     /* SELECT OPERATIONS */
-    private static ArrayList<String> table_names = new ArrayList<String>();
-    private static ArrayList<String> field_names = new ArrayList<String>();
-    private static ArrayList<QueryFilter> where_filters = new ArrayList<QueryFilter>();
+    private ArrayList<String> table_names = new ArrayList<String>();    
+    private ArrayList<String> field_names = new ArrayList<String>();
+    private ArrayList<String> field_aliases = new ArrayList<String>();
+    private ArrayList<QueryFilter> where_filters = new ArrayList<QueryFilter>();
+
+
+    private void resetGlobals()
+    {
+        /* This method will reset all the global variables that need to be reset
+           when called */
+
+        table_names = new ArrayList<String>();
+        field_names = new ArrayList<String>();
+        field_aliases = new ArrayList<String>();
+        where_filters = new ArrayList<QueryFilter>();
+    }
 
 :};
 
 /* Terminals */
-terminal CREATE, SCHEMA, TABLE, PRIMARY, KEY, INSERT, INTO, VALUES, NULL, SELECT, FROM, WHERE, AND, OR, COUNT, SUM;
+terminal CREATE, SCHEMA, TABLE, PRIMARY, KEY, INSERT, INTO, VALUES, NULL, SELECT, FROM, WHERE, AND, OR, COUNT, SUM, AS;
 terminal String INT, VARCHAR;
-terminal String PARLEFT, PARRIGHT, SEMICOLON, COMA, ASTERISK, OPREL;
+terminal String PARLEFT, PARRIGHT, SEMICOLON, COMA, ASTERISK, OPREL, POINT;
 terminal String ID;
 terminal NUM;
 terminal STR;
@@ -320,14 +334,27 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
 
 
 select ::= SELECT select_fields:type FROM select_tables where
-           {:           
+           {:                           
                 /* Get the current default schema */
                 Schema schema = KickAssDB.mainwindow.getDefault_schema();
+
+                /* Validate that the field aliases used DO exist on the schema */
+                Collections.reverse(field_aliases);
+                boolean aliases_exist = schema.validateAliases(field_aliases);
+
+                if ( aliases_exist == false )
+                {
+                    /* One or more aliases Do not exist, display error */
+                    JOptionPane.showMessageDialog(KickAssDB.mainwindow, "One or more aliases specified do not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                    resetGlobals();
+                    return null;
+                }
 
                 /* Check if there are more than 2 tables in the query */
                 if ( table_names.size() > 2 )
                 {
                     JOptionPane.showMessageDialog(KickAssDB.mainwindow, "FROM statement can only have a maximum of two tables.", "Error", JOptionPane.ERROR_MESSAGE);
+                    resetGlobals();
                     return null;
                 }
 
@@ -346,13 +373,7 @@ select ::= SELECT select_fields:type FROM select_tables where
                 {
                     case 0:
                         /* SELECT * */
-                        Table new_table = new Table();
-                        if ( from_tables.size() > 1 )
-                            new_table = Table.mergeTables(from_tables.get(0), from_tables.get(1)); // More than 1 table
-                        else
-                            new_table = from_tables.get(0); // Only one table
-
-                        MainWindow.showQueryOutput(new_table);
+                        Operations.selectAll(from_tables, where_filters);
                         break;
 
                     case 1:
@@ -372,9 +393,7 @@ select ::= SELECT select_fields:type FROM select_tables where
                 }
 
                 /* Reset ArrayLists Names */
-                table_names = new ArrayList<String>();
-                field_names = new ArrayList<String>();
-                where_filters = new ArrayList<QueryFilter>();
+                resetGlobals();
                 
            :}
            ;
@@ -392,6 +411,28 @@ select ::= SELECT select_fields:type FROM select_tables where
                              {: 
                                  field_names.add(field_id);
                                  RESULT = 1; 
+                             :}
+                             | ID:table_alias POINT ID:field_id COMA select_more_fields
+                             {:
+                                 /* With Alias */
+                                 field_names.add(field_id);
+
+                                 /* Add this alias to the list, to validate later */
+                                 field_aliases.add(table_alias.toString());
+
+                                 RESULT = 1;
+                                 
+                             :}
+                             | ID:table_alias POINT ID:field_id
+                             {:
+                                 /* With Alias */
+                                 field_names.add(field_id);
+
+                                 /* Add this alias to the list, to validate later */
+                                 field_aliases.add(table_alias.toString());
+
+                                 RESULT = 1;
+                                 
                              :}
                              | COUNT PARLEFT ASTERISK PARRIGHT 
                              {: 
@@ -411,7 +452,17 @@ select ::= SELECT select_fields:type FROM select_tables where
                                                     | ID:field_id
                                                     {:
                                                         field_names.add(field_id);
-                                                    :}    
+                                                    :}
+                                                    | ID:table_alias POINT ID:field_id COMA select_more_fields
+                                                    {:
+                                                        field_names.add(field_id);
+                                                        field_aliases.add(table_alias);
+                                                    :}
+                                                    | ID:table_alias POINT ID:field_id
+                                                    {:
+                                                        field_names.add(field_id);
+                                                        field_aliases.add(table_alias);
+                                                    :}
                                                     ;
 
            select_tables ::= ID:table_name COMA select_tables
@@ -421,6 +472,26 @@ select ::= SELECT select_fields:type FROM select_tables where
                              | ID:table_name
                              {:
                                  table_names.add(table_name.toString());
+                             :}
+                             | ID:table_name AS ID:alias_name COMA select_tables
+                             {:
+                                 /* With Alias */
+                                 table_names.add(table_name.toString());
+
+                                 /* Add this alias to the table specified in the query */
+                                 Schema df_schema = MainWindow.getDefaultSchema();  // Get current Schema
+                                 Table query_table = df_schema.getTable(table_name.toString()); // Get Table Object
+                                 query_table.setTable_alias(alias_name.toString()); // Set this alias to this table                                 
+                             :}                                                          
+                             | ID:table_name AS ID:alias_name
+                             {:
+                                 /* With Alias */
+                                 table_names.add(table_name.toString());
+
+                                 /* Add this alias to the table specified in the query */
+                                 Schema df_schema = MainWindow.getDefaultSchema();  // Get current Schema
+                                 Table query_table = df_schema.getTable(table_name.toString()); // Get Table Object
+                                 query_table.setTable_alias(alias_name.toString()); // Set this alias to this table
                              :}
                              ;
 

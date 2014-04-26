@@ -651,7 +651,7 @@ public class MainWindow extends javax.swing.JFrame
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JPanel ResultsPanel;
-    private static javax.swing.JTabbedPane ReviewTab;
+    protected static javax.swing.JTabbedPane ReviewTab;
     private javax.swing.JButton clearOutput;
     private javax.swing.JButton compileCup;
     private javax.swing.JButton compileLexer;

@@ -22,7 +22,7 @@ public class Keywords
         keywords.add("FROM");       keywords.add("WHERE");
         keywords.add("AND");        keywords.add("OR");
         keywords.add("INT");        keywords.add("VARCHAR");
-        keywords.add("SCHEMA");
+        keywords.add("SCHEMA");     keywords.add("AS");
         
         /* Add lower cases */
         createLowerCase();

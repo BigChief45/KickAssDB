@@ -69,4 +69,24 @@ public class Schema
        
        return null;
    }
+   
+    public boolean aliasExists(String alias)
+    {
+        /* Loops through all the tables in the Schema and checks if this
+           alias exists in one of them */                
+        for (Table t : schema)        
+            if ( t.getTable_alias().equals(alias))
+                return true;
+        
+        return false;
+    }
+    
+    public boolean validateAliases(ArrayList<String> aliases)
+    {
+        for ( String s : aliases )
+            if ( aliasExists(s) == false )
+                return false;
+        
+        return true;
+    }
 }

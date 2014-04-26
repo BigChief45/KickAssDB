@@ -217,4 +217,36 @@ public class Operations
         new_table.printTuples();
         MainWindow.showQueryOutput(new_table);
     }
+    
+    public static void selectAll(ArrayList<Table> tables, ArrayList<QueryFilter> filters)
+    {
+        Table new_table = new Table();
+        
+        if ( tables.size() > 1 )
+        {
+            Table table1, table2;
+            table1 = tables.get(0);
+            table2 = tables.get(1);
+            
+            new_table = Table.mergeTables(table1, table2); // More than 1 table
+            
+            //If we have filters we apply them
+            if ( filters.size() > 0 )
+                new_table = QueryFilter.filterTable(new_table, filters);
+                        
+        }
+        else
+        {            
+            new_table = tables.get(0); // Only one table
+                        
+            //If we have filters we apply them
+            if ( filters.size() > 0 )
+                new_table = QueryFilter.filterTable(new_table, filters);
+            
+        }
+        
+        /* Display output */
+        MainWindow.showQueryOutput(new_table);
+        
+    }
 }

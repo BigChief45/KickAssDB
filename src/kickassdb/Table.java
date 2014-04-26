@@ -8,6 +8,7 @@ public class Table
  
     private int table_id;
     private String table_name;
+    private String table_alias;
     
     private Attribute primary_key;    
     private ArrayList<Attribute> table_domain;
@@ -17,6 +18,7 @@ public class Table
     public Table()
     {
         table_tuples = new ArrayList<>();
+        table_alias = "";
     }
     
     public Table(int ID, String name, ArrayList<Attribute> domain)
@@ -27,6 +29,7 @@ public class Table
         this.table_domain = domain;        
                 
         table_tuples = new ArrayList<>();        
+        table_alias = "";
     
     }
     
@@ -52,6 +55,16 @@ public class Table
     public void setTable_id(int table_id) 
     {
         this.table_id = table_id;
+    }
+    
+    public String getTable_alias() 
+    {
+        return table_alias;
+    }
+
+    public void setTable_alias(String alias) 
+    {
+        table_alias = alias;
     }
 
     public String getTable_name() 
@@ -216,5 +229,5 @@ public class Table
                                        
         return crossproduct;
     }
-
+    
 }

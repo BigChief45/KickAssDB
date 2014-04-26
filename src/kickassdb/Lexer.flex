@@ -21,9 +21,10 @@ letter = [a-zA-z]
 digit = [0-9]
 space = \t | \f | " " | \r | \n
 specials = "!" | "?" | "." | "-"
+point = "."
 
 // Delimiters 
-op_rel = "=" | "<>" | "<" | "<=" | ">" | ">="
+op_rel = "=" | "<>" | "<" | ">"
 //op_sum = "+" | "-"
 //op_mult = "*" | "/"
 parenthesis_left = "("
@@ -66,6 +67,7 @@ str = ("\'") ({letter} | {digit} | {space} | {specials} )* ("\'")
         "OR" { return new Symbol(sym.OR, yycolumn, yyline, yytext()); }
         "COUNT" { return new Symbol(sym.COUNT, yycolumn, yyline, yytext()); }
         "SUM" { return new Symbol(sym.SUM, yycolumn, yyline, yytext()); }
+        "AS" { return new Symbol(sym.AS, yycolumn, yyline, yytext()); }
 
 
         "int" { return new Symbol(sym.INT, yycolumn, yyline, yytext()); }
@@ -76,6 +78,7 @@ str = ("\'") ({letter} | {digit} | {space} | {specials} )* ("\'")
 	{semicolon} { return new Symbol(sym.SEMICOLON, yycolumn, yyline, yytext()); }
 	{coma} { return new Symbol(sym.COMA, yycolumn, yyline, yytext()); }	
         {op_rel} { return new Symbol(sym.OPREL, yycolumn, yyline, yytext()); }
+        {point} { return new Symbol(sym.POINT, yycolumn, yyline, yytext()); }
 
         {str} { return new Symbol(sym.STR, yycolumn, yyline, yytext().replaceAll("'", "")); }
 		

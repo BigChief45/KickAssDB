@@ -66,109 +66,161 @@ public class QueryFilter
         /* Check quantity of filters */
         if ( filters.size() == 1 )
         {
-            QueryFilter filter = filters.get(0);
-            
-            String f_name = filter.getFieldName();
-            String operator = filter.getOperand();
-            Object filter_value = filter.getFilter_value();
+            QueryFilter filter = filters.get(0);            
                        
             /* Loop through the whole table and check the tuples */
             for ( Tuple tuple : table.getTable_tuples() )
             {               
-                int index = table.getFieldPosition(f_name);
-                // Now we get the value in the position of the tuple
-                Value val = tuple.getValue(index);                
-
-                //Integers
-                int num = 0, numFilterValue = 0;
-                //Strings
-                String stringValue = val.getValue().toString();
+                              
+                Tuple tempTuple = getApplyingTuple(table, tuple, filter);
                 
-                if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
-                {                                                        
-                    
-                    String tempVal = val.getValue().toString();
-                    num = Integer.parseInt(tempVal);
-                   
-                    String tempFilterValue = filter_value.toString();
-                    numFilterValue = Integer.parseInt(tempFilterValue);
-                                                                                   
-                }                
+                if (tempTuple != null)
+                    new_table.addTuple(tuple);
                 
-                switch (operator) 
-                {                    
-                    case "=":                       
-                        if ( Attribute.Type.VARCHAR == table.getAttributeByName(f_name).getType() )
-                        {                                                        
-                            if (stringValue.equals(filter_value.toString()))
-                                new_table.addTuple(tuple);                            
-                        }
-                        else if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
-                        {                   
-
-                            if (num == numFilterValue)
-                                new_table.addTuple(tuple);                                        
-                        }                
-                        break;
-
-                    case "<>":
-                        if ( Attribute.Type.VARCHAR == table.getAttributeByName(f_name).getType() )
-                        {                            
-                            if (!stringValue.equals(filter_value.toString()))
-                                new_table.addTuple(tuple);                            
-                        }
-                        else if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
-                        {                    
-                            
-                            if ((num < numFilterValue) || (num > numFilterValue))
-                                new_table.addTuple(tuple);                                        
-                        }       
-                        break;
-                        
-                    case ">":      
-                        if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
-                        {                    
-                            
-                            if (num > numFilterValue)
-                                new_table.addTuple(tuple);                                        
-                        }                 
-                        break;
-
-                    case "<":
-                        if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
-                        {                                              
-                                                       
-                            if (num < numFilterValue)
-                                new_table.addTuple(tuple);
-                            
-                        }                         
-                        break;                      
-                        
-                    default:
-                        break;
-                        
-                } // End switch (operator) 
-            }
-        }
+            }//End for ( Tuple tuple : table.getTable_tuples() )
+            
+        }//End if ( filters.size() == 1 )
         else if ( filters.size() == 2 )
         {
          
             //First we will get the indexes of the columns which are part of the where clause
             QueryFilter filter1 = filters.get(0);
-            QueryFilter filter2 = filters.get(1);
+            QueryFilter filter2 = filters.get(1);                                  
             
+            /* Loop through the whole table and check the tuples */
+            for ( Tuple tuple : table.getTable_tuples() )
+            {               
+                              
+                Tuple tempTuple = getApplyingTuple(table, tuple, filter1);
+                
+                switch (filter1.getBool_value()) {
+                    case "OR":
+                        if (tempTuple != null)
+                            new_table.addTuple(tempTuple);
+                        else{
+                            
+                            tempTuple = getApplyingTuple(table, tuple, filter2);
+                            
+                            if (tempTuple != null)
+                                new_table.addTuple(tempTuple);
+                            
+                        }//End else
+                        break;                        
+                        
+                    case "AND":
+                        if (tempTuple != null){
+                        
+                            tempTuple = getApplyingTuple(table, tuple, filter2);
+                            
+                            if (tempTuple != null)
+                                new_table.addTuple(tempTuple);
+                        
+                        }//End if (tempTuple != null)
+                        break;
+                        
+                    default:
+                        break;
+                        
+                }//End switch (filter1.getBool_value())                
+                
+            }//End for ( Tuple tuple : table.getTable_tuples() )            
             
-            
-        }
+        }//End else if ( filters.size() == 2 )
         
         return new_table;              
     }
+    
+    public static Tuple getApplyingTuple(Table table, Tuple tuple, QueryFilter filter){
+    
+        Tuple new_tuple = null;
+        
+        String f_name = filter.getFieldName();
+        String operator = filter.getOperand();
+        Object filter_value = filter.getFilter_value();
+        
+        int index = table.getFieldPosition(f_name);
+        // Now we get the value in the position of the tuple
+        Value val = tuple.getValue(index);                
 
-   public Tuple getContainedTuple() {
+        //Integers
+        int num = 0, numFilterValue = 0;
+        //Strings
+        String stringValue = val.getValue().toString();
+
+        if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
+        {                                                        
+
+            String tempVal = val.getValue().toString();
+            num = Integer.parseInt(tempVal);
+
+            String tempFilterValue = filter_value.toString();
+            numFilterValue = Integer.parseInt(tempFilterValue);
+
+        }//End if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
+
+        switch (operator) 
+        {                    
+            case "=":                       
+                if ( Attribute.Type.VARCHAR == table.getAttributeByName(f_name).getType() )
+                {                                                        
+                    if (stringValue.equals(filter_value.toString()))
+                        new_tuple = tuple;                          
+                }
+                else if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
+                {                   
+
+                    if (num == numFilterValue)
+                        new_tuple =  tuple;                                       
+                }
+                break;
+
+            case "<>":
+                if ( Attribute.Type.VARCHAR == table.getAttributeByName(f_name).getType() )
+                {                            
+                    if (!stringValue.equals(filter_value.toString()))
+                        new_tuple = tuple;                          
+                }
+                else if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
+                {                    
+
+                    if ((num < numFilterValue) || (num > numFilterValue))
+                        new_tuple = tuple;                                    
+                }       
+                break;
+
+            case ">":      
+                if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
+                {                    
+
+                    if (num > numFilterValue)
+                        new_tuple = tuple;                                       
+                }                 
+                break;
+
+            case "<":
+                if ( Attribute.Type.INTEGER == table.getAttributeByName(f_name).getType() )
+                {                                              
+
+                    if (num < numFilterValue)
+                        new_tuple = tuple;
+
+                }                         
+                break;                      
+
+            default:
+                break;
+
+        }// End switch (operator)        
+        
+        return new_tuple;
+        
+    }//End public Tuple getApplyingTuples()
+
+    public Tuple getContainedTuple() {
    
-       return new Tuple();
+        return new Tuple();
    
-   }
+    }
     
     /**
      * @return the field_name
