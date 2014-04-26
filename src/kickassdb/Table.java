@@ -8,7 +8,7 @@ public class Table
  
     private int table_id;
     private String table_name;
-    private String table_alias;
+    private Alias table_alias;
     
     private Attribute primary_key;    
     private ArrayList<Attribute> table_domain;
@@ -18,7 +18,7 @@ public class Table
     public Table()
     {
         table_tuples = new ArrayList<>();
-        table_alias = "";
+        table_alias = new Alias();
     }
     
     public Table(int ID, String name, ArrayList<Attribute> domain)
@@ -29,7 +29,7 @@ public class Table
         this.table_domain = domain;        
                 
         table_tuples = new ArrayList<>();        
-        table_alias = "";
+        table_alias = new Alias();
     
     }
     
@@ -57,12 +57,12 @@ public class Table
         this.table_id = table_id;
     }
     
-    public String getTable_alias() 
+    public Alias getTable_alias() 
     {
         return table_alias;
-    }
+    }    
 
-    public void setTable_alias(String alias) 
+    public void setTable_alias(Alias alias) 
     {
         table_alias = alias;
     }

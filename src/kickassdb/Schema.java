@@ -75,7 +75,7 @@ public class Schema
         /* Loops through all the tables in the Schema and checks if this
            alias exists in one of them */                
         for (Table t : schema)        
-            if ( t.getTable_alias().equals(alias))
+            if ( t.getTable_alias().getName().equals(alias))
                 return true;
         
         return false;
@@ -84,7 +84,7 @@ public class Schema
     public boolean validateAliases(ArrayList<String> aliases)
     {
         for ( String s : aliases )
-            if ( aliasExists(s) == false )
+            if ( (!s.equals("")) && (aliasExists(s) == false)  )
                 return false;
         
         return true;

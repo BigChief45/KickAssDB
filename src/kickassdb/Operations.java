@@ -34,6 +34,28 @@ public class Operations
         MainWindow.showQueryOutput(output);
     }
     
+    public static void selectCount(ArrayList<String> fields, ArrayList<Table> tables)
+    {
+        String field = fields.get(0);
+        int count = 1;
+        
+        /* Calculate the count */
+        
+
+        /* Prepare output */
+        Table output = new Table();
+        ArrayList<Attribute> output_d = new ArrayList<Attribute>();
+        Attribute output_a = new Attribute("Count", Attribute.Type.INTEGER, 0);
+        output_d.add(output_a);
+        Value output_v = new Value(count);
+        Tuple output_t = new Tuple();
+        output_t.addValue(output_v);
+        output.setTable_domain(output_d);
+        output.addTuple(output_t);
+
+        MainWindow.showQueryOutput(output);
+    }
+    
     public static void selectSum(ArrayList<String> field_names, ArrayList<Table> tables)            
     {                
         /* Check how many fields where specified for the SUM */
@@ -102,8 +124,29 @@ public class Operations
         
     }
     
-    public static void selectFields(ArrayList<String> field_names, ArrayList<Table> tables, ArrayList<QueryFilter> filters)
-    {
+    public static void selectFields(ArrayList<String> field_names, ArrayList<Table> tables, ArrayList<QueryFilter> filters, ArrayList<String> aliases)
+    {        
+        /* First check if the fields exist on the tables */
+        int i = 0; // Table counter iterator
+        for ( String f : field_names )
+        {            
+            i = 0;
+            for ( Table t : tables )
+            {
+                if ( Validations.isFieldInDomain(f, t) == true )                                    
+                    break;
+                else
+                    i++;
+               
+                if ( i == tables.size() )
+                {
+                    /* Looped through all tables without finding the field */
+                    JOptionPane.showMessageDialog(KickAssDB.mainwindow, "One of the selected fields does not exist in any of the table's domain.", "Error", JOptionPane.ERROR_MESSAGE);                                         
+                    return;
+                }                
+            }
+        }
+
         // Result table
         Table new_table = new Table();
         
@@ -156,8 +199,21 @@ public class Operations
             Table t1 = tables.get(0);
             Table t2 = tables.get(1);
             
-            Table table1 = Table.mergeTables(t1, t2);
-                        
+            /* Check if fields are ambiguous */
+            i = 0;
+            for ( String f : field_names )
+            {
+                if ( (Validations.isFieldAmbiguous(f, t1, t2) == true) && (aliases.get(i).equals("")) )
+                {
+                    /* There is ambiguity */
+                    JOptionPane.showMessageDialog(KickAssDB.mainwindow, "There is ambiguity with one or more of the selected fields. Please use table aliases to indicate which fields from which tables to select.", "Error", JOptionPane.ERROR_MESSAGE);                                         
+                    return;
+                }
+                i++;
+            }
+            
+            Table mergedTable = Table.mergeTables(t1, t2);                      
+            
             /* Get the domain for the table */
             ArrayList<Attribute> d = new ArrayList<Attribute>();
             
@@ -173,25 +229,69 @@ public class Operations
             /* We'll get the indexes of the requested attributes */
             ArrayList indexes = new ArrayList();
             
+            //To match the aliases with the correct table we add a counter for it
+            int counterAliases = 0;
+            int counterFieldNames = 0; 
+            
             for (Attribute attr : t1.getTable_domain()) 
             {                
                 // If the find attribute is contained inside field_names then we add the index to indexes
-                if ( field_names.contains(attr.getAttribute_name()) )                
-                    indexes.add(t1.getTable_domain().lastIndexOf(attr));                    
+                if ( counterAliases < aliases.size() ){
                 
-            }
+                    if ( (field_names.contains(attr.getAttribute_name()) && aliases.get(counterAliases).equals(t1.getTable_alias().getName()))){
+                        
+                        indexes.add(t1.getTable_domain().lastIndexOf(attr));
+                        field_names.remove(counterFieldNames);
+                        counterFieldNames++;
+                        counterAliases++;             
+                    }
+                    else if (field_names.contains(attr.getAttribute_name()) && "".equals(aliases.get(counterAliases)))
+                    {            
+                        indexes.add(t1.getTable_domain().lastIndexOf(attr));
+                        field_names.remove(counterFieldNames);
+                        counterFieldNames++;
+                        counterAliases++;  
+                    }                    
+                
+                } 
+//                else if (field_names.contains(attr.getAttribute_name()))
+//                {
+//                    indexes.add(t1.getTable_domain().lastIndexOf(attr));
+//                }//End else
+                
+            }//End for (Attribute attr : t1.getTable_domain())
             
             int lastIndex = t1.getTable_domain().size();
             
-            for (Attribute attr : t2.getTable_domain()) 
+            for (Attribute attr : t2.getTable_domain())
             {                
-                // If the find attribute is contained inside field_names then we add the index to indexes
-                if ( field_names.contains(attr.getAttribute_name()) )
-                    indexes.add(lastIndex + t2.getTable_domain().lastIndexOf(attr));
-            }            
+                if ( counterAliases < aliases.size() ){
+
+                    // If the find attribute is contained inside field_names then we add the index to indexes
+                    if ( (field_names.contains(attr.getAttribute_name()) && aliases.get(counterAliases).equals(t2.getTable_alias().getName()))){
+                        indexes.add(lastIndex + t2.getTable_domain().lastIndexOf(attr));
+                        field_names.remove(counterFieldNames);
+                        counterFieldNames++;
+                        counterAliases++;                
+                    }
+                    else if (field_names.contains(attr.getAttribute_name()) && "".equals(aliases.get(counterAliases)))
+                    {            
+                        indexes.add(lastIndex + t2.getTable_domain().lastIndexOf(attr));
+                        field_names.remove(counterFieldNames);
+                        counterFieldNames++;
+                        counterAliases++;  
+                    }
+
+                } 
+//                else if (field_names.contains(attr.getAttribute_name()))
+//                {
+//                    indexes.add(t2.getTable_domain().lastIndexOf(attr));
+//                }//End else
+
+            }//End for (Attribute attr : t2.getTable_domain())            
             
             // Now we add the tuples containing the selected attributes to new_table
-            for (Tuple t : table1.getTable_tuples()) 
+            for (Tuple t : mergedTable.getTable_tuples()) 
             {                
                 // We create a tuple where we will add the values
                 Tuple temp_Tuple =  new Tuple();
@@ -203,7 +303,7 @@ public class Operations
                     temp_Tuple.addValue(t.getValue(currentIndex));                    
                 }                
                 new_table.addTuple(temp_Tuple);
-            }             
+            }            
                        
         }
         else
@@ -250,3 +350,4 @@ public class Operations
         
     }
 }
+

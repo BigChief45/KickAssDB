@@ -149,4 +149,41 @@ public class Validations
         return true;                
     }
     
+    public static boolean isFieldInDomain(String field_name, Table table)
+    {        
+        for ( Attribute a : table.getTable_domain() )        
+            if ( a.getAttribute_name().equals(field_name) )
+                return true;
+            
+        return false;
+    }
+    
+    public static boolean isFieldAmbiguous(String field_name, Table table1, Table table2 )
+    {               
+        int counter = 0;
+        for ( Attribute a : table1.getTable_domain() )
+        {
+            if ( a.getAttribute_name().equals(field_name) )
+            {    
+                counter++;
+                break;
+            }
+        }
+        
+        for ( Attribute a : table2.getTable_domain() )
+        {
+            if ( a.getAttribute_name().equals(field_name) )
+            {    
+                counter++;
+                break;                          
+            }
+        }        
+        
+        if ( counter > 1 )
+           return  true; 
+        else
+            return false;
+   
+    }
+        
 }

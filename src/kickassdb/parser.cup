@@ -337,7 +337,7 @@ select ::= SELECT select_fields:type FROM select_tables where
            {:                           
                 /* Get the current default schema */
                 Schema schema = KickAssDB.mainwindow.getDefault_schema();
-
+                
                 /* Validate that the field aliases used DO exist on the schema */
                 Collections.reverse(field_aliases);
                 boolean aliases_exist = schema.validateAliases(field_aliases);
@@ -378,7 +378,7 @@ select ::= SELECT select_fields:type FROM select_tables where
 
                     case 1:
                         /* SELECT -fields- */
-                        Operations.selectFields(field_names, from_tables, where_filters);
+                        Operations.selectFields(field_names, from_tables, where_filters, field_aliases);
                         break;
 
                     case 2:
@@ -387,6 +387,11 @@ select ::= SELECT select_fields:type FROM select_tables where
                         break;
 
                     case 3:
+                        /* SELECT COUNT(field) */
+                        Operations.selectCount(field_names, from_tables);
+                        break;
+
+                    case 4:
                         /* SELECT SUM() */
                         Operations.selectSum(field_names, from_tables);
                         break;
@@ -405,11 +410,13 @@ select ::= SELECT select_fields:type FROM select_tables where
                              | ID:field_id
                              {:
                                  field_names.add(field_id);
+                                 field_aliases.add("");
                                  RESULT = 1;
                              :}
                              | ID:field_id COMA select_more_fields 
                              {: 
                                  field_names.add(field_id);
+                                 field_aliases.add("");
                                  RESULT = 1; 
                              :}
                              | ID:table_alias POINT ID:field_id COMA select_more_fields
@@ -431,17 +438,21 @@ select ::= SELECT select_fields:type FROM select_tables where
                                  /* Add this alias to the list, to validate later */
                                  field_aliases.add(table_alias.toString());
 
-                                 RESULT = 1;
-                                 
+                                 RESULT = 1;                                 
                              :}
                              | COUNT PARLEFT ASTERISK PARRIGHT 
                              {: 
                                  RESULT = 2; 
                              :}
+                             | COUNT PARLEFT ID:field_id PARRIGHT
+                             {:                                
+                                field_names.add(field_id);
+                                RESULT = 3;
+                             :}
                              | SUM PARLEFT ID:field_id PARRIGHT 
                              {: 
                                  field_names.add(field_id);
-                                 RESULT = 3; 
+                                 RESULT = 4; 
                              :}
                              ;
                              
@@ -481,7 +492,7 @@ select ::= SELECT select_fields:type FROM select_tables where
                                  /* Add this alias to the table specified in the query */
                                  Schema df_schema = MainWindow.getDefaultSchema();  // Get current Schema
                                  Table query_table = df_schema.getTable(table_name.toString()); // Get Table Object
-                                 query_table.setTable_alias(alias_name.toString()); // Set this alias to this table                                 
+                                 query_table.setTable_alias(new Alias(alias_name.toString(), query_table)); // Set this alias to this table
                              :}                                                          
                              | ID:table_name AS ID:alias_name
                              {:
@@ -491,7 +502,7 @@ select ::= SELECT select_fields:type FROM select_tables where
                                  /* Add this alias to the table specified in the query */
                                  Schema df_schema = MainWindow.getDefaultSchema();  // Get current Schema
                                  Table query_table = df_schema.getTable(table_name.toString()); // Get Table Object
-                                 query_table.setTable_alias(alias_name.toString()); // Set this alias to this table
+                                 query_table.setTable_alias(new Alias(alias_name.toString(), query_table)); // Set this alias to this table
                              :}
                              ;
 
