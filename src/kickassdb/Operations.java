@@ -157,7 +157,7 @@ public class Operations
             
             /* Apply filters before selecting, if there are any */
             if ( filters.size() > 0 )
-                table1 = QueryFilter.filterTable(table1, filters);
+                table1 = QueryFilter.filterTable(0, table1, filters);
                                     
             /* Get the domain for the table */
             ArrayList<Attribute> d = new ArrayList<>();
@@ -207,10 +207,7 @@ public class Operations
             int tempFieldNameCounter = 0;
             
             //We iterate the alias list and put the required attributes in the table that corresponds
-            for (String alias : aliases) {
-                
-                System.out.println("Alias = "+alias);
-                System.out.println("FieldName = "+field_names.get(tempFieldNameCounter));
+            for (String alias : aliases) {                
                 
                 //Table 1
                 //First we assk if the alias matches the tables alias name
@@ -267,7 +264,16 @@ public class Operations
                 
             }//End for ( String s : field_names )
             
+            //We set the domain of the new table that will the addition of both tables' domains
             new_table.setTable_domain(new_tableDomain);
+            int firstTableDomainCount = t1.getTable_domain().size();
+            
+            //Now we perform the query filter if there is any filter
+            if ( filters.size() > 0  ){
+            
+                new_table = QueryFilter.filterTable(firstTableDomainCount, new_table, filters);
+            
+            }//End if ( filters.size() > 0  )
             
             /* We'll get the indexes of the requested attributes */
             ArrayList indexes = new ArrayList();            
@@ -333,18 +339,20 @@ public class Operations
             
             new_table = Table.mergeTables(table1, table2); // More than 1 table
             
-            //If we have filters we apply them
+            // If we have filters we apply them
             if ( filters.size() > 0 )
-                new_table = QueryFilter.filterTable(new_table, filters);
+                new_table = QueryFilter.filterTable(0, new_table, filters);
                         
         }
         else
         {            
             new_table = tables.get(0); // Only one table
-                        
+            
+            
+            
             //If we have filters we apply them
             if ( filters.size() > 0 )
-                new_table = QueryFilter.filterTable(new_table, filters);
+                new_table = QueryFilter.filterTable(0, new_table, filters);
             
         }
         

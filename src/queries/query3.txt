@@ -1,2 +1,2 @@
 SELECT * FROM Person, Vehicle
-WHERE vehicle_id = 1 AND person_name = 'Paul'
+WHERE person_id = vehicle_id

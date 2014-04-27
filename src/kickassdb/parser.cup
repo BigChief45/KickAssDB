@@ -47,7 +47,6 @@ action code
     private ArrayList<String> field_aliases = new ArrayList<String>();
     private ArrayList<QueryFilter> where_filters = new ArrayList<QueryFilter>();
 
-
     private void resetGlobals()
     {
         /* This method will reset all the global variables that need to be reset
@@ -81,7 +80,7 @@ non terminal coma;
 non terminal primary_key;
 non terminal attributes;
 non terminal attribute_names;
-non terminal select, select_tables, select_fields, select_more_fields, where, filter, add_where;
+non terminal select, select_tables, select_fields, select_more_fields, where, filter, add_where, where_alias;
 
 start with operation;
 
@@ -508,54 +507,90 @@ select ::= SELECT select_fields:type FROM select_tables where
                              :}
                              ;
 
-           where ::= WHERE ID:field_id OPREL:operand filter:fv add_where
+           where ::= WHERE filter:fv1 OPREL:operand filter:fv2 add_where
                      {:
                         /* Create a new Filter Object */
-                        QueryFilter qf = new QueryFilter(field_id.toString(), operand.toString(), fv, null);
+                        QueryFilter qf = new QueryFilter();
+
+                        /* Assign the operand to the filter */
+                        qf.setOperand(operand);
+
+                        /* Set both filter parts */
+                        qf.setLeftFilter( (FilterPart) fv1);
+                        qf.setRightFilter( (FilterPart) fv2);
 
                         /* Add it to the list of filters for this query */
                         where_filters.add(qf);
-                     :}
-                     | WHERE ID:alias_name POINT ID:field_id OPREL:operand filter:fv add_where
-                     {:
-
-                     :}
+                     :}                     
                      |
                      ;
-
+                                         
                      filter ::= STR:value
                                 {:
-                                    RESULT = value;
+                                    /* Value is a string */
+                                    FilterPart fp = new FilterPart();
+                                    fp.setValue(value);
+
+                                    RESULT = fp;
                                 :}
                                 | NUM:value
+                                {:                                    
+                                    /* Value is an integer */
+                                    FilterPart fp = new FilterPart();
+                                    fp.setValue(value);
+
+                                    RESULT = fp;
+                                :}
+                                | ID:field_name
                                 {:
-                                    RESULT = value;
+                                    /* Value is an existing field */
+                                    FilterPart fp = new FilterPart();
+                                    fp.setFieldName(field_name);
+
+                                    RESULT = fp;
+                                :}
+                                | ID:alias_id POINT ID:field_name
+                                {:
+                                    /* Value is an existing field with alias */
+                                    FilterPart fp = new FilterPart();
+                                    fp.setFieldName(field_name);
+                                    fp.setFieldAlias(alias_id);
+
+                                    RESULT = fp;
                                 :}
                                 ;
 
-                                add_where ::= AND ID:field_id OPREL:operand filter:fv add_where
+                                add_where ::= AND filter:fv1 OPREL:operand filter:fv2 add_where
                                               {:
                                                   /* Create a new Filter Object */
-                                                  QueryFilter qf = new QueryFilter(field_id.toString(), operand.toString(), fv, "AND");
+                                                  QueryFilter qf = new QueryFilter();
+
+                                                  /* Assign the operand and bool value to the filter */
+                                                  qf.setOperand(operand);
+                                                  qf.setBoolValue("AND");
+
+                                                  /* Set both filter parts */
+                                                  qf.setLeftFilter( (FilterPart) fv1);
+                                                  qf.setRightFilter( (FilterPart) fv2);
 
                                                   /* Add it to the list of filters for this query */
                                                   where_filters.add(qf);
                                               :}
-                                              | OR ID:field_id OPREL:operand filter:fv add_where
+                                              | OR filter:fv1 OPREL:operand filter:fv2 add_where
                                               {:
                                                   /* Create a new Filter Object */
-                                                  QueryFilter qf = new QueryFilter(field_id.toString(), operand.toString(), fv, "OR");
+                                                  QueryFilter qf = new QueryFilter();
+
+                                                  /* Assign the operand and bool value to the filter */
+                                                  qf.setOperand(operand);
+                                                  qf.setBoolValue("OR");
+
+                                                  /* Set both filter parts */
+                                                  qf.setLeftFilter( (FilterPart) fv1);
+                                                  qf.setRightFilter( (FilterPart) fv2);
 
                                                   /* Add it to the list of filters for this query */
                                                   where_filters.add(qf);
-                                              :}
-                                              | AND ID:alias_name POINT ID:field_id OPREL:operand filter:fv add_where
-                                              {:
-
-                                              :}
-                                              | OR ID:alias_name POINT ID:field_id OPREL:operand filter:fv add_where
-                                              {:
-
-                                              :}
+                                              :}                                              
                                               |
                                               ;

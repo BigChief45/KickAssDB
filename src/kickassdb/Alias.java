@@ -4,6 +4,7 @@ public class Alias
 {
     private String alias_name;
     private Table alias_table;
+    private String alias_field;
     
     public Alias()
     {
@@ -34,5 +35,15 @@ public class Alias
     public void setTable(Table t)
     {
         alias_table = t;
+    }
+    
+    public String getFieldName()
+    {
+        return alias_field;
+    }
+    
+    public void setFieldName(String s)
+    {
+        alias_field = s;
     }
 }

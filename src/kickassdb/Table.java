@@ -211,6 +211,7 @@ public class Table
         /* Merge all the data */
         Table crossproduct = new Table();
         
+        //First we set the table domain
         ArrayList<Attribute> table1_domain = table1.getTable_domain();
         ArrayList<Attribute> table2_domain = table2.getTable_domain();
         ArrayList<Attribute> d = new ArrayList();

@@ -90,6 +90,40 @@ public class Schema
         return true;
     }
     
+    public Table getTableWithAliasName(String alias){
+    
+        Table result_table = null;
+        
+        for (Table table : schema) {
+            
+            if ( table.getTable_alias().getName().equals(alias) ){
+                result_table = table;   
+                break;
+            }//End if ( table.getTable_alias().getName().equals(alias) )
+            
+        }//End for (Table table : schema)
+        
+        return result_table;
+    
+    }//End public Table getTableWithAliasName()
+    
+    public Table getTableWithAttributeName(String attrName){
+    
+        Table result_table = null;
+        
+        for (Table table : schema) {
+            
+            if ( table.attributeExistsInDomain(attrName) ){
+                result_table = table;       
+                break;
+            }//End if ( table.getTable_alias().getName().equals(alias) )
+            
+        }//End for (Table table : schema)
+        
+        return result_table;        
+        
+    }//End public Table getTableWithAttributeName()
+    
     public void resetTableAliases()
     {
         /* This method resets all aliases from the tables in the schema */
