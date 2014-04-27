@@ -123,6 +123,25 @@ public class Table
         
         return -1; // Field does not exist in domain
     }
+    
+    public boolean attributeExistsInDomain(String attrName){
+    
+        boolean result = false;
+        
+        //We iterate throughout the table's domain and see if the any of its attributes matches the attrName
+        for (Attribute attribute : table_domain) {
+            
+            //If we find a match we set the result to true
+            if ( attribute.getAttribute_name().equals(attrName) ){
+                result = true;
+                break;
+            }//End if ( attribute.getAttribute_name().equals(attrName) )
+            
+        }//End for (Attribute attribute : table_domain)
+        
+        return result;
+        
+    }//End public boolean attributeExistsInDomain()
             
     public String getAttType(String name) {
         String type = null;

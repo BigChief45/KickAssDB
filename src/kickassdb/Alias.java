@@ -7,7 +7,7 @@ public class Alias
     
     public Alias()
     {
-        
+        alias_name = "";
     }
     
     public Alias(String name, Table table)

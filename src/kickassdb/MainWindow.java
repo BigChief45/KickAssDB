@@ -469,8 +469,8 @@ public class MainWindow extends javax.swing.JFrame
 
     private void executeQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executeQueryActionPerformed
         
-        /* Store the query as a string */
-        String query = queryText.getText();
+        /* Reset all aliases in the schema */
+        default_schema.resetTableAliases();
         
         getOutputText().append("Executing Query... \n");
         this.parserResult = "Parsing Successful \n";

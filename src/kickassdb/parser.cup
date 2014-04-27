@@ -345,7 +345,7 @@ select ::= SELECT select_fields:type FROM select_tables where
                 if ( aliases_exist == false )
                 {
                     /* One or more aliases Do not exist, display error */
-                    JOptionPane.showMessageDialog(KickAssDB.mainwindow, "One or more aliases specified do not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(KickAssDB.mainwindow, "One or more of aliases specified do not exist.", "Error", JOptionPane.ERROR_MESSAGE);
                     resetGlobals();
                     return null;
                 }
@@ -459,10 +459,12 @@ select ::= SELECT select_fields:type FROM select_tables where
                              select_more_fields ::= ID:field_id COMA select_more_fields
                                                     {:
                                                         field_names.add(field_id);
+                                                        field_aliases.add("");
                                                     :}
                                                     | ID:field_id
                                                     {:
                                                         field_names.add(field_id);
+                                                        field_aliases.add("");
                                                     :}
                                                     | ID:table_alias POINT ID:field_id COMA select_more_fields
                                                     {:
@@ -514,6 +516,10 @@ select ::= SELECT select_fields:type FROM select_tables where
                         /* Add it to the list of filters for this query */
                         where_filters.add(qf);
                      :}
+                     | WHERE ID:alias_name POINT ID:field_id OPREL:operand filter:fv add_where
+                     {:
+
+                     :}
                      |
                      ;
 
@@ -542,6 +548,14 @@ select ::= SELECT select_fields:type FROM select_tables where
 
                                                   /* Add it to the list of filters for this query */
                                                   where_filters.add(qf);
+                                              :}
+                                              | AND ID:alias_name POINT ID:field_id OPREL:operand filter:fv add_where
+                                              {:
+
+                                              :}
+                                              | OR ID:alias_name POINT ID:field_id OPREL:operand filter:fv add_where
+                                              {:
+
                                               :}
                                               |
                                               ;

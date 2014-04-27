@@ -75,7 +75,7 @@ public class Schema
         /* Loops through all the tables in the Schema and checks if this
            alias exists in one of them */                
         for (Table t : schema)        
-            if ( t.getTable_alias().getName().equals(alias))
+            if ( t.getTable_alias().getName().equals(alias) || t.getTable_name().equals(alias) )
                 return true;
         
         return false;
@@ -88,5 +88,12 @@ public class Schema
                 return false;
         
         return true;
+    }
+    
+    public void resetTableAliases()
+    {
+        /* This method resets all aliases from the tables in the schema */
+        for ( Table t : schema )        
+            t.getTable_alias().setName("");        
     }
 }
