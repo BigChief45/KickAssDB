@@ -1,6 +1,8 @@
 package kickassdb;
 
-public class Attribute 
+import java.io.Serializable;
+
+public class Attribute  implements Serializable
 {
 
     private Type type;

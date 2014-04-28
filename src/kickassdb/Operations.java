@@ -171,7 +171,6 @@ public class Operations
             
             /* We'll get the indexes of the requested attributes */
             ArrayList indexes = new ArrayList();
-            
             for (Attribute attr : table1.getTable_domain())
             {                
                 // If the find attribute is contained inside field_names then we add the index to indexes

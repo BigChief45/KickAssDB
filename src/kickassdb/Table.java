@@ -2,8 +2,9 @@ package kickassdb;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.io.*;
 
-public class Table 
+public class Table implements Serializable
 {
  
     private int table_id;
@@ -30,7 +31,7 @@ public class Table
                 
         table_tuples = new ArrayList<>();        
         table_alias = new Alias();
-    
+        
     }
     
     public void addTuple(Tuple tuple)

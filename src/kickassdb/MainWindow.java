@@ -704,9 +704,8 @@ public class MainWindow extends javax.swing.JFrame
     public static void saveSchema(Schema schema)
     {
         /* Create a folder with the schema name */
-        File folder = new File("src/schemas/" + schema.getName());
-        folder.mkdir();
-        
+        String path_name = "src/schemas/" + schema.getName();
+        AddFile.AddNewFolder(path_name);
         /* Create the Schema File inside the folder */
         
         /* Assign Default Schema */
