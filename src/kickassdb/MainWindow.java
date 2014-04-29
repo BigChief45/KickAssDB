@@ -651,7 +651,7 @@ public class MainWindow extends javax.swing.JFrame
         
         /* Saves the current unsaved schema */
         String sn = JOptionPane.showInputDialog(this, "Schema name:", "Save Schema", JOptionPane.QUESTION_MESSAGE);
-        
+                
         default_schema.setName(sn);
         
         if ( Storage.createSchema(default_schema) )
