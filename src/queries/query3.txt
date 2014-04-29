@@ -1,1 +1,2 @@
-CREATE SCHEMA University
+SELECT * FROM Person, Vehicle
+WHERE model = 'Yaris'
