@@ -3,7 +3,7 @@ package kickassdb;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
-public class Operations 
+public class Operations
 {
     
     /* This class contains the code for all the operations the DBMS does
@@ -156,9 +156,10 @@ public class Operations
             Table table1 = tables.get(0);
             
             /* Apply filters before selecting, if there are any */
-            if ( filters.size() > 0 )
-                table1 = QueryFilter.filterTable(0, table1, filters);
-                                    
+            if ( filters.size() > 0 ){
+                //table1 = QueryFilter.filterTable(0, table1, filters);
+                table1 = QueryFilter.newFilterTable(table1, filters);
+            }
             /* Get the domain for the table */
             ArrayList<Attribute> d = new ArrayList<>();
         
@@ -270,8 +271,9 @@ public class Operations
             //Now we perform the query filter if there is any filter
             if ( filters.size() > 0  ){
             
-                new_table = QueryFilter.filterTable(firstTableDomainCount, new_table, filters);
-            
+                //new_table = QueryFilter.filterTable(firstTableDomainCount, new_table, filters);
+                new_table = QueryFilter.newFilterTable(new_table, filters);
+                
             }//End if ( filters.size() > 0  )
             
             /* We'll get the indexes of the requested attributes */
@@ -328,36 +330,42 @@ public class Operations
     
     public static void selectAll(ArrayList<Table> tables, ArrayList<QueryFilter> filters)
     {
-        Table new_table = new Table();
+        Table new_table;          
         
+        //If it is more than 1 table we merge them
         if ( tables.size() > 1 )
         {
+            
+            //We get the first and the second table
             Table table1, table2;
             table1 = tables.get(0);
             table2 = tables.get(1);
             
+            //We merge two tables into 1
             new_table = Table.mergeTables(table1, table2); // More than 1 table
             
             // If we have filters we apply them
             if ( filters.size() > 0 )
-                new_table = QueryFilter.filterTable(0, new_table, filters);
-                        
-        }
+                new_table = QueryFilter.newFilterTable(new_table, filters);
+            
+                //new_table = QueryFilter.filterTable(table1.getTable_domain().size(), new_table, filters);                        
+            
+        }//End if ( tables.size() > 1 )
         else
         {            
+            
             new_table = tables.get(0); // Only one table
-            
-            
-            
+                                    
             //If we have filters we apply them
             if ( filters.size() > 0 )
                 new_table = QueryFilter.filterTable(0, new_table, filters);
             
-        }
+        }//End else
         
         /* Display output */
         MainWindow.showQueryOutput(new_table);
         
-    }
-}
+    }//End public static void selectAll(ArrayList<Table> tables, ArrayList<QueryFilter> filters)
+    
+}//End public class Operations
 

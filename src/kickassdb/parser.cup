@@ -139,13 +139,14 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
 
                             /* Add table to default schema */
                             schema.addTable(table);
+
                             /* Create a folder of the table */
                             AddFile.AddNewFolder("src/schemas/" + schema.getName() + "/" + table.getTable_name());
 
-                            /* Create an attribute.txt in the table's folder*/
+                            /* Create an attribute.txt in the table's folder */
                             AddFile.AddAttribute("src/schemas/" + schema.getName() + "/" + table.getTable_name() + "/attribute.txt", table);
                             
-                            /* To test if the attribute.txt has been created*/
+                            /* To test if the attribute.txt has been created */
                             AddFile.TestPrint("src/schemas/" + schema.getName() + "/" + table.getTable_name() + "/attribute.txt", table);
                             
                             table.printDomain();                       
