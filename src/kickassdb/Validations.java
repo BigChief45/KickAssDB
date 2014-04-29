@@ -187,7 +187,7 @@ public class Validations
     }
         
     
-    public boolean tableExists(String name)
+    public static boolean tableExists(String name)
     {
         /* Checks if there is a table with the specified name */
         for ( Table t : MainWindow.getDefaultSchema().getSchema() )

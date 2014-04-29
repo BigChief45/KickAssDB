@@ -379,6 +379,13 @@ select ::= SELECT select_fields:type FROM select_tables where
                     if ( schema.getTable(s) != null )
                         from_tables.add(schema.getTable(s));                
 
+                /* Check if REAL tables were collected */
+                if ( from_tables.isEmpty() )
+                {
+                    JOptionPane.showMessageDialog(KickAssDB.mainwindow, "One or more of the tables in FROM clause do not exist.", "Error", JOptionPane.ERROR_MESSAGE);                                         
+                    return null;
+                }
+                                
                 Collections.reverse(from_tables);
                 Collections.reverse(field_names);
 
