@@ -374,8 +374,7 @@ public class Operations
 //    }
     
     public static void select(ArrayList<Table> tables, ArrayList<QueryFilter> filters, ArrayList<String> field_names, ArrayList<String> field_aliases)
-    {
-        
+    {        
         //Table where we will store the result of the query
         Table new_table = new Table();
         
