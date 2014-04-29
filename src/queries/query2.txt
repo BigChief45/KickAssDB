@@ -1,5 +1,1 @@
-CREATE TABLE Vehicle (
-vehicle_id INT PRIMARY KEY,
-plate_number VARCHAR(20),
-model VARCHAR(30)
-)
+SELECT Count(*) from Person, Vehicle

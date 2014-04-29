@@ -1,7 +1,6 @@
 package kickassdb;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class Table 
 {
@@ -14,7 +13,8 @@ public class Table
     private ArrayList<Attribute> table_domain;
     private ArrayList<Tuple> table_tuples;
     
-
+    private ArrayList<Attribute> table_complete_domain;
+    
     public Table()
     {
         table_tuples = new ArrayList<>();
@@ -124,6 +124,23 @@ public class Table
         return -1; // Field does not exist in domain
     }
     
+    public int getFieldPositionCompleteDomain(String field_name)
+    {
+        /* Returns the field's position in the domain if it exists */
+        int position = 0;
+        
+        /* Loop through the domain */
+        for ( Attribute a : table_complete_domain )
+        {
+            if ( field_name.equals(a.getAttribute_name()) )
+                return position;
+            
+            position++;
+        }//End for ( Attribute a : table_complete_domain )
+        
+        return -1; // Field does not exist in domain
+    }//End public int getFieldPositionCompleteDomain(String field_name)
+    
     public boolean attributeExistsInDomain(String attrName){
     
         boolean result = false;
@@ -154,6 +171,14 @@ public class Table
         }
         return null;
     }
+    
+    public String getAttTypeByPosition(int position) {
+        String type = null;
+        
+        Attribute selectedAttribute = this.table_domain.get(position);
+        return selectedAttribute.getType().toString();
+        
+    }    
     
     public Attribute getAttributeByName(String name) {
 
@@ -214,17 +239,47 @@ public class Table
         //First we set the table domain
         ArrayList<Attribute> table1_domain = table1.getTable_domain();
         ArrayList<Attribute> table2_domain = table2.getTable_domain();
-        ArrayList<Attribute> d = new ArrayList();
+        ArrayList<Attribute> domain = new ArrayList();
+        ArrayList<Attribute> completeDomain = new ArrayList();        
         
         for (Attribute attr : table1_domain) {
-            d.add(attr);
-        }
+            domain.add(attr);
+            
+            //Now we will add the name before the attribute for table1
+            Attribute new_attribute = new Attribute();
+            
+            new_attribute.setAttributeSize(attr.getAttributeSize());
+            new_attribute.setAttribute_name(attr.getAttribute_name());
+            new_attribute.setType(attr.getType());            
+            
+            String attrName = new_attribute.getAttribute_name();
+            new_attribute.setAttribute_name(table1.table_name+attrName);
+            
+            //We add the attribute to the complete domain
+            completeDomain.add(new_attribute);
+            
+        }//End for (Attribute attr : table1_domain)
         
         for (Attribute attr : table2_domain) {
-            d.add(attr);
-        }
+            domain.add(attr);
+            
+            //Now we will add the name before the attribute for table1
+            Attribute new_attribute = new Attribute();
+            
+            new_attribute.setAttributeSize(attr.getAttributeSize());
+            new_attribute.setAttribute_name(attr.getAttribute_name());
+            new_attribute.setType(attr.getType());  
+            
+            String attrName = new_attribute.getAttribute_name();
+            new_attribute.setAttribute_name(table2.table_name+attrName);
+            
+            //We add the attribute to the complete domain
+            completeDomain.add(new_attribute);            
+            
+        }//End for (Attribute attr : table2_domain)
                         
-        crossproduct.setTable_domain(d);
+        crossproduct.setTable_domain(domain);
+        crossproduct.setTable_complete_domain(completeDomain);
         
         for ( Tuple tuple : table1.getTable_tuples() )
         {
@@ -235,19 +290,35 @@ public class Table
 
                 for (Value v : tuple.getTuple_values()) {
                     new_tuple.addValue(v);
-                }
+                }//End for (Value v : tuple.getTuple_values())
                 
                 for (Value v : tuple2.getTuple_values()) {
                     new_tuple.addValue(v);
-                }
+                }//End for (Value v : tuple2.getTuple_values())
                 
                 //We add the tuple to the table crossproduct
                 crossproduct.addTuple(new_tuple);                
                 
-            }        
-        }
+            }//End for ( Tuple tuple2 : table2.getTable_tuples() )
+            
+        }//End for ( Tuple tuple : table1.getTable_tuples() )
                                        
         return crossproduct;
+        
+    }//End public static Table mergeTables(Table table1, Table table2)
+
+    /**
+     * @return the table_complete_domain
+     */
+    public ArrayList<Attribute> getTable_complete_domain() {
+        return table_complete_domain;
+    }
+
+    /**
+     * @param table_complete_domain the table_complete_domain to set
+     */
+    public void setTable_complete_domain(ArrayList<Attribute> table_complete_domain) {
+        this.table_complete_domain = table_complete_domain;
     }
     
 }

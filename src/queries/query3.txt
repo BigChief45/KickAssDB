@@ -1,2 +1,2 @@
 SELECT * FROM Person, Vehicle
-WHERE person_id = vehicle_id
+WHERE model = 'Yaris'
