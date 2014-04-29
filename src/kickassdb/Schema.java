@@ -5,23 +5,20 @@ import java.util.ArrayList;
 
 
 public class Schema 
-{
-    
+{    
     private ArrayList<Table> schema;
     private int table_count = 0;
     private String schema_name;
 
     public Schema()
     {
-        schema = new ArrayList<Table>();
-        
+        schema = new ArrayList<Table>();        
     }
     
     public Schema(String name)
     {
         schema = new ArrayList<Table>();
-        schema_name = name;
-        //create a file named (name);
+        schema_name = name;        
     }
     
     
@@ -49,8 +46,6 @@ public class Schema
     {
         this.schema.add(t);
         table_count++;
-        //CREATE A FOLDER in another class
-        //serialization.func(t);
         
         MainWindow.outputText.append("Table " + t.getTable_name() + " was created. \n");
     }
