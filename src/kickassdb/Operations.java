@@ -65,8 +65,7 @@ public class Operations
         
         /* Loop through the whole table and count the non NULL values */
         for ( Tuple t : query_table.getTable_tuples() )
-        {
-            System.out.println("Value = " + t.getValue(fieldPosition).getValue().toString());
+        {            
             if ( t.getValue(fieldPosition).getValue() != null && !(t.getValue(fieldPosition).getValue().equals("")) )
                 count = count + 1;
         }
