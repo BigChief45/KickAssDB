@@ -1,2 +1,2 @@
-SELECT * FROM Person, Vehicle
-WHERE model = 'Yaris'
+SELECT * FROM Person AS P, Vehicle AS V
+WHERE 1 = 1
