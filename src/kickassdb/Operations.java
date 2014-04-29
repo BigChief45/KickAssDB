@@ -169,8 +169,7 @@ public class Operations
     }   
     
     public static void select(ArrayList<Table> tables, ArrayList<QueryFilter> filters, ArrayList<String> field_names, ArrayList<String> field_aliases)
-    {
-        
+    {                        
         //Table where we will store the result of the query
         Table new_table = new Table();
         
@@ -189,12 +188,25 @@ public class Operations
                 new_table = QueryFilter.newFilterTable(new_table, filters);                
                 break;
                 
-            case 2:
+            case 2:                
                 //We get the first and the second table
                 Table table1, table2;
                 table1 = tables.get(0);
                 table2 = tables.get(1);
 
+                /* Check if there are ambiguous fields */
+                int i = 0;
+                for ( String s : field_names )
+                {
+                    if ( (field_aliases.get(i).equals("")) && Validations.isFieldAmbiguous(s, table1, table2) == true)
+                    {
+                        JOptionPane.showMessageDialog(KickAssDB.mainwindow, "One or more fields are ambiguous. Please use table aliases to specify the field.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    i++;
+                }
+                i = 0;
+                
                 //We merge two tables into 1
                 new_table = Table.mergeTables(table1, table2); // More than 1 table
 
