@@ -86,6 +86,10 @@ public class QueryFilter
         //Then we choose what action to take according to the number of filters.
         switch (numberOfFilters) {            
             
+            case 0:
+                result_table.setTable_tuples(table.getTable_tuples());                
+                break;
+            
             case 1:
                 
                 //We get the operation

@@ -373,8 +373,8 @@ public class Operations
                 new_table = tables.get(0); // Only one table
 
                 //If we have filters we apply them
-                if ( numberFilters > 0 )
-                    new_table = QueryFilter.newFilterTable(new_table, filters);                
+                //if ( numberFilters > 0 )
+                new_table = QueryFilter.newFilterTable(new_table, filters);                
                 break;
                 
             case 2:
@@ -387,8 +387,8 @@ public class Operations
                 new_table = Table.mergeTables(table1, table2); // More than 1 table
 
                 // If we have filters we apply them
-                if ( numberFilters > 0 )
-                    new_table = QueryFilter.newFilterTable(new_table, filters);                
+                //if ( numberFilters > 0 )
+                new_table = QueryFilter.newFilterTable(new_table, filters);                
                 break;                
                 
             default:
@@ -404,8 +404,13 @@ public class Operations
         
             ArrayList<Integer> visiblesColumnsIndexes;
             visiblesColumnsIndexes = new ArrayList();
-            
+                        
             for (String alias : field_aliases) {
+                
+                if ( visiblesColumnsIndexes.size() == field_names.size() ){
+                    System.out.println("");
+                    break;
+                }
                 
                 //Now we define the field names we want to see                
                 Table tableWithAliasEqualsName = MainWindow.getDefaultSchema().getTable(alias);               
