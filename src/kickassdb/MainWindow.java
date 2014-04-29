@@ -306,6 +306,11 @@ public class MainWindow extends javax.swing.JFrame
         openSchema.setFocusable(false);
         openSchema.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         openSchema.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        openSchema.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openSchemaActionPerformed(evt);
+            }
+        });
         jToolBar1.add(openSchema);
 
         saveSchema.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -518,15 +523,18 @@ public class MainWindow extends javax.swing.JFrame
             else
             {
                 // Show File Chooser to save new file
-                JFileChooser fc = new JFileChooser();
-                FileFilter ft = new FileNameExtensionFilter( "Text Files", "txt" );                
-                fc.addChoosableFileFilter( ft );
+                JFileChooser fc = new JFileChooser("src\\queries");
+                fc.setAcceptAllFileFilterUsed(false);
+                FileFilter ft = new FileNameExtensionFilter("SQL Files", "sql", "sql" );                
+                fc.addChoosableFileFilter(ft);
+                                
                 int retVal = fc.showSaveDialog(null);
 
                 if ( retVal == fc.APPROVE_OPTION )
                 {
-                    File nuevoArchivo = new File( fc.getSelectedFile().getAbsolutePath());
-
+                    
+                    File nuevoArchivo = new File(fc.getSelectedFile().getAbsolutePath() + ".sql");
+                                        
                     // Create file on selected directory
                     FileWriter fw = new FileWriter(nuevoArchivo);
                     PrintWriter pw = new PrintWriter(fw);
@@ -536,6 +544,7 @@ public class MainWindow extends javax.swing.JFrame
                     pw.close();
 
                     opened_file = nuevoArchivo;
+                    queryTabs.setTitleAt(0, opened_file.getName());
                 }
             }
         }
@@ -551,6 +560,9 @@ public class MainWindow extends javax.swing.JFrame
         
         // Create File Chooser
         JFileChooser fc = new JFileChooser("src\\queries");
+        fc.setAcceptAllFileFilterUsed(false);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("SQL Files", "sql", "sql");
+        fc.setFileFilter(filter);
         
         int seleccion = fc.showOpenDialog(null);
 
@@ -608,6 +620,26 @@ public class MainWindow extends javax.swing.JFrame
     private void itemExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemExitActionPerformed
         System.exit(0);
     }//GEN-LAST:event_itemExitActionPerformed
+
+    private void openSchemaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openSchemaActionPerformed
+        // Create File Chooser
+        JFileChooser fc = new JFileChooser("src\\schemas");
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Schema Files", "sdef", "schema");
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.setFileFilter(filter);
+        int seleccion = fc.showOpenDialog(null);
+
+        if ( seleccion == fc.APPROVE_OPTION )
+        {
+            // Select the file
+            opened_file = fc.getSelectedFile();
+            
+            /* Deserialize it */
+            Storage.openSchema(opened_file);
+            
+            getOutputText().append("Opened schema: " + default_schema.getName() + "\n");
+        }
+    }//GEN-LAST:event_openSchemaActionPerformed
 
     
     protected static Schema getDefaultSchema()
@@ -701,14 +733,10 @@ public class MainWindow extends javax.swing.JFrame
         currentSchema_label.setText("Current Schema: " + default_schema.getName());
     }
     
-    public static void saveSchema(Schema schema)
+    public static void createSchema(Schema schema)
     {
-        /* Create a folder with the schema name */
-        String path_name = "src/schemas/" + schema.getName();
-        AddFile.AddNewFolder(path_name);
-        /* Create the Schema File inside the folder */
-        
-        /* Assign Default Schema */
-        setDefault_schema(schema);
+        /* Create a definition file with the schema name */                
+        if ( Storage.createSchema(schema) )                
+            setDefault_schema(schema);           
     }
 }
