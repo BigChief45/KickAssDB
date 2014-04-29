@@ -1,6 +1,8 @@
 package kickassdb;
 
-public class Alias 
+import java.io.Serializable;
+
+public class Alias implements Serializable
 {
     private String alias_name;
     private Table alias_table;
