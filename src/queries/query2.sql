@@ -1,1 +1,1 @@
-CREATE SCHEMA Porron
+SELECT Count(job) FROM Person

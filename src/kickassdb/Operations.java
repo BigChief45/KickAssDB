@@ -37,11 +37,40 @@ public class Operations
     public static void selectCount(ArrayList<String> fields, ArrayList<Table> tables)
     {
         String field = fields.get(0);
-        int count = 1;
+        int count = 0;
+        
+        Table query_table = new Table();
         
         /* Calculate the count */
-        
+        if ( tables.size() == 1)
+        {
+            query_table = tables.get(0);
+        }
+        else if ( tables.size() == 2 )
+        {
+            Table t1 = tables.get(0);
+            Table t2 = tables.get(1);
+            
+            query_table = Table.mergeTables(t1, t2);
+        }
 
+        int fieldPosition = query_table.getFieldPosition(field);
+        
+        /* Check if the attribute exists in the table domain */
+        if ( fieldPosition == -1 )
+        {
+            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Attribute does not exist in the table domain", "Error", JOptionPane.ERROR_MESSAGE);                                         
+            return;
+        }
+        
+        /* Loop through the whole table and count the non NULL values */
+        for ( Tuple t : query_table.getTable_tuples() )
+        {
+            System.out.println("Value = " + t.getValue(fieldPosition).getValue().toString());
+            if ( t.getValue(fieldPosition).getValue() != null && !(t.getValue(fieldPosition).getValue().equals("")) )
+                count = count + 1;
+        }
+        
         /* Prepare output */
         Table output = new Table();
         ArrayList<Attribute> output_d = new ArrayList<Attribute>();
