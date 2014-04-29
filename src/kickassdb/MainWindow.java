@@ -697,7 +697,7 @@ public class MainWindow extends javax.swing.JFrame
 
     public static void setDefault_schema(Schema sc) {
         default_schema = sc;
-        
+        default_schema.setIsSaved(true); // Indicates that the schemas is now stored
         currentSchema_label.setText("Current Schema: " + default_schema.getName());
     }
     

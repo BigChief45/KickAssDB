@@ -9,16 +9,20 @@ public class Schema
     private ArrayList<Table> schema;
     private int table_count = 0;
     private String schema_name;
+    boolean isSaved;
 
     public Schema()
     {
-        schema = new ArrayList<Table>();        
+        schema = new ArrayList<Table>();
+        isSaved = false;
     }
     
     public Schema(String name)
     {
         schema = new ArrayList<Table>();
-        schema_name = name;        
+        schema_name = name;
+        
+        isSaved = false;
     }
     
     
@@ -67,6 +71,16 @@ public class Schema
                return t;
        
        return null;
+   }
+   
+   public boolean isSaved()
+   {
+       return isSaved;
+   }
+   
+   public void setIsSaved(boolean b)
+   {
+       isSaved = b;
    }
    
     public boolean aliasExists(String alias)

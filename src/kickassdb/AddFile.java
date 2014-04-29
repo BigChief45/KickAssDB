@@ -61,8 +61,11 @@ public class AddFile
             
             if ( !myFilePath.exists() )             
                 myFilePath.mkdir();              
-            else             
-                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "There is already a diretory with this name.", "Error", JOptionPane.ERROR_MESSAGE);            
+            else
+            {
+                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "There is already a diretory with this name.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
         }  
         catch (Exception e) 
         {
