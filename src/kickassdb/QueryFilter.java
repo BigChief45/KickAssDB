@@ -524,7 +524,9 @@ public class QueryFilter
         switch (queryFilter.query_filter_type) {
             case "ATTRIBUTE_ALIAS_ATTRIBUTE": case "ATTRIBUTE_ATTRIBUTE": case "ALIAS_ATTRIBUTE_ATTRIBUTE":
                 case "ALIAS_ATTRIBUTE_ALIAS_ATTRIBUTE":
-                //result = Operation2Attributes(table, indexAttributeLeft, indexAttributeRight, operation);
+                    String attributeTypeLeft = table.getAttTypeByPosition(queryFilter.leftFilter.getIndexAttributeLeft());
+                    String attributeTypeRight = table.getAttTypeByPosition(queryFilter.rightFilter.getIndexAttributeRight());
+                    result = TupleOperation2Attributes(tuple, attributeTypeLeft, attributeTypeRight, queryFilter.leftFilter.getIndexAttributeLeft(), queryFilter.rightFilter.getIndexAttributeRight(), queryFilter.getOperand());
                 break;
 
             case "ATTRIBUTE_VALUE":
@@ -898,11 +900,99 @@ public class QueryFilter
     }//End         
            
     //Operations Tuple
-    private static boolean TupleOperation2Attributes(Table table, int index1, int index2, String operation){
+    private static boolean TupleOperation2Attributes(Tuple tuple, String attributeTypeLeft, String attributeTypeRight, int index1, int index2, String operation){
     
-        return true;
+        boolean result = false;        
         
-    }
+        switch (operation) {
+            case "=":
+                if ( attributeTypeLeft.equals("INTEGER") && attributeTypeRight.equals("INTEGER") ){
+
+                    int value1 = Integer.parseInt(tuple.getValue(index1).getValue().toString());
+                    int value2 = Integer.parseInt(tuple.getValue(index2).getValue().toString());
+
+                    if ( value1 == value2 )
+                        result = true;
+
+                } else {
+
+                    String value1 = tuple.getValue(index1).getValue().toString();
+                    String value2 = tuple.getValue(index2).getValue().toString();
+
+                    if ( value1.equals(value2) )
+                        result = true;                
+
+                }//End else                    
+                break;
+
+            case ">":
+                if ( attributeTypeLeft.equals("INTEGER") && attributeTypeRight.equals("INTEGER") ){
+
+                    int value1 = Integer.parseInt(tuple.getValue(index1).getValue().toString());
+                    int value2 = Integer.parseInt(tuple.getValue(index2).getValue().toString());
+
+                    if ( value1 > value2 )
+                        result = true;
+
+                } else {
+
+                    String value1 = tuple.getValue(index1).getValue().toString();
+                    String value2 = tuple.getValue(index2).getValue().toString();
+
+                    if ( value1.length() > value2.length() )
+                        result = true;              
+
+                }//End else               
+                break;
+
+            case "<":
+                if ( attributeTypeLeft.equals("INTEGER") && attributeTypeRight.equals("INTEGER") ){
+
+                    int value1 = Integer.parseInt(tuple.getValue(index1).getValue().toString());
+                    int value2 = Integer.parseInt(tuple.getValue(index2).getValue().toString());
+
+                    if ( value1 < value2 )
+                        result = true;
+
+                } else {
+
+                    String value1 = tuple.getValue(index1).getValue().toString();
+                    String value2 = tuple.getValue(index2).getValue().toString();
+
+                    if ( value1.length() < value2.length() )
+                        result = true;                  
+
+                }//End else                                   
+                break;
+
+            case "<>":
+                if ( attributeTypeLeft.equals("INTEGER") && attributeTypeRight.equals("INTEGER") ){
+
+                    int value1 = Integer.parseInt(tuple.getValue(index1).getValue().toString());
+                    int value2 = Integer.parseInt(tuple.getValue(index2).getValue().toString());
+
+                    if ( !(value1 == value2) )
+                        result = true;
+
+                } else {
+
+                    String value1 = tuple.getValue(index1).getValue().toString();
+                    String value2 = tuple.getValue(index2).getValue().toString();
+
+                    if ( !value1.equals(value2) )
+                        result = true;                   
+
+                }//End else                     
+                break;                    
+
+            default:
+                break;
+        }//End         
+
+
+        return result;
+        
+    }//End private static boolean TupleOperation2Attributes(Tuple tuple, String attributeTypeLeft, String attributeTypeRight, int index1, int index2, String operation)
         
     private static boolean TupleOperation2Value(Table table, int lValue, int rValue, String operation){
     
