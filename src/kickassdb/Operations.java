@@ -10,16 +10,25 @@ public class Operations
        with the dables (SELECT, INSERT, etc.) to reduce code on the CUP file
     */
         
-    public static void selectCount(ArrayList<Table> tables )
+    public static void selectCount(ArrayList<Table> tables, ArrayList<QueryFilter> filters )
     {
+        /* Call the select method to apply the filters recieved */
         int count = 1;
-
-        /* Calculate the count */
-        for ( Table t : tables )
-        {            
-            count = count * t.getTable_tuples().size();             
+        Table result = new Table();
+        if ( !filters.isEmpty() )
+        {
+            /* If the query has filters, get a filtered relation first, then count */
+            result = select(tables, filters);            
+            count = result.getTable_tuples().size();            
         }
-
+        else
+        {
+                
+            /* No filters, Calculate the count */
+            for ( Table t : tables )               
+                count = count * t.getTable_tuples().size();                         
+        }
+        
         /* Prepare output */
         Table output = new Table();
         ArrayList<Attribute> output_d = new ArrayList<Attribute>();
@@ -34,20 +43,23 @@ public class Operations
         MainWindow.showQueryOutput(output);
     }
     
-    public static void selectCount(ArrayList<String> fields, ArrayList<Table> tables)
+    public static void selectCount(ArrayList<String> fields, ArrayList<Table> tables, ArrayList<QueryFilter> filters)
     {
         String field = fields.get(0);
+        Table query_table = new Table();
         int count = 0;
         
-        Table query_table = new Table();
-        
-        /* Calculate the count */
-        if ( tables.size() == 1)
+        /* Check if the query has filters */
+        if ( !filters.isEmpty() )        
+            query_table = select(tables, filters);        
+        else if ( tables.size() == 1)
         {
+            /* There are no filters, and just one table */
             query_table = tables.get(0);
         }
         else if ( tables.size() == 2 )
         {
+            /* There are no filters, 2 tables */
             Table t1 = tables.get(0);
             Table t2 = tables.get(1);
             
@@ -65,8 +77,7 @@ public class Operations
         
         /* Loop through the whole table and count the non NULL values */
         for ( Tuple t : query_table.getTable_tuples() )
-        {
-            System.out.println("Value = " + t.getValue(fieldPosition).getValue().toString());
+        {            
             if ( t.getValue(fieldPosition).getValue() != null && !(t.getValue(fieldPosition).getValue().equals("")) )
                 count = count + 1;
         }
@@ -85,7 +96,7 @@ public class Operations
         MainWindow.showQueryOutput(output);
     }
     
-    public static void selectSum(ArrayList<String> field_names, ArrayList<Table> tables)            
+    public static void selectSum(ArrayList<String> field_names, ArrayList<Table> tables, ArrayList<QueryFilter> filters)            
     {                
         /* Check how many fields where specified for the SUM */
         if ( field_names.size() > 1 )
@@ -97,13 +108,18 @@ public class Operations
         Table query_table = new Table();
         int sum = 0;
         
+        /* Check if there are any filters */
+        if ( !filters.isEmpty() )        
+            query_table = select(tables, filters);        
+        
         /* Check how many tables are in the query */
-        if ( tables.size() == 1 )
+        else if ( tables.size() == 1 )
         {
-            query_table = tables.get(0); // Only one table
+            query_table = tables.get(0); // Only one table, no filters
         }
         else if ( tables.size() == 2 )
         {
+            /* No filters, 2 tables */
             Table table1 = tables.get(0);
             Table table2 = tables.get(1);
                                                 
@@ -406,57 +422,57 @@ public class Operations
             ArrayList<Integer> visiblesColumnsIndexes;
             visiblesColumnsIndexes = new ArrayList();
                         
+            ArrayList<String> columnNames;
+            columnNames = new ArrayList();            
+            
+            int counter = 0;
             for (String alias : field_aliases) {
                 
-                if ( visiblesColumnsIndexes.size() == field_names.size() ){
-                    System.out.println("");
-                    break;
-                }
-                
-                //Now we define the field names we want to see                
-                Table tableWithAliasEqualsName = MainWindow.getDefaultSchema().getTable(alias);               
-                
-                for (String name : field_names) {
+                if (alias.equals("")){
+                   
+                    int num = new_table.getFieldPosition(field_names.get(counter));
                     
-                    if ( alias.equals("") ){
-
-                        int idx = new_table.getFieldPosition(name);
-
-                        visiblesColumnsIndexes.add(idx);                        
-
-                    }else {
-
-                        int attributeIndex = -1;                    
-
-                        //If there's a table that its alias is its name then we look for the index alias + attribute in the merged table
-                        if ( tableWithAliasEqualsName != null ){
-
-                            attributeIndex = new_table.getFieldPositionCompleteDomain(tableWithAliasEqualsName.getTable_name() + name);
-
-                        }//End if ( tableWithAliasEqualsName != null )
-                        else {
-
-                            //First we find the table who has that alias
-                            Table tableWithAliasName = MainWindow.getDefaultSchema().getTableWithAliasName(alias);
-
-                            //If we find it we define the indexAliasAttributeRight
-                            if (tableWithAliasName != null){
-
-                                attributeIndex = new_table.getFieldPositionCompleteDomain(tableWithAliasName.getTable_name() + name);
-
-                            }//End if (tableWithAliasName != null)
-
-                        }//End else
-
-                        if (!(attributeIndex == -1))
-                            visiblesColumnsIndexes.add(attributeIndex);                        
-
-                    }//End else                                  
-                                       
-                }//End for (String name : field_names)                                                                
+                    if (num > -1)
+                        visiblesColumnsIndexes.add(num);
                 
-            }//End for (String string : field_aliases)                
-                     
+                }
+                //We find the name of the table
+                else{
+                
+                    //If the alias is the table's name
+                    Table tableWithAliasEqualsName = MainWindow.getDefaultSchema().getTable(alias);
+                    
+                    if ( tableWithAliasEqualsName != null ){
+
+                        int num = new_table.getFieldPositionCompleteDomain(tableWithAliasEqualsName.getTable_name()+field_names.get(counter));
+                        
+                        if (num > -1)
+                            visiblesColumnsIndexes.add(num);
+
+                    }//End if ( tableWithAliasEqualsName != null )
+                    else {
+
+                        //First we find the table who has that alias                           
+                        Table tableWithAliasName = MainWindow.getDefaultSchema().getTableWithAliasName(alias);
+
+                        //If we find it we define the indexAliasAttributeRight
+                        if (tableWithAliasName != null){
+
+                            int num = new_table.getFieldPositionCompleteDomain(tableWithAliasName.getTable_name()+field_names.get(counter));
+
+                            if (num > -1)
+                                visiblesColumnsIndexes.add(num);
+
+                        }//End if (tableWithAliasName != null)                    
+                
+                    }//End else
+                
+                }//End else
+                
+                counter++;
+                
+            }//End else
+            
             Table tempTable = new Table();
             tempTable.setTable_domain(new ArrayList());
 //            tempTable.setTable_domain(new_table.getTable_domain());
@@ -479,13 +495,13 @@ public class Operations
             }//End for (Tuple tuple : new_table.getTable_tuples())                                    
             
             //And we set the domain
-            int counter = 0;
+            int counter2 = 0;
             for (Attribute attr : new_table.getTable_domain()) {
                 
-                if ( visiblesColumnsIndexes.contains(counter) )
+                if ( visiblesColumnsIndexes.contains(counter2) )
                     tempTable.getTable_domain().add(attr);
                 
-                counter++;
+                counter2++;
                 
             }
             
@@ -497,6 +513,52 @@ public class Operations
         MainWindow.showQueryOutput(new_table);
         
     }//End public static void selectAll(ArrayList<Table> tables, ArrayList<QueryFilter> filters)
+
+    public static Table select(ArrayList<Table> tables, ArrayList<QueryFilter> filters)
+    {
+        
+        //Table where we will store the result of the query
+        Table new_table = new Table();
+        
+        //We get the number of filters
+        int numberFilters = filters.size();
+        //We get the number of tables        
+        int numberTables = tables.size();
+        
+        switch (numberTables) {
+            
+            case 1:
+                new_table = tables.get(0); // Only one table
+
+                //If we have filters we apply them
+                //if ( numberFilters > 0 )
+                new_table = QueryFilter.newFilterTable(new_table, filters);                
+                break;
+                
+            case 2:
+                //We get the first and the second table
+                Table table1, table2;
+                table1 = tables.get(0);
+                table2 = tables.get(1);
+
+                //We merge two tables into 1
+                new_table = Table.mergeTables(table1, table2); // More than 1 table
+
+                // If we have filters we apply them
+                //if ( numberFilters > 0 )
+                new_table = QueryFilter.newFilterTable(new_table, filters);                
+                break;                
+                
+            default:
+                break;
+                
+        }//End switch (numberFilters)
+                                                      
+        /* Display output */
+        return new_table;
+        
+    }//End public static void selectAll(ArrayList<Table> tables, ArrayList<QueryFilter> filters)
+    
     
 }//End public class Operations
 
