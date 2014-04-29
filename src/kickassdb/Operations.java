@@ -405,57 +405,57 @@ public class Operations
             ArrayList<Integer> visiblesColumnsIndexes;
             visiblesColumnsIndexes = new ArrayList();
                         
+            ArrayList<String> columnNames;
+            columnNames = new ArrayList();            
+            
+            int counter = 0;
             for (String alias : field_aliases) {
                 
-                if ( visiblesColumnsIndexes.size() == field_names.size() ){
-                    System.out.println("");
-                    break;
-                }
-                
-                //Now we define the field names we want to see                
-                Table tableWithAliasEqualsName = MainWindow.getDefaultSchema().getTable(alias);               
-                
-                for (String name : field_names) {
+                if (alias.equals("")){
+                   
+                    int num = new_table.getFieldPosition(field_names.get(counter));
                     
-                    if ( alias.equals("") ){
-
-                        int idx = new_table.getFieldPosition(name);
-
-                        visiblesColumnsIndexes.add(idx);                        
-
-                    }else {
-
-                        int attributeIndex = -1;                    
-
-                        //If there's a table that its alias is its name then we look for the index alias + attribute in the merged table
-                        if ( tableWithAliasEqualsName != null ){
-
-                            attributeIndex = new_table.getFieldPositionCompleteDomain(tableWithAliasEqualsName.getTable_name() + name);
-
-                        }//End if ( tableWithAliasEqualsName != null )
-                        else {
-
-                            //First we find the table who has that alias
-                            Table tableWithAliasName = MainWindow.getDefaultSchema().getTableWithAliasName(alias);
-
-                            //If we find it we define the indexAliasAttributeRight
-                            if (tableWithAliasName != null){
-
-                                attributeIndex = new_table.getFieldPositionCompleteDomain(tableWithAliasName.getTable_name() + name);
-
-                            }//End if (tableWithAliasName != null)
-
-                        }//End else
-
-                        if (!(attributeIndex == -1))
-                            visiblesColumnsIndexes.add(attributeIndex);                        
-
-                    }//End else                                  
-                                       
-                }//End for (String name : field_names)                                                                
+                    if (num > -1)
+                        visiblesColumnsIndexes.add(num);
                 
-            }//End for (String string : field_aliases)                
-                     
+                }
+                //We find the name of the table
+                else{
+                
+                    //If the alias is the table's name
+                    Table tableWithAliasEqualsName = MainWindow.getDefaultSchema().getTable(alias);
+                    
+                    if ( tableWithAliasEqualsName != null ){
+
+                        int num = new_table.getFieldPositionCompleteDomain(tableWithAliasEqualsName.getTable_name()+field_names.get(counter));
+                        
+                        if (num > -1)
+                            visiblesColumnsIndexes.add(num);
+
+                    }//End if ( tableWithAliasEqualsName != null )
+                    else {
+
+                        //First we find the table who has that alias                           
+                        Table tableWithAliasName = MainWindow.getDefaultSchema().getTableWithAliasName(alias);
+
+                        //If we find it we define the indexAliasAttributeRight
+                        if (tableWithAliasName != null){
+
+                            int num = new_table.getFieldPositionCompleteDomain(tableWithAliasName.getTable_name()+field_names.get(counter));
+
+                            if (num > -1)
+                                visiblesColumnsIndexes.add(num);
+
+                        }//End if (tableWithAliasName != null)                    
+                
+                    }//End else
+                
+                }//End else
+                
+                counter++;
+                
+            }//End else
+            
             Table tempTable = new Table();
             tempTable.setTable_domain(new ArrayList());
 //            tempTable.setTable_domain(new_table.getTable_domain());
@@ -478,13 +478,13 @@ public class Operations
             }//End for (Tuple tuple : new_table.getTable_tuples())                                    
             
             //And we set the domain
-            int counter = 0;
+            int counter2 = 0;
             for (Attribute attr : new_table.getTable_domain()) {
                 
-                if ( visiblesColumnsIndexes.contains(counter) )
+                if ( visiblesColumnsIndexes.contains(counter2) )
                     tempTable.getTable_domain().add(attr);
                 
-                counter++;
+                counter2++;
                 
             }
             

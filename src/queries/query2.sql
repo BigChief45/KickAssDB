@@ -1,1 +1,2 @@
-SELECT person_id, person_name FROM Person
+SELECT Sum(vehicle_id) FROM Vehicle
+WHERE vehicle_id > 2
