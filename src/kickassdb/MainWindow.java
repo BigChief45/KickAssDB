@@ -319,6 +319,11 @@ public class MainWindow extends javax.swing.JFrame
         saveSchema.setFocusable(false);
         saveSchema.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         saveSchema.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        saveSchema.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveSchemaActionPerformed(evt);
+            }
+        });
         jToolBar1.add(saveSchema);
 
         viewSchema.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -638,8 +643,21 @@ public class MainWindow extends javax.swing.JFrame
             Storage.openSchema(opened_file);
             
             getOutputText().append("Opened schema: " + default_schema.getName() + "\n");
+            saveSchema.setEnabled(false);
         }
     }//GEN-LAST:event_openSchemaActionPerformed
+
+    private void saveSchemaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSchemaActionPerformed
+        
+        /* Saves the current unsaved schema */
+        String sn = JOptionPane.showInputDialog(this, "Schema name:", "Save Schema", JOptionPane.QUESTION_MESSAGE);
+        
+        default_schema.setName(sn);
+        
+        if ( Storage.createSchema(default_schema) )
+            setDefault_schema(default_schema);
+        
+    }//GEN-LAST:event_saveSchemaActionPerformed
 
     
     protected static Schema getDefaultSchema()
