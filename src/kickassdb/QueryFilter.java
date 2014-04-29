@@ -299,6 +299,12 @@ public class QueryFilter
     
     }//End public static Table newFilterTable(Table table, ArrayList<QueryFilter> filters)
     
+    private static Table filterTable2Filters(){
+    
+        return new Table();
+    
+    }
+    
     private static Table Operation2Attributes(Table table, int index1, int index2, String operation){
     
         Table result_table = new Table();
