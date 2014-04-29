@@ -14,7 +14,8 @@ public class QueryFilter
     private String operand;    
     private String bool_value;
     
-    
+    private String query_filter_type;
+        
     public QueryFilter()
     {
         
@@ -65,6 +66,12 @@ public class QueryFilter
     {
         return bool_value;
     }
+    
+    private void determineQueryFilterType(){
+            
+        this.query_filter_type = this.leftFilter.getFilterType_type().toString() + "_" +this.rightFilter.getFilterType_type().toString();        
+    
+    }//End private void determineQueryFilterType()
     
     public static Table newFilterTable(Table table, ArrayList<QueryFilter> filters){
     
@@ -279,15 +286,59 @@ public class QueryFilter
                     default:
                         break;
                         
-                }//End switch (nextOperation)                               
+                }//End switch (nextOperation)                           
                 
                 break;
                 
             case 2:
                 
-                Table tableLeft = new Table();
-                //tableLeft = QueryFilter.newFilterTable(tableLeft, filters.get(0));                
+                //We will set the values of the filters
+                QueryFilter filterLeft = setNewFilter(table, filters.get(1));
+                filterLeft.determineQueryFilterType();
+                QueryFilter filterRight = setNewFilter(table, filters.get(0));
+                filterRight.determineQueryFilterType();
                 
+                //We get the boolean value
+                String boolOperand = filterRight.getBoolValue();
+                
+                //Now that we have everything set we iterate
+                for (Tuple tuple : table.getTable_tuples()) {
+                    
+                    System.out.println("");
+                    
+                    boolean resultLeft = isTupleValid(table, tuple, filterLeft);
+                    
+                    //Now we will take action using the AND or OR
+                    switch (boolOperand) {
+                        
+                        case "OR":
+                            if (resultLeft == true)
+                                result_table.addTuple(tuple);
+                            else {
+                            
+                                boolean resultRight = isTupleValid(table, tuple, filterRight);
+                                
+                                if (resultRight == true)
+                                    result_table.addTuple(tuple);
+                                
+                            }//End else                                        
+                            break;
+                        
+                        case "AND":
+                            
+                            boolean resultRight = isTupleValid(table, tuple, filterRight);                            
+                            
+                            if ((resultLeft == true) && (resultRight == true))
+                                result_table.addTuple(tuple);
+                            
+                            break;
+                            
+                        default:
+                            break;
+                            
+                    }//End switch (boolOperand)
+                        
+                }//End for (Tuple tuple : table.getTable_tuples())                
                 break;
                 
             default:
@@ -299,11 +350,226 @@ public class QueryFilter
     
     }//End public static Table newFilterTable(Table table, ArrayList<QueryFilter> filters)
     
-    private static Table filterTable2Filters(){
+    private static QueryFilter setNewFilter(Table table, QueryFilter filter){
     
-        return new Table();
+                //Now we get the left filter
+                FilterPart leftFilterPart  = filter.getLeftFilter();
+                //Now we get the right filter
+                FilterPart rightFilterPart  = filter.getRightFilter();
+                
+                //Now we get the filter type
+                String filterTypeLeft = leftFilterPart.getFilterType_type().toString();
+                String filterTypeRight = rightFilterPart.getFilterType_type().toString();
+                                
+                //We will set the attributes of the query Filter
+                //We decide what to do using the filter type
+                switch (filterTypeLeft) {
+                    
+                    //If it is an attribute then we look for the index in the merged table
+                    case "ATTRIBUTE":
+                        //We look for the index in the merged table
+                        leftFilterPart.setIndexAttributeLeft(table.getFieldPosition(leftFilterPart.getFieldName()));
+                        //indexAttributeLeft = table.getFieldPosition(leftFilterPart.getFieldName());                      
+                        break;
+                    
+                    //If it is an attribute with alias then we look for the index in the merged table
+                    case "ALIAS_ATTRIBUTE":
+                        //First we determine if the alias is a table
+                        Table tableWithAliasEqualsName = MainWindow.getDefaultSchema().getTable(leftFilterPart.getFieldAlias());
+                        
+                        //If there's a table that its alias is its name then we look for the index alias + attribute in the merged table
+                        if ( tableWithAliasEqualsName != null ){
+                        
+                            
+                            leftFilterPart.setIndexAttributeLeft(table.getFieldPositionCompleteDomain(tableWithAliasEqualsName.getTable_name() + leftFilterPart.getFieldName()));
+                            //indexAttributeLeft = table.getFieldPositionCompleteDomain(tableWithAliasEqualsName.getTable_name() + leftFilterPart.getFieldName());
+                        
+                        }//End if ( tableWithAliasEqualsName != null )
+                        else {
+                        
+                            //First we find the table who has that alias
+                            Table tableWithAliasName = MainWindow.getDefaultSchema().getTableWithAliasName(leftFilterPart.getFieldAlias());
+                            
+                            //If we find it we define the indexAliasAttributeRight
+                            if (tableWithAliasName != null){
+                            
+                                leftFilterPart.setIndexAttributeLeft(table.getFieldPositionCompleteDomain(tableWithAliasName.getTable_name() + leftFilterPart.getFieldName()));
+                                //indexAttributeLeft = table.getFieldPositionCompleteDomain(tableWithAliasName.getTable_name() + leftFilterPart.getFieldName());
+                            
+                            }//End if (tableWithAliasName != null)
+                        
+                        }//End else                        
+                        break;
+                        
+                    //If it is a value then we retrieve it
+                    case "VALUE":
+                        //We try to find out if the value is an integer
+                        try {
+                            
+                            leftFilterPart.setIntValueLeft(Integer.parseInt(leftFilterPart.getValue().toString()));
+                            leftFilterPart.setValueTypeLeft("INTEGER");
+                            
+//                            intValueLeft = Integer.parseInt(leftFilterPart.getValue().toString());
+//                            valueTypeLeft = "INTEGER";
+                            
+                        } catch (Exception e) {
+                            
+                            leftFilterPart.setStringValueLeft(leftFilterPart.getValue().toString());
+                            leftFilterPart.setValueTypeLeft("STRING");                            
+                            
+//                            stringValueLeft = leftFilterPart.getValue().toString();
+//                            valueTypeLeft = "STRING";
+                            
+                        }//End catch (Exception e)
+                        break;
+                                                
+                    default:
+                        break;
+                                                                        
+                }//End switch (filterType)
+                
+                //Now that we have the indexes or values we can compare with the right part
+                
+//                //Index of the attribute in the merged table
+//                int indexAttributeRight = -1;
+//                //Index of the attribute with the alias in the merged table
+//                //int indexAliasAttributeRight = -1;
+//                                
+//                //Values
+//                String valueTypeRight = "null";
+//                String stringValueRight = "null";
+//                int intValueRight = -1;
+                                                
+                //We decide what to do using the filter type on the right side
+                switch (filterTypeRight) {
+                    
+                    //If it is an attribute then we look for the index in the merged table
+                    case "ATTRIBUTE":
+                        //We look for the index in the merged table
+                        rightFilterPart.setIndexAttributeRight(table.getFieldPosition(rightFilterPart.getFieldName()));
+                        //indexAttributeRight = table.getFieldPosition(rightFilterPart.getFieldName());                      
+                        //result_table = attributeLeftOperation(table, leftFilterPart, rightFilterPart);
+                        break;
+                    
+                    //If it is an attribute with alias then we look for the index in the merged table
+                    case "ALIAS_ATTRIBUTE":
+                        //First we determine if the alias is a table
+                        Table tableWithAliasEqualsName = MainWindow.getDefaultSchema().getTable(rightFilterPart.getFieldAlias());
+                        
+                        //If there's a table that its alias is its name then we look for the index alias + attribute in the merged table
+                        if ( tableWithAliasEqualsName != null ){
+                        
+                            rightFilterPart.setIndexAttributeRight(table.getFieldPositionCompleteDomain(tableWithAliasEqualsName.getTable_name() + rightFilterPart.getFieldName()));
+                            //indexAttributeRight = table.getFieldPositionCompleteDomain(tableWithAliasEqualsName.getTable_name() + rightFilterPart.getFieldName());
+                        
+                        }//End if ( tableWithAliasEqualsName != null )
+                        else {
+                        
+                            //First we find the table who has that alias
+                            Table tableWithAliasName = MainWindow.getDefaultSchema().getTableWithAliasName(rightFilterPart.getFieldAlias());
+                            
+                            //If we find it we define the indexAliasAttributeRight
+                            if (tableWithAliasName != null){
+                            
+                                rightFilterPart.setIndexAttributeRight(table.getFieldPositionCompleteDomain(tableWithAliasName.getTable_name() + rightFilterPart.getFieldName()));
+                                //indexAttributeRight = table.getFieldPositionCompleteDomain(tableWithAliasName.getTable_name() + rightFilterPart.getFieldName());
+                            
+                            }//End if (tableWithAliasName != null)
+                        
+                        }//End else                        
+                        break;
+                        
+                    //If it is a value then we retrieve it
+                    case "VALUE":
+                        //We try to find out if the value is an integer
+                        try {
+                            
+                            
+                            rightFilterPart.setIntValueRight(Integer.parseInt(rightFilterPart.getValue().toString()));
+                            rightFilterPart.setValueTypeRight("INTEGER");
+                            
+//                            intValueRight = Integer.parseInt(rightFilterPart.getValue().toString());
+//                            valueTypeRight = "INTEGER";
+                            
+                        } catch (Exception e) {
+                            
+                            rightFilterPart.setStringValueRight(rightFilterPart.getValue().toString());
+                            rightFilterPart.setValueTypeRight("STRING");                            
+                            
+//                            stringValueRight = rightFilterPart.getValue().toString();
+//                            valueTypeRight = "STRING";
+                            
+                        }//End catch (Exception e)
+                        break;
+                                                                                                                                     
+                    default:
+                        break;
+                                                                        
+                }//End switch (filterType)
+                
+                filter.setLeftFilter(leftFilterPart);
+                filter.setRightFilter(rightFilterPart);
+                
+                return filter;
+        
+    }//End private static QueryFilter setNewFilter(Table table, QueryFilter filter)
     
+    private static boolean isTupleValid(Table table, Tuple tuple, QueryFilter queryFilter){
+                    
+        boolean result = false;
+
+        int indexLeft = queryFilter.getLeftFilter().getIndexAttributeLeft();        
+        int indexRight = queryFilter.getRightFilter().getIndexAttributeRight();
+        
+        switch (queryFilter.query_filter_type) {
+            case "ATTRIBUTE_ALIAS_ATTRIBUTE": case "ATTRIBUTE_ATTRIBUTE": case "ALIAS_ATTRIBUTE_ATTRIBUTE":
+                case "ALIAS_ATTRIBUTE_ALIAS_ATTRIBUTE":
+                //result = Operation2Attributes(table, indexAttributeLeft, indexAttributeRight, operation);
+                break;
+
+            case "ATTRIBUTE_VALUE":
+                if ( "INTEGER".equals(queryFilter.rightFilter.getValueTypeRight()))
+                    result = TupleOperationAttributeValue(tuple, "INTEGER", indexLeft ,queryFilter.rightFilter.getIntValueRight(), queryFilter.getOperand());
+                else
+                    result = TupleOperationAttributeValue(tuple, "VARCHAR", indexLeft, queryFilter.rightFilter.getStringValueRight(), queryFilter.getOperand());
+                break;                            
+
+            case "ALIAS_ATTRIBUTE_VALUE":
+                if ("INTEGER".equals(queryFilter.rightFilter.getValueTypeRight()))
+                    result = TupleOperationAttributeValue(tuple, "INTEGER", indexLeft, queryFilter.rightFilter.getIntValueRight(), queryFilter.getOperand());
+                else
+                    result = TupleOperationAttributeValue(tuple, "VARCHAR", indexLeft, queryFilter.rightFilter.getStringValueRight(), queryFilter.getOperand());                        
+                break;                        
+
+            case "VALUE_ATTRIBUTE":
+                if ( "INTEGER".equals(queryFilter.rightFilter.getValueTypeRight()))
+                    result = TupleOperationAttributeValue(tuple, "INTEGER", indexRight, queryFilter.rightFilter.getIntValueRight(), queryFilter.getOperand());
+                else
+                    result = TupleOperationAttributeValue(tuple, "VARCHAR", indexRight, queryFilter.rightFilter.getStringValueRight(), queryFilter.getOperand());
+                break;                            
+
+            case "VALUE_ALIAS_ATTRIBUTE":
+                if ("INTEGER".equals(queryFilter.rightFilter.getValueTypeRight()))
+                    result = TupleOperationAttributeValue(tuple, "INTEGER", indexRight, queryFilter.rightFilter.getIntValueRight(), queryFilter.getOperand());
+                else
+                    result = TupleOperationAttributeValue(tuple, "VARCHAR", indexRight, queryFilter.rightFilter.getStringValueRight(), queryFilter.getOperand());                        
+                break;         
+
+            case "VALUE_VALUE":
+                //if ("INTEGER".equals(valueTypeLeft))
+                    //result = Operation2Value(table, intValueLeft, intValueRight, operation);
+                //else
+                    //result = Operation2Value(table, stringValueLeft, stringValueRight, operation);                                                
+                break;
+
+            default:
+                break;
+
+        }//End switch (nextOperation)
+        
+        return result;
     }
+    
     
     private static Table Operation2Attributes(Table table, int index1, int index2, String operation){
     
@@ -631,9 +897,139 @@ public class QueryFilter
         
     }//End         
            
+    //Operations Tuple
+    private static boolean TupleOperation2Attributes(Table table, int index1, int index2, String operation){
     
+        return true;
+        
+    }
+        
+    private static boolean TupleOperation2Value(Table table, int lValue, int rValue, String operation){
     
+        return true;
+        
+    }
     
+    private static boolean TupleOperation2Value(Table table, String lValue, String rValue, String operation){
+    
+        return true;
+        
+    }    
+    
+    private static boolean TupleOperationAttributeValue(Tuple tuple, String attributeType, int index1, String value, String operation){
+         
+        boolean result = false;
+        
+        switch (operation) {
+            case "=":
+                if ( attributeType.equals("VARCHAR") ){
+
+                    String value1 = tuple.getValue(index1).getValue().toString();
+
+                    if ( value1.equals(value) )
+                        result = true;
+
+                }                   
+                break;
+
+            case ">":
+                if ( attributeType.equals("VARCHAR") ){
+
+                    String value1 = tuple.getValue(index1).getValue().toString();
+
+                    if ( value1.length() > value.length() )
+                        result = true;
+
+                }              
+                break;
+
+            case "<":
+                if ( attributeType.equals("VARCHAR") ){
+
+                    String value1 = tuple.getValue(index1).getValue().toString();
+
+                    if ( value1.length() < value.length() )
+                        result = true;
+
+                }                             
+                break;
+
+            case "<>":
+                if ( attributeType.equals("VARCHAR") ){
+
+                    String value1 = tuple.getValue(index1).getValue().toString();
+
+                    if ( !(value1.equals(value)) )
+                        result = true;
+
+                }                    
+                break;                    
+
+            default:
+                break;
+                
+        }//End         
+        
+        return result;
+    
+    }//End private static boolean TupleOperationAttributeValue(Tuple tuple, String attributeType, int index1, String value, String operation)
+    
+    private static boolean TupleOperationAttributeValue(Tuple tuple, String attributeType, int index1, int value, String operation){    
+                                    
+        boolean result = false;
+        
+        switch (operation) {
+            case "=":
+                if ( attributeType.equals("INTEGER") ){
+
+                    int value1 = Integer.parseInt(tuple.getValue(index1).getValue().toString());
+
+                    if ( value1 == value )
+                        result = true;
+
+                }                   
+                break;
+
+            case ">":
+                if ( attributeType.equals("INTEGER") ){
+
+                    int value1 = Integer.parseInt(tuple.getValue(index1).getValue().toString());
+
+                    if ( value1 > value )
+                        result = true;
+
+                }              
+                break;
+
+            case "<":
+                if ( attributeType.equals("INTEGER") ){
+
+                    int value1 = Integer.parseInt(tuple.getValue(index1).getValue().toString());
+
+                    if ( value1 < value )
+                        result = true;
+
+                }                             
+                break;
+
+            case "<>":
+                if ( attributeType.equals("INTEGER") ){
+
+                    int value1 = Integer.parseInt(tuple.getValue(index1).getValue().toString());
+
+                    if ( !(value1 == value) )
+                        result = true;
+
+                }                    
+                break;                    
+
+            default:
+                break;
+        }//End 
+
+        return result;
+    
+    }    
     
     //Operations
     private static Table attributeLeftOperation(Table table, FilterPart left, FilterPart right){
@@ -1344,5 +1740,19 @@ public class QueryFilter
         return result_tuple;
     
     }//End private Tuple OperationsLeftSide()    
+
+    /**
+     * @return the query_filter_type
+     */
+    public String getQuery_filter_type() {
+        return query_filter_type;
+    }
+
+    /**
+     * @param query_filter_type the query_filter_type to set
+     */
+    public void setQuery_filter_type(String query_filter_type) {
+        this.query_filter_type = query_filter_type;
+    }
     
 }

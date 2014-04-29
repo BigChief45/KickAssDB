@@ -7,6 +7,183 @@ public class FilterPart
     private int field_position;
     private Object value;
 
+    //New fields
+    //Left Side
+    //Index of the attribute in the merged table
+    private int indexAttributeLeft;
+    //Index of the attribute with the alias in the merged table
+    //int indexAliasAttributeLeft = -1;
+
+    //Values
+    private String valueTypeLeft;
+    private String stringValueLeft;
+    private int intValueLeft;
+    
+    //Right Side
+    //Index of the attribute in the merged table
+    private int indexAttributeRight;
+    //Index of the attribute with the alias in the merged table
+    //int indexAliasAttributeLeft = -1;
+
+    //Values
+    private String valueTypeRight;
+    private String stringValueRight;
+    private int intValueRight;    
+
+    /**
+     * @return the field_alias
+     */
+    public String getField_alias() {
+        return field_alias;
+    }
+
+    /**
+     * @param field_alias the field_alias to set
+     */
+    public void setField_alias(String field_alias) {
+        this.field_alias = field_alias;
+    }
+
+    /**
+     * @return the field_name
+     */
+    public String getField_name() {
+        return field_name;
+    }
+
+    /**
+     * @param field_name the field_name to set
+     */
+    public void setField_name(String field_name) {
+        this.field_name = field_name;
+    }
+
+    /**
+     * @return the field_position
+     */
+    public int getField_position() {
+        return field_position;
+    }
+
+    /**
+     * @param field_position the field_position to set
+     */
+    public void setField_position(int field_position) {
+        this.field_position = field_position;
+    }
+
+    /**
+     * @return the indexAttributeLeft
+     */
+    public int getIndexAttributeLeft() {
+        return indexAttributeLeft;
+    }
+
+    /**
+     * @param indexAttributeLeft the indexAttributeLeft to set
+     */
+    public void setIndexAttributeLeft(int indexAttributeLeft) {
+        this.indexAttributeLeft = indexAttributeLeft;
+    }
+
+    /**
+     * @return the valueTypeLeft
+     */
+    public String getValueTypeLeft() {
+        return valueTypeLeft;
+    }
+
+    /**
+     * @param valueTypeLeft the valueTypeLeft to set
+     */
+    public void setValueTypeLeft(String valueTypeLeft) {
+        this.valueTypeLeft = valueTypeLeft;
+    }
+
+    /**
+     * @return the stringValueLeft
+     */
+    public String getStringValueLeft() {
+        return stringValueLeft;
+    }
+
+    /**
+     * @param stringValueLeft the stringValueLeft to set
+     */
+    public void setStringValueLeft(String stringValueLeft) {
+        this.stringValueLeft = stringValueLeft;
+    }
+
+    /**
+     * @return the intValueLeft
+     */
+    public int getIntValueLeft() {
+        return intValueLeft;
+    }
+
+    /**
+     * @param intValueLeft the intValueLeft to set
+     */
+    public void setIntValueLeft(int intValueLeft) {
+        this.intValueLeft = intValueLeft;
+    }
+
+    /**
+     * @return the indexAttributeRight
+     */
+    public int getIndexAttributeRight() {
+        return indexAttributeRight;
+    }
+
+    /**
+     * @param indexAttributeRight the indexAttributeRight to set
+     */
+    public void setIndexAttributeRight(int indexAttributeRight) {
+        this.indexAttributeRight = indexAttributeRight;
+    }
+
+    /**
+     * @return the valueTypeRight
+     */
+    public String getValueTypeRight() {
+        return valueTypeRight;
+    }
+
+    /**
+     * @param valueTypeRight the valueTypeRight to set
+     */
+    public void setValueTypeRight(String valueTypeRight) {
+        this.valueTypeRight = valueTypeRight;
+    }
+
+    /**
+     * @return the stringValueRight
+     */
+    public String getStringValueRight() {
+        return stringValueRight;
+    }
+
+    /**
+     * @param stringValueRight the stringValueRight to set
+     */
+    public void setStringValueRight(String stringValueRight) {
+        this.stringValueRight = stringValueRight;
+    }
+
+    /**
+     * @return the intValueRight
+     */
+    public int getIntValueRight() {
+        return intValueRight;
+    }
+
+    /**
+     * @param intValueRight the intValueRight to set
+     */
+    public void setIntValueRight(int intValueRight) {
+        this.intValueRight = intValueRight;
+    }
+    
     /**
      *The type of the filter part
      */
@@ -24,12 +201,12 @@ public class FilterPart
     
     public String getFieldAlias()
     {
-        return field_alias;
+        return getField_alias();
     }//End public String getFieldAlias()
     
     public void setFieldAlias(String a)
     {
-        field_alias = a;
+        setField_alias(a);
         
         //Each time it is set we check the type of the filter part
         this.setFilterPartType();
@@ -38,12 +215,12 @@ public class FilterPart
     
     public String getFieldName()
     {
-        return field_name;
+        return getField_name();
     }//End public String getFieldName()
     
     public void setFieldName(String n)
     {
-        field_name = n;
+        setField_name(n);
         
         //Each time it is set we check the type of the filter part
         this.setFilterPartType();
@@ -52,12 +229,12 @@ public class FilterPart
     
     public int getFieldPosition()
     {
-        return field_position;
+        return getField_position();
     }//End public int getFieldPosition()
     
     public void setFieldPosition(int p)
     {
-        field_position = p;
+        setField_position(p);
         
         //Each time it is set we check the type of the filter part
         this.setFilterPartType();        
@@ -97,7 +274,7 @@ public class FilterPart
         //Is type = ALIAS_ATTRIBUTE
         if ( !this.field_name.equals("") && !this.field_alias.equals("")){
         
-            this.filterType_type = Type.ALIAS_ATTRIBUTE;
+            this.setFilterType_type(Type.ALIAS_ATTRIBUTE);
             return;
             
         }//End if ( !this.field_name.equals("") )        
@@ -105,15 +282,15 @@ public class FilterPart
         //Is type = ATTRIBUTE
         if ( !this.field_name.equals("") ){
         
-            this.filterType_type = Type.ATTRIBUTE;
+            this.setFilterType_type(Type.ATTRIBUTE);
             return;
             
         }//End if ( !this.field_name.equals("") )
         
         //Is type = VALUE\
-        if ( this.value != null ){
+        if ( this.getValue() != null ){
 
-            this.filterType_type = Type.VALUE;
+            this.setFilterType_type(Type.VALUE);
 
         }//End if ( !this.field_name.equals("") )
     

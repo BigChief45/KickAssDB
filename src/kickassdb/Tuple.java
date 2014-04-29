@@ -1,8 +1,9 @@
 package kickassdb;
 
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Tuple 
+public class Tuple implements Serializable
 {
     
     private ArrayList<Value> tuple_values;

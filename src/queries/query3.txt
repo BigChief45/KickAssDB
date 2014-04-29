@@ -1,2 +1,0 @@
-SELECT * FROM Person AS P, Vehicle
-WHERE model = 'Camry' AND model = 'Yaris'

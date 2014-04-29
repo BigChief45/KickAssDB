@@ -2,9 +2,9 @@
 package kickassdb;
 
 import java.util.ArrayList;
+import java.io.Serializable;
 
-
-public class Schema 
+public class Schema implements Serializable
 {    
     private ArrayList<Table> schema;
     private int table_count = 0;

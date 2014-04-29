@@ -1,6 +1,8 @@
 package kickassdb;
 
-public class Value 
+import java.io.Serializable;
+
+public class Value implements Serializable
 {
     
     private Object value;

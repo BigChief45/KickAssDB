@@ -100,7 +100,7 @@ create_schema ::= CREATE SCHEMA ID:schema_id
                   {:
                         Schema schema = new Schema(schema_id.toString());
 
-                        MainWindow.saveSchema(schema);
+                        MainWindow.createSchema(schema);
                   :}
                   ;
 
@@ -144,17 +144,11 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
                             /* Check first if the Schema is already stored */
                             if ( schema.isSaved() )
                             {
-                                AddFile.AddNewFolder("src/schemas/" + schema.getName() + "/" + table.getTable_name());
-
-                                /* Create an attribute.txt in the table's folder */
-                                AddFile.AddAttribute("src/schemas/" + schema.getName() + "/" + table.getTable_name() + "/attribute.txt", table);
-
-                                /* To test if the attribute.txt has been created */
-                                AddFile.TestPrint("src/schemas/" + schema.getName() + "/" + table.getTable_name() + "/attribute.txt", table);
+                                /* Save the schema on drive */
+                                Storage.saveSchema(schema);
                             }
                             
                             table.printDomain();                       
-
                         }
                         else if ( pk_count > 1 )
                         {
@@ -269,8 +263,8 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                         /* Check first if the schema is stored */
                                         if ( schema.isSaved() )
                                         {
-                                            String path = "src/schemas/" + schema.getName() + "/" + t.getTable_name() + "/data.txt";                                        
-                                            AddFile.AddData(path, new_tuple);
+                                            /* Save Schema */
+                                            Storage.saveSchema(schema);
                                         }
                                     }
 

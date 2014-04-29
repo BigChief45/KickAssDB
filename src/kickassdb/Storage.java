@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
  *
  * @author cindy
  */
-public class AddFile 
+public class Storage 
 {
     static private String readFile(String fileName) 
     {
@@ -71,6 +71,81 @@ public class AddFile
         {
             JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Error creating directory.", "Error", JOptionPane.ERROR_MESSAGE);                                         
             e.printStackTrace();  
+        }
+    }
+    
+    public static boolean createSchema(Schema schema)
+    {
+        try 
+        {
+            /* Creates a new folder for the schema from the recieved path */
+            File schemaFile = new File("src/schemas/" + schema.getName() + ".sdef");
+            
+            if ( schemaFile.exists() )
+            {
+                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "There is already a schema with this name.", "Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+            
+            /* Create Blank Definition File */            
+            schemaFile.createNewFile();
+            
+            /* Writes the Schema object to the file */
+            OutputStream out = new FileOutputStream(schemaFile);
+            ObjectOutputStream oos = new ObjectOutputStream(out);
+            
+            oos.writeObject(schema);            
+            oos.close();
+            
+            return true;
+        }  
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Error creating schema directory.", "Error", JOptionPane.ERROR_MESSAGE);                                         
+            e.printStackTrace();
+            return false;
+        }                
+    }
+    
+    public static void saveSchema(Schema schema)
+    {
+        try 
+        {                                     
+            /* Re-Create Blank Definition File */
+            File schemaDef = new File("src/schemas/" + schema.getName() + ".sdef");
+            schemaDef.delete(); // Delete file
+            schemaDef.createNewFile(); // Re-create file
+            
+            /* Writes the Schema object to the file */
+            OutputStream out = new FileOutputStream(schemaDef);
+            ObjectOutputStream oos = new ObjectOutputStream(out);
+            
+            oos.writeObject(schema);            
+            oos.close();                        
+        }  
+        catch (Exception e) 
+        {
+            JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Error saving schema", "Error", JOptionPane.ERROR_MESSAGE);                                         
+            e.printStackTrace();            
+        }
+    }
+            
+    public static void openSchema(File schema_file)
+    {
+        /* Reads a definition file and loads it into a Schema object */
+        try
+        {
+            FileInputStream fin = new FileInputStream(schema_file);
+            ObjectInputStream ois = new ObjectInputStream(fin);
+            
+            Schema schema = (Schema) ois.readObject();
+            
+            /* Set this schema as the current schema */
+            MainWindow.setDefault_schema(schema);
+        }
+        catch (Exception e)
+        {
+            System.out.print(e.getMessage());
         }
     }
     
