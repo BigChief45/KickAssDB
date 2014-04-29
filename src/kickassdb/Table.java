@@ -194,6 +194,14 @@ public class Table implements Serializable
         
     }//End public Attribute getAttributeByName(String name)
     
+    public Attribute getAttributeByPosition(int i) {
+
+        Attribute attr = table_domain.get(i);        
+        
+        return attr;
+        
+    }//End public Attribute getAttributeByName(String name)    
+    
     public void printDomain()
     {
     

@@ -798,12 +798,12 @@ class CUP$parser$actions {
                 {
                     case 0:
                         /* SELECT * */
-                        Operations.selectAll(from_tables, where_filters);
+                        Operations.select(from_tables, where_filters, field_names, field_aliases);
                         break;
 
                     case 1:
                         /* SELECT -fields- */
-                        Operations.selectFields(field_names, from_tables, where_filters, field_aliases);
+                        Operations.select(from_tables, where_filters, field_names, field_aliases);
                         break;
 
                     case 2:
