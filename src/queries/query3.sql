@@ -1,0 +1,1 @@
+SELECT person_name, V.country FROM Person AS P, Vehicle AS V
