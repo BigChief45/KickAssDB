@@ -330,4 +330,11 @@ public class Table implements Serializable
         this.table_complete_domain = table_complete_domain;
     }
     
+    @Override
+    public String toString(){
+    
+        return this.table_name;
+    
+    }
+    
 }

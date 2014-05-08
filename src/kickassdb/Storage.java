@@ -146,6 +146,7 @@ public class Storage
         catch (Exception e)
         {
             System.out.print(e.getMessage());
+            e.printStackTrace();
         }
     }
     

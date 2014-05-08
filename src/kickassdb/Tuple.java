@@ -71,5 +71,14 @@ public class Tuple implements Serializable
         
         return new_tuple;
     }
+ 
+    @Override
+    public String toString(){
     
+        String r = "";
+        for ( Value v : tuple_values )
+            r = r + v.getValue().toString() + "; ";
+    
+        return r;
+    }
 }

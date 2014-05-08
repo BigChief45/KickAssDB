@@ -20,7 +20,7 @@ import java_cup.runtime.Symbol;
 letter = [a-zA-z]
 digit = [0-9]
 space = \t | \f | " " | \r | \n
-specials = "!" | "?" | "." | "-"
+specials = "!" | "?" | "." | "-" | ":"
 point = "."
 
 // Delimiters 
