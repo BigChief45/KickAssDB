@@ -38,7 +38,7 @@ public class Table implements Serializable
         
     }
     
-    public void setIndexex(ArrayList<Attribute> i)
+    public void setIndexes(ArrayList<Attribute> i)
     {
         indexes = i;
     }
@@ -48,6 +48,11 @@ public class Table implements Serializable
         return indexes;
     }
             
+    public void addIndex(Attribute i )
+    {
+        indexes.add(i);
+    }
+    
     public void addTuple(Tuple tuple)
     {
         table_tuples.add(tuple);
@@ -218,7 +223,7 @@ public class Table implements Serializable
     
     public boolean hasIndexes()
     {
-        return indexes.isEmpty();
+        return !indexes.isEmpty();
     }
     
     public void printDomain()

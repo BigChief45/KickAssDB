@@ -8,6 +8,7 @@ package kickassdb;
 
 import java.util.Hashtable;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 
 /**
@@ -169,18 +170,26 @@ public class AddIndexes extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tableListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_tableListValueChanged
-
         
         Table sTable = (Table)this.tableList.getSelectedValue();
                 
+        /* Display table attributes in list */
         DefaultListModel listModel = new DefaultListModel();
-        for (Object attr : sTable.getTable_domain()) {
-            
-            listModel.addElement(attr);
-            
-        }
+        DefaultListModel indexesModel = new DefaultListModel();
         
-        this.tableDomain.setModel(listModel);        
+        for (Object attr : sTable.getTable_domain())                     
+            listModel.addElement(attr);            
+        
+        for ( Object i : sTable.getIndexes() )
+            indexesModel.addElement(i);
+        
+        this.tableDomain.setModel(listModel);
+        this.tableIndexes.setModel(indexesModel);
+        
+        if ( sTable.getIndexes().size() >= 2 )
+            addIndex.setEnabled(false);
+        else
+            addIndex.setEnabled(true);
         
     }//GEN-LAST:event_tableListValueChanged
 
@@ -263,8 +272,15 @@ public class AddIndexes extends javax.swing.JFrame {
             }
             
             at.setHashTable(ht);
+                                                            
             //System.out.println(ht.toString());
-        }                                        
+        }
+        
+        /* Add the index to the table */
+        Table indexed_table = (Table) this.tableList.getSelectedValue();
+        indexed_table.addIndex(at);
+        
+        JOptionPane.showMessageDialog(this, "Index created on attribute " + at.getAttribute_name() + " on table " + indexed_table.getTable_name(), "Indexed Added Succesfully", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_addIndexActionPerformed
 
     private void removeIndexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeIndexActionPerformed
@@ -294,6 +310,11 @@ public class AddIndexes extends javax.swing.JFrame {
         at.setHashTable(new Hashtable());
         at.setIndexType(Attribute.IndexType.NULL);
         
+        /* Remove the index from the Table's index list */
+        Table indexed_table = (Table) this.tableList.getSelectedValue();
+        indexed_table.getIndexes().remove(at);
+        
+        JOptionPane.showMessageDialog(this, "Index " + at.getAttribute_name() + " has been removed from table " + indexed_table.getTable_name(), "Indexed Removed Succesfully", JOptionPane.WARNING_MESSAGE);
     }//GEN-LAST:event_removeIndexActionPerformed
 
     /**

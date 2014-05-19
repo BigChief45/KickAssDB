@@ -38,7 +38,7 @@ public class Schema implements Serializable
 
     public int getTable_count() 
     {
-        return table_count;
+        return schema.size();
     }
 
     public void setTable_count(int table_count) 
@@ -67,7 +67,7 @@ public class Schema implements Serializable
    public Table getTable(String table_name)
    {
        for ( Table t : schema )
-           if ( t.getTable_name().equals(table_name) )
+           if ( t.getTable_name().toLowerCase().equals(table_name.toString().toLowerCase()) )
                return t;
        
        return null;
