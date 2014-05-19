@@ -1,4 +1,4 @@
-CREATE TABLE Person (
+sCREATE TABLE Person (
 person_id INT PRIMARY KEY ,
 person_name varchar(20),
 person_last varchar(30),

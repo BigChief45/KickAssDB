@@ -244,7 +244,7 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
 
                                     val = Validations.validateInsertingTuple(attName, valType, t) && 
                                           Validations.validateColumnSize(temp_tuple) && 
-                                          Validations.validateVarcharSize(new_tuple, t.getTable_domain()); 
+                                          Validations.validateVarcharSize(new_tuple, t.getTable_domain());
 
                                     if ( val && t.getPrimary_key().getAttribute_name() != null ) 
                                         val = Validations.validatePrimaryKey(new_tuple, t);
@@ -257,6 +257,31 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                     if(val) 
                                     {
                                         t.addTuple(new_tuple);
+
+                                        /* Check if the table has indexes */
+                                        if ( t.hasIndexes() )
+                                        {
+                                            /* Loop through the table indexes */
+                                            int fieldPosition = 0;
+                                            for ( Attribute a : t.getIndexes() )
+                                            {
+                                                fieldPosition = t.getFieldPosition(a.getAttribute_name());
+                                                
+                                                /* Add the value to the Attribute's indexing structure */
+                                                /* Check the structure type */
+                                                if ( a.getIndexType() == Attribute.IndexType.TREE_TYPE_INDEXING )
+                                                    if ( a.getType() == Attribute.Type.INTEGER)
+                                                        a.getBTree().put((int) new_tuple.getValue(fieldPosition).getValue(), new_tuple);
+                                                    else if ( a.getType() == Attribute.Type.VARCHAR)
+                                                        a.getBTree().put((int) new_tuple.getValue(fieldPosition).getValue().toString().length(), new_tuple);
+                                                else if ( a.getIndexType() == Attribute.IndexType.HASH_TYPE_INDEXING )
+                                                    if ( a.getType() == Attribute.Type.INTEGER)
+                                                        a.getHashTable().put((int) new_tuple.getValue(fieldPosition).getValue(), new_tuple);
+                                                    else if ( a.getType() == Attribute.Type.VARCHAR)
+                                                        a.getHashTable().put((int) new_tuple.getValue(fieldPosition).getValue().toString().length(), new_tuple);
+                                            }                                            
+                                        }
+
                                         t.printTuples();
 
                                         /* add the data to the file */
