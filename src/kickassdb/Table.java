@@ -16,10 +16,13 @@ public class Table implements Serializable
     
     private ArrayList<Attribute> table_complete_domain;
     
+    private ArrayList<Attribute> indexes;
+    
     public Table()
     {
         table_tuples = new ArrayList<>();
         table_alias = new Alias();
+        indexes = new ArrayList();
     }
     
     public Table(int ID, String name, ArrayList<Attribute> domain)
@@ -31,7 +34,23 @@ public class Table implements Serializable
                 
         table_tuples = new ArrayList<>();        
         table_alias = new Alias();
+        indexes = new ArrayList();
         
+    }
+    
+    public void setIndexes(ArrayList<Attribute> i)
+    {
+        indexes = i;
+    }
+    
+    public ArrayList<Attribute> getIndexes()
+    {
+        return indexes;
+    }
+            
+    public void addIndex(Attribute i )
+    {
+        indexes.add(i);
     }
     
     public void addTuple(Tuple tuple)
@@ -200,7 +219,12 @@ public class Table implements Serializable
         
         return attr;
         
-    }//End public Attribute getAttributeByName(String name)    
+    }//End public Attribute getAttributeByName(String name)
+    
+    public boolean hasIndexes()
+    {
+        return !indexes.isEmpty();
+    }
     
     public void printDomain()
     {
