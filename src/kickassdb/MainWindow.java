@@ -58,10 +58,51 @@ public class MainWindow extends javax.swing.JFrame
         this.queryScrollPane.setRowHeaderView(tln);
         
         /* Load Syntax Highlighter */
-        loadSyntaxHighlighter();
-                
+        loadSyntaxHighlighter();                
+        
+        //Test
+        KickAssDB.mainwindow = this;
+        this.loadTest();
+        
     }//End MainWindow()
 
+    private void loadTest (){     
+    
+        //Open File        
+        opened_file = new File("src\\queries\\CreateAll.sql");
+
+        // Add it to the text pane
+        try
+        {
+            BufferedReader reader;
+            try (FileReader fr = new FileReader(opened_file)) {
+                reader = new BufferedReader(fr);
+                String line;
+                String input = "";
+                while ( (line = reader.readLine()) != null )
+                    input += line + "\n";
+                queryText.setText(input);
+            }
+            reader.close();
+            getOutputText().append("Opened file: " + opened_file.getName() + "\n");
+
+            queryTabs.setTitleAt(0, opened_file.getName());
+
+        }//End try
+        catch (Exception e )
+        {
+
+            getOutputText().setText(e.getMessage());
+
+        }//End catch (Exception e )
+        
+        //Save
+        this.saveQuery.doClick();
+        //Execute
+        this.executeQuery.doClick();        
+        
+    }//End private void loadTest ()
+    
     private void loadSyntaxHighlighter()
     {
         EditorKit editorKit;
@@ -524,7 +565,9 @@ public class MainWindow extends javax.swing.JFrame
         /* Call the Parser */
         try
         {
+            System.out.println("Absolute Path " +opened_file.getAbsolutePath().toString());
             parser p = new parser(new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath())));
+            System.out.println(p.toString());
             p.parse();
             
             MainWindow.outputText.append(this.parserResult);            
@@ -532,6 +575,7 @@ public class MainWindow extends javax.swing.JFrame
         catch(Exception e)
         {
             System.err.println(e.getMessage());
+            e.printStackTrace();
             outputText.append("Query stopped. \n");
         }
         
@@ -709,8 +753,30 @@ public class MainWindow extends javax.swing.JFrame
 
     private void btnPrintTreesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintTreesActionPerformed
         // TODO add your handling code here:
+        //We load the schema just for testing purposes   
         
-        
+        for (Table table : this.getDefault_schema().getSchema()) {
+            
+            for (Attribute attr : table.getTable_domain()) {
+                               
+                //We verify if it contains an index
+                if ( attr.getIndexType().equals(Attribute.IndexType.HASH_TYPE_INDEXING) ){
+                
+                    System.out.println("Table = " + table.getTable_name());
+                    System.out.println(attr.getHashTable().size());
+                    
+                }
+                                        
+                if ( attr.getIndexType().equals(Attribute.IndexType.TREE_TYPE_INDEXING) ){
+
+                    System.out.println("Table = " + table.getTable_name());
+                    System.out.println(attr.getBTree().toString());
+                                        
+                }
+                                    
+            }//End for (Attribute attr : table.getTable_domain())
+            
+        }//End for (Object object : col) 
         
     }//GEN-LAST:event_btnPrintTreesActionPerformed
 
