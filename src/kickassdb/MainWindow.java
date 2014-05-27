@@ -3,6 +3,7 @@ package kickassdb;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -10,22 +11,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java_cup.runtime.Symbol;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.TableColumn;
 import javax.swing.text.Document;
 import javax.swing.text.EditorKit;
 import javax.swing.text.MutableAttributeSet;
@@ -34,8 +30,7 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledEditorKit;
-import java.util.Timer;
-import java.util.TimerTask;
+
 
 public class MainWindow extends javax.swing.JFrame 
 {        
@@ -69,32 +64,34 @@ public class MainWindow extends javax.swing.JFrame
 
     private void loadSyntaxHighlighter()
     {
-        EditorKit editorKit = new StyledEditorKit()
-        {
-            public Document createDefaultDocument()
-            {
-                MutableAttributeSet attr = MultiSyntaxDocument.DEFAULT_KEYWORD;
-                HashMap<String, MutableAttributeSet> keywords = new HashMap<String, MutableAttributeSet>();
-                
-                /* Get Keywords and add them to the Highlighter */
-                Keywords kws = new Keywords();
-                
-                for ( String s : kws.getKeywords() )
-                {
-                    keywords.put( s,   attr );
-                }
-                                
-                SimpleAttributeSet operatorTest = new SimpleAttributeSet();
-                MultiSyntaxDocument.setAttributeColor( operatorTest, new Color( 255, 0, 0 ) );
-                MultiSyntaxDocument.setAttributeFont( operatorTest, new Font( "Courier New", Font.BOLD, 11 ) );
-                keywords.put( "dound",         operatorTest );
-                
-                MultiSyntaxDocument doc = new MultiSyntaxDocument( keywords );
-                doc.setTabs( 4 );
-                
-                return doc;
-            }
-        };
+        EditorKit editorKit;
+            editorKit = new StyledEditorKit()
+  {
+      @Override
+      public Document createDefaultDocument()
+      {
+          MutableAttributeSet attr = MultiSyntaxDocument.DEFAULT_KEYWORD;
+          HashMap<String, MutableAttributeSet> keywords = new HashMap<>();
+          
+          /* Get Keywords and add them to the Highlighter */
+          Keywords kws = new Keywords();
+          
+          for ( String s : kws.getKeywords() )
+          {
+              keywords.put( s,   attr );
+          }
+                          
+          SimpleAttributeSet operatorTest = new SimpleAttributeSet();
+          MultiSyntaxDocument.setAttributeColor( operatorTest, new Color( 255, 0, 0 ) );
+          MultiSyntaxDocument.setAttributeFont( operatorTest, new Font( "Courier New", Font.BOLD, 11 ) );
+          keywords.put( "dound",         operatorTest );
+          
+          MultiSyntaxDocument doc = new MultiSyntaxDocument( keywords );
+          doc.setTabs( 4 );
+          
+          return doc;
+      }
+  };
         
         queryText.setEditorKitForContentType("text/java", editorKit);
         queryText.setContentType("text/java");
@@ -102,6 +99,7 @@ public class MainWindow extends javax.swing.JFrame
         JButton button = new JButton("Load Java File");
         button.addActionListener( new ActionListener()
         {
+            @Override
             public void actionPerformed(ActionEvent e)
             {
                 try
@@ -225,6 +223,7 @@ public class MainWindow extends javax.swing.JFrame
         jSeparator2 = new javax.swing.JToolBar.Separator();
         compileLexer = new javax.swing.JButton();
         compileCup = new javax.swing.JButton();
+        btnPrintTrees = new javax.swing.JButton();
         queryTabs = new javax.swing.JTabbedPane();
         queryScrollPane = new javax.swing.JScrollPane();
         queryText = new javax.swing.JTextPane();
@@ -397,6 +396,17 @@ public class MainWindow extends javax.swing.JFrame
         });
         jToolBar1.add(compileCup);
 
+        btnPrintTrees.setText("Print Trees");
+        btnPrintTrees.setFocusable(false);
+        btnPrintTrees.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPrintTrees.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPrintTrees.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrintTreesActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnPrintTrees);
+
         queryText.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         queryText.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
@@ -517,7 +527,7 @@ public class MainWindow extends javax.swing.JFrame
             parser p = new parser(new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath())));
             p.parse();
             
-            this.outputText.append(this.parserResult);            
+            MainWindow.outputText.append(this.parserResult);            
         }
         catch(Exception e)
         {
@@ -551,11 +561,10 @@ public class MainWindow extends javax.swing.JFrame
             {
                 // Save changes to the current file
                 FileWriter fw = new FileWriter(opened_file);
-                PrintWriter pw = new PrintWriter(fw);
-
-                pw.write(queryText.getText());
-                getOutputText().setText("File " + opened_file.getName() + " saved successfully. \n");
-                pw.close();
+                try (PrintWriter pw = new PrintWriter(fw)) {
+                    pw.write(queryText.getText());
+                    getOutputText().setText("File " + opened_file.getName() + " saved successfully. \n");
+                }
             }
             else
             {
@@ -567,25 +576,24 @@ public class MainWindow extends javax.swing.JFrame
                                 
                 int retVal = fc.showSaveDialog(null);
 
-                if ( retVal == fc.APPROVE_OPTION )
+                if ( retVal == JFileChooser.APPROVE_OPTION )
                 {
                     
                     File nuevoArchivo = new File(fc.getSelectedFile().getAbsolutePath() + ".sql");
                                         
                     // Create file on selected directory
                     FileWriter fw = new FileWriter(nuevoArchivo);
-                    PrintWriter pw = new PrintWriter(fw);
-
-                    pw.write(queryText.getText());
-                    getOutputText().setText("File " + nuevoArchivo.getName() + " has been saved successfully. \n");
-                    pw.close();
+                    try (PrintWriter pw = new PrintWriter(fw)) {
+                        pw.write(queryText.getText());
+                        getOutputText().setText("File " + nuevoArchivo.getName() + " has been saved successfully. \n");
+                    }
 
                     opened_file = nuevoArchivo;
                     queryTabs.setTitleAt(0, opened_file.getName());
                 }
             }
         }
-        catch ( Exception e )
+        catch ( IOException | HeadlessException e )
         {
             getOutputText().setText(e.getMessage());
         }
@@ -603,7 +611,7 @@ public class MainWindow extends javax.swing.JFrame
         
         int seleccion = fc.showOpenDialog(null);
 
-        if ( seleccion == fc.APPROVE_OPTION )
+        if ( seleccion == JFileChooser.APPROVE_OPTION )
         {
             // Select the file
             opened_file = fc.getSelectedFile();
@@ -611,16 +619,15 @@ public class MainWindow extends javax.swing.JFrame
             // Add it to the text pane
             try
             {
-                FileReader fr = new FileReader(opened_file);
-                BufferedReader reader = new BufferedReader(fr);
-                
-                String line;
-                String input = "";
-                while ( (line = reader.readLine()) != null )
-                    input += line + "\n";
-
-                queryText.setText(input);
-                fr.close();
+                BufferedReader reader;
+                try (FileReader fr = new FileReader(opened_file)) {
+                    reader = new BufferedReader(fr);
+                    String line;
+                    String input = "";
+                    while ( (line = reader.readLine()) != null )
+                        input += line + "\n";
+                    queryText.setText(input);
+                }
                 reader.close();
                 getOutputText().append("Opened file: " + opened_file.getName() + "\n");
                                 
@@ -666,7 +673,7 @@ public class MainWindow extends javax.swing.JFrame
         fc.setFileFilter(filter);
         int seleccion = fc.showOpenDialog(null);
 
-        if ( seleccion == fc.APPROVE_OPTION )
+        if ( seleccion == JFileChooser.APPROVE_OPTION )
         {
             // Select the file
             opened_file = fc.getSelectedFile();
@@ -700,6 +707,13 @@ public class MainWindow extends javax.swing.JFrame
         
     }//GEN-LAST:event_indexesButtonActionPerformed
 
+    private void btnPrintTreesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintTreesActionPerformed
+        // TODO add your handling code here:
+        
+        
+        
+    }//GEN-LAST:event_btnPrintTreesActionPerformed
+
     
     protected static Schema getDefaultSchema()
     {
@@ -722,19 +736,14 @@ public class MainWindow extends javax.swing.JFrame
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (    ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new MainWindow().setVisible(true);
             }
@@ -743,6 +752,7 @@ public class MainWindow extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JPanel ResultsPanel;
     protected static javax.swing.JTabbedPane ReviewTab;
+    private javax.swing.JButton btnPrintTrees;
     private javax.swing.JButton clearOutput;
     private javax.swing.JButton compileCup;
     private javax.swing.JButton compileLexer;
