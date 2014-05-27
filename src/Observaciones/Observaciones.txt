@@ -1,0 +1,14 @@
+//Observaciones
+
+	//Create Table Statements
+
+	// Person
+	CREATE TABLE Person (
+	person_id INT PRIMARY KEY ,
+	person_name varchar(20),
+	person_last varchar(30),
+	country varchar(30),
+	vehicle_id int
+	);
+
+	No sirve
