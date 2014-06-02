@@ -194,8 +194,8 @@ public class BPlusTree {
 
                 //We iterate in all the keys of the node
                 for (int i = 0; i < node.mNumKeys; i++){
-                    
-                    int temp = Integer.parseInt(node.mObjects[i].toString());
+                                                                                       
+                    int temp = node.mKeys[i];
                     
                     if ( temp < key  ) {
                     
@@ -229,7 +229,7 @@ public class BPlusTree {
                 //We iterate in all the keys of the node
                 for (int i = 0; i < element.mNumKeys; i++){
                     
-                    int temp = Integer.parseInt(element.mObjects[i].toString());
+                    int temp = element.mKeys[i];
                     
                     if ( temp > key  ) {
                     
@@ -267,7 +267,7 @@ public class BPlusTree {
                 //We iterate in all the keys of the node
                 for (int i = 0; i < node.mNumKeys; i++){
                     
-                    int temp = Integer.parseInt(node.mObjects[i].toString());
+                    int temp = node.mKeys[i];
                     
                     if ( temp != key  ) {
                     

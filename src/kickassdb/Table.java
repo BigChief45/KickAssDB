@@ -23,6 +23,9 @@ public class Table implements Serializable
         table_tuples = new ArrayList<>();
         table_alias = new Alias();
         indexes = new ArrayList();
+        
+        table_complete_domain = new ArrayList<>();
+        
     }
     
     public Table(int ID, String name, ArrayList<Attribute> domain)
@@ -35,7 +38,20 @@ public class Table implements Serializable
         table_tuples = new ArrayList<>();        
         table_alias = new Alias();
         indexes = new ArrayList();
+        table_complete_domain = new ArrayList<>();         
         
+    }
+    
+    public void createCompleteDomain(){
+    
+        for (Attribute attr : table_domain) {
+            
+            Attribute nAttr = attr;
+            nAttr.setAttribute_name(this.table_name+nAttr.getAttribute_name());
+            table_complete_domain.add(nAttr);
+            
+        }//End for (Attribute attr : table_domain)
+    
     }
     
     public void setIndexes(ArrayList<Attribute> i)

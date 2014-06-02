@@ -1,3 +1,3 @@
-SELECT person_name
+SELECT *
 FROM Person
-WHERE person_id = 4
+WHERE person_id = 2014
