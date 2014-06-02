@@ -280,11 +280,6 @@ public class AddIndexes extends javax.swing.JFrame {
             }
             
             at.setHashTable(hm);
-            
-            /* Get the Tuple with the user id 3 */
-            int key = 3;
-            Tuple tuple = (Tuple) hm.get(key);
-            System.out.println("Key: " + key + " | Value: " + tuple.getValue(1).getValue().toString());
         }
         
         /* Add the index to the table */

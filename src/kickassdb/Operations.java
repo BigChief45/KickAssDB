@@ -2,6 +2,7 @@ package kickassdb;
 
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import kickassdb.BPlusTree.Node;
 
 public class Operations
 {
@@ -182,16 +183,99 @@ public class Operations
             
             case 1:
                 new_table = tables.get(0); // Only one table
+                
+                QueryFilter filterL = filters.get(0);
+                //QueryFilter filterR = filters.get(1);
+                
+                Attribute.IndexType indexType = getAttributeIndexType(new_table, filterL);
+                Attribute attr = new_table.getAttributeByName(filterL.getLeftFilter().getFieldName());
+                
+                int value  = Integer.parseInt(filterL.getRightFilter().getValue().toString());
+                
+                //We create the complete domain if it exists
+                if ( field_aliases.size() > 0  )
+                    new_table.createCompleteDomain();
+                
+                String operand;
+                ArrayList results = new ArrayList();
+                Table resultTable = new Table();
+                switch (indexType.toString()) 
+                {                                        
+                    case "HASH_TYPE_INDEXING":
+                        operand = filterL.getOperand();
+                        results = new ArrayList();
+                        
+                        switch ( operand )
+                        {
+                            case "=":
+                                results.add( HashMethods.search(attr.getHashTable(), value));
+                                break;
+                                
+                            case "<":
+                                results = HashMethods.searchLess(attr.getHashTable(), value);
+                                break;
+                                
+                            case ">":
+                                results = HashMethods.searchGreater(attr.getHashTable(), value);
+                                break;
+                                
+                            case "<>":
+                                results = HashMethods.searchDifferent(attr.getHashTable(), value);
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                        
+                        resultTable = new Table();
+                        resultTable.setTable_tuples(results);
+                        resultTable.setTable_domain(new_table.getTable_domain());
+                        resultTable.setTable_complete_domain(new_table.getTable_complete_domain());
+                        
+                        new_table = QueryFilter.newFilterTable(resultTable, filters);
+                                                
+                        break;
+                        
+                    case "TREE_TYPE_INDEXING":                        
+                        operand = filterL.getOperand();                        
+                        results = new ArrayList();
+                        
+                        switch (operand) 
+                        {
+                            case "=":
+                                results.add((Tuple)attr.getBPlusTree().search(value));
+                                break;
+                                
+                            case "<":
+                                results = (ArrayList<Tuple>)attr.getBPlusTree().getLess(value);
+                                break;
 
-                //If we have filters we apply them
-                //if ( numberFilters > 0 )
-                
-                if ( hasAttributeAnIndex(new_table, filters) )
-                    System.out.println("");
-                else
-                    new_table = QueryFilter.newFilterTable(new_table, filters);                
-                
-                
+                            case ">":
+                                results = (ArrayList<Tuple>)attr.getBPlusTree().getGreater(value);
+                                break;
+
+                            case "<>":
+                                results = (ArrayList<Tuple>)attr.getBPlusTree().getDifferent(value);
+                                break;
+                                
+                            default:
+                                break;
+                        }//End switch (operand)
+                        
+                        resultTable = new Table();
+                        resultTable.setTable_tuples(results);
+                        resultTable.setTable_domain(new_table.getTable_domain());
+                        resultTable.setTable_complete_domain(new_table.getTable_complete_domain());
+                        
+                        new_table = QueryFilter.newFilterTable(resultTable, filters);
+                        
+                        break;
+                        
+                    default:
+                        new_table = QueryFilter.newFilterTable(new_table, filters);
+                        break;
+                        
+                }//End switch (indexType.toString())
                 break;
                 
             case 2:                
@@ -366,29 +450,26 @@ public class Operations
         
     }//End public static void selectAll(ArrayList<Table> tables, ArrayList<QueryFilter> filters)    
     
-    private static boolean hasAttributeAnIndex(Table table, ArrayList<QueryFilter> filters){
-    
+    private static Attribute.IndexType getAttributeIndexType(Table table, QueryFilter filter){    
+        
         String tableName = table.getTable_name();
                 
-        table.getAttributeByName(tableName);
-                
-        String filterTypeL = filters.get(0).leftFilter.getFilterType_type().toString();
+        String filterTypeL = filter.leftFilter.getFilterType_type().toString();
         
-        String filterTypeR = filters.get(0).rightFilter.getFilterType_type().toString();
+        String filterTypeR = filter.rightFilter.getFilterType_type().toString();
         
         Attribute attr = new Attribute();
         if ( "ALIAS_ATTRIBUTE".equals(filterTypeL) || "ATTRIBUTE".equals(filterTypeL) )
-            attr = table.getAttributeByName(filters.get(0).leftFilter.getFieldName());
+            attr = table.getAttributeByName(filter.leftFilter.getFieldName());
             
         if ( "ALIAS_ATTRIBUTE".equals(filterTypeR) || "ATTRIBUTE".equals(filterTypeR) )
-            attr = table.getAttributeByName(filters.get(0).rightFilter.getFieldName());
+            attr = table.getAttributeByName(filter.rightFilter.getFieldName());
         
         Attribute.IndexType indexType = attr.getIndexType();                
         
-        System.out.println("");
-        return true;
+        return indexType;
         
     }//End private void hasAttributeAnIndex()
-    
+            
 }//End public class Operations
 
