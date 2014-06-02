@@ -186,9 +186,10 @@ public class Operations
                 //If we have filters we apply them
                 //if ( numberFilters > 0 )
                 
-                if ( hasAttributeAnIndex(new_table, filters) )
-                    System.out.println("");
-                else
+//                if ( hasAttributeAnIndex(new_table, filters) )
+//                    System.out.println("");
+//                else
+                    
                     new_table = QueryFilter.newFilterTable(new_table, filters);                
                 
                 
