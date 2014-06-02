@@ -250,6 +250,9 @@ public class AddIndexes extends javax.swing.JFrame {
             }
             
             at.setBPlusTree(tree);
+            
+            System.out.println(tree.toString());
+            
         }
         else if ( hashRadio.isSelected() )
         {
