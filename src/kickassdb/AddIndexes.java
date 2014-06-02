@@ -229,7 +229,7 @@ public class AddIndexes extends javax.swing.JFrame {
             at.setIndexType(Attribute.IndexType.TREE_TYPE_INDEXING);
             
             /* Add all the values of the table to the B Tree */
-            BTree tree = at.getBTree();
+            BPlusTree tree = at.getBPlusTree();
             Table selectedTable = (Table) tableList.getSelectedValue();
                         
             int position = selectedTable.getFieldPosition(at.getAttribute_name());
@@ -239,16 +239,17 @@ public class AddIndexes extends javax.swing.JFrame {
             {
                 /* Iterate through all the tuples */
                 for ( Tuple tuple : selectedTable.getTable_tuples() )                
-                    tree.put( Integer.parseInt(tuple.getValue(position).getValue().toString()), tuple);                
+                    tree.add( Integer.parseInt(tuple.getValue(position).getValue().toString()), tuple);
+                    
             }
             else if ( at.getType() == Attribute.Type.VARCHAR )
             {
                 /* Iterate through all the tuples */
                 for ( Tuple tuple : selectedTable.getTable_tuples() )                
-                    tree.put( tuple.getValue(position).getValue().toString(), tuple);                
+                    tree.add( tuple.getValue(position).getValue().toString().length(), tuple);                
             }
             
-            at.setBTree(tree);
+            at.setBPlusTree(tree);
         }
         else if ( hashRadio.isSelected() )
         {
@@ -313,7 +314,7 @@ public class AddIndexes extends javax.swing.JFrame {
         addIndex.setEnabled(true);
         
         /* Remove Data Structure associated with this attribute */
-        at.setBTree(new BTree());
+        at.setBPlusTree(new BPlusTree());
         at.setHashTable(new HashMap());
         at.setIndexType(Attribute.IndexType.NULL);
         

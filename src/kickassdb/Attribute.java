@@ -12,7 +12,7 @@ public class Attribute  implements Serializable
     private String attribute_name;
     private int attribute_size;
         
-    private BTree bTree;
+    private BPlusTree bTree;
     private HashMap hashTable;
     
     public enum Type 
@@ -74,7 +74,7 @@ public class Attribute  implements Serializable
         indexType = it;
         
         if ( it == IndexType.TREE_TYPE_INDEXING )        
-            bTree = new BTree();                             
+            bTree = new BPlusTree();                             
         else if ( it == IndexType.HASH_TYPE_INDEXING )
             hashTable = new HashMap();
         
@@ -85,12 +85,12 @@ public class Attribute  implements Serializable
         return indexType;
     }
     
-    public void setBTree(BTree bt)
+    public void setBPlusTree(BPlusTree bt)
     {
         bTree = bt;
     }
     
-    public BTree getBTree()
+    public BPlusTree getBPlusTree()
     {
         return bTree;
     }

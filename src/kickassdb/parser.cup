@@ -272,9 +272,9 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                             if ( a.getIndexType() == Attribute.IndexType.TREE_TYPE_INDEXING )
                                             {
                                                 if ( a.getType() == Attribute.Type.INTEGER)
-                                                    a.getBTree().put( Integer.parseInt(new_tuple.getValue(fieldPosition).getValue().toString()), new_tuple);
+                                                    a.getBPlusTree().add( Integer.parseInt(new_tuple.getValue(fieldPosition).getValue().toString()), new_tuple);
                                                 else if ( a.getType() == Attribute.Type.VARCHAR)
-                                                    a.getBTree().put((int) new_tuple.getValue(fieldPosition).getValue().toString().length(), new_tuple);
+                                                    a.getBPlusTree().add((int) new_tuple.getValue(fieldPosition).getValue().toString().length(), new_tuple);
                                             }
                                             else if ( a.getIndexType() == Attribute.IndexType.HASH_TYPE_INDEXING )
                                             {

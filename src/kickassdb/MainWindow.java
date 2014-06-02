@@ -768,7 +768,7 @@ public class MainWindow extends javax.swing.JFrame
                 if ( attr.getIndexType().equals(Attribute.IndexType.TREE_TYPE_INDEXING) ){
 
                     System.out.println("Table = " + table.getTable_name());
-                    System.out.println(attr.getBTree().toString());
+                    System.out.println(attr.getBPlusTree().toString());
                                         
                 }
                                     
