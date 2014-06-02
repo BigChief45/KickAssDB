@@ -72,6 +72,7 @@ public class AddIndexes extends javax.swing.JFrame {
         addIndex.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         addIndex.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/add.png"))); // NOI18N
         addIndex.setText("Add Index");
+        addIndex.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         addIndex.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addIndexActionPerformed(evt);
@@ -83,6 +84,7 @@ public class AddIndexes extends javax.swing.JFrame {
         removeIndex.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         removeIndex.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/delete.png"))); // NOI18N
         removeIndex.setText("Remove Index");
+        removeIndex.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         removeIndex.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeIndexActionPerformed(evt);
@@ -121,7 +123,7 @@ public class AddIndexes extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(150, 150, 150))
+                        .addGap(244, 244, 244))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -274,8 +276,6 @@ public class AddIndexes extends javax.swing.JFrame {
             }
             
             at.setHashTable(hm);
-                                                            
-            //System.out.println(ht.toString());
         }
         
         /* Add the index to the table */
