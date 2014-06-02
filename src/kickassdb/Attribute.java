@@ -2,6 +2,7 @@ package kickassdb;
 
 import java.io.Serializable;
 import java.util.Hashtable;
+import java.util.HashMap;
 
 public class Attribute  implements Serializable
 {
@@ -12,7 +13,7 @@ public class Attribute  implements Serializable
     private int attribute_size;
         
     private BTree bTree;
-    private Hashtable hashTable;
+    private HashMap hashTable;
     
     public enum Type 
     {
@@ -75,7 +76,7 @@ public class Attribute  implements Serializable
         if ( it == IndexType.TREE_TYPE_INDEXING )        
             bTree = new BTree();                             
         else if ( it == IndexType.HASH_TYPE_INDEXING )
-            hashTable = new Hashtable();
+            hashTable = new HashMap();
         
     }
     
@@ -94,12 +95,12 @@ public class Attribute  implements Serializable
         return bTree;
     }
     
-    public void setHashTable(Hashtable ht)
+    public void setHashTable(HashMap ht)
     {
         hashTable = ht;
     }
     
-    public Hashtable getHashTable()
+    public HashMap getHashTable()
     {
         return hashTable;
     }
