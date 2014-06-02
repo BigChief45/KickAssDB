@@ -554,7 +554,7 @@ public class MainWindow extends javax.swing.JFrame
     private void executeQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executeQueryActionPerformed
 
         /* Set Timer */
-        double startTime = System.currentTimeMillis();
+        double startTime = System.nanoTime();
         
         /* Reset all aliases in the schema */
         default_schema.resetTableAliases();
@@ -565,9 +565,7 @@ public class MainWindow extends javax.swing.JFrame
         /* Call the Parser */
         try
         {
-            System.out.println("Absolute Path " +opened_file.getAbsolutePath().toString());
             parser p = new parser(new Lexer(new java.io.FileInputStream(opened_file.getAbsolutePath())));
-            System.out.println(p.toString());
             p.parse();
             
             MainWindow.outputText.append(this.parserResult);            
@@ -579,7 +577,7 @@ public class MainWindow extends javax.swing.JFrame
             outputText.append("Query stopped. \n");
         }
         
-        double endTime = System.currentTimeMillis();
+        double endTime = System.nanoTime();
         double totalTime = (endTime - startTime) / 1000;
         
         executionTime.setText("Execution Time: " + totalTime + " seconds. \n");

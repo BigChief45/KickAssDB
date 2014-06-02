@@ -185,7 +185,13 @@ public class Operations
 
                 //If we have filters we apply them
                 //if ( numberFilters > 0 )
-                new_table = QueryFilter.newFilterTable(new_table, filters);                
+                
+                if ( hasAttributeAnIndex(new_table, filters) )
+                    System.out.println("");
+                else
+                    new_table = QueryFilter.newFilterTable(new_table, filters);                
+                
+                
                 break;
                 
             case 2:                
@@ -359,6 +365,30 @@ public class Operations
         return new_table;
         
     }//End public static void selectAll(ArrayList<Table> tables, ArrayList<QueryFilter> filters)    
+    
+    private static boolean hasAttributeAnIndex(Table table, ArrayList<QueryFilter> filters){
+    
+        String tableName = table.getTable_name();
+                
+        table.getAttributeByName(tableName);
+                
+        String filterTypeL = filters.get(0).leftFilter.getFilterType_type().toString();
+        
+        String filterTypeR = filters.get(0).rightFilter.getFilterType_type().toString();
+        
+        Attribute attr = new Attribute();
+        if ( "ALIAS_ATTRIBUTE".equals(filterTypeL) || "ATTRIBUTE".equals(filterTypeL) )
+            attr = table.getAttributeByName(filters.get(0).leftFilter.getFieldName());
+            
+        if ( "ALIAS_ATTRIBUTE".equals(filterTypeR) || "ATTRIBUTE".equals(filterTypeR) )
+            attr = table.getAttributeByName(filters.get(0).rightFilter.getFieldName());
+        
+        Attribute.IndexType indexType = attr.getIndexType();                
+        
+        System.out.println("");
+        return true;
+        
+    }//End private void hasAttributeAnIndex()
     
 }//End public class Operations
 

@@ -431,19 +431,7 @@ public class QueryFilter
                         break;
                                                                         
                 }//End switch (filterType)
-                
-                //Now that we have the indexes or values we can compare with the right part
-                
-//                //Index of the attribute in the merged table
-//                int indexAttributeRight = -1;
-//                //Index of the attribute with the alias in the merged table
-//                //int indexAliasAttributeRight = -1;
-//                                
-//                //Values
-//                String valueTypeRight = "null";
-//                String stringValueRight = "null";
-//                int intValueRight = -1;
-                                                
+                   
                 //We decide what to do using the filter type on the right side
                 switch (filterTypeRight) {
                     
@@ -1144,8 +1132,7 @@ public class QueryFilter
         return new Table();
         
     }//End private Tuple attributeLeftOperation(Table table, FilterPart left, FilterPart right)
-    
-    
+        
     public static Table filterTable(int t1Count, Table table, ArrayList<QueryFilter> filters)
     {
         /* This helper method recieves a table and removes the tuples that
