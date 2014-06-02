@@ -9,7 +9,7 @@ package kickassdb;
 import java.util.Hashtable;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
+import java.util.HashMap;
 
 /**
  *
@@ -70,7 +70,9 @@ public class AddIndexes extends javax.swing.JFrame {
         jScrollPane2.setViewportView(tableDomain);
 
         addIndex.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        addIndex.setText(">");
+        addIndex.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/add.png"))); // NOI18N
+        addIndex.setText("Add Index");
+        addIndex.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         addIndex.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addIndexActionPerformed(evt);
@@ -80,7 +82,9 @@ public class AddIndexes extends javax.swing.JFrame {
         jScrollPane3.setViewportView(tableIndexes);
 
         removeIndex.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        removeIndex.setText("<");
+        removeIndex.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/delete.png"))); // NOI18N
+        removeIndex.setText("Remove Index");
+        removeIndex.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         removeIndex.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeIndexActionPerformed(evt);
@@ -119,7 +123,7 @@ public class AddIndexes extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(150, 150, 150))
+                        .addGap(244, 244, 244))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -130,9 +134,9 @@ public class AddIndexes extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(addIndex)
-                                    .addComponent(removeIndex))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(removeIndex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(addIndex, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -158,9 +162,9 @@ public class AddIndexes extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(removeIndex))
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(treeRadio)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(hashRadio))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -252,7 +256,7 @@ public class AddIndexes extends javax.swing.JFrame {
             
             at.setIndexType(Attribute.IndexType.HASH_TYPE_INDEXING);
             
-            Hashtable ht = new Hashtable();
+            HashMap<Integer, Object> hm = new HashMap<Integer, Object>();            
             Table selectedTable = (Table) tableList.getSelectedValue();
                         
             int position = selectedTable.getFieldPosition(at.getAttribute_name());
@@ -262,18 +266,16 @@ public class AddIndexes extends javax.swing.JFrame {
             {
                 /* Iterate through all the tuples */
                 for ( Tuple tuple : selectedTable.getTable_tuples() )                
-                    ht.put( Integer.parseInt(tuple.getValue(position).getValue().toString()), tuple);                
+                    hm.put( Integer.parseInt(tuple.getValue(position).getValue().toString()), tuple);                
             }
             else if ( at.getType() == Attribute.Type.VARCHAR )
             {
                 /* Iterate through all the tuples */
                 for ( Tuple tuple : selectedTable.getTable_tuples() )                
-                    ht.put( tuple.getValue(position).getValue().toString(), tuple);                
+                    hm.put( tuple.getValue(position).getValue().toString().length(), tuple);                
             }
             
-            at.setHashTable(ht);
-                                                            
-            //System.out.println(ht.toString());
+            at.setHashTable(hm);
         }
         
         /* Add the index to the table */
@@ -307,7 +309,7 @@ public class AddIndexes extends javax.swing.JFrame {
         
         /* Remove Data Structure associated with this attribute */
         at.setBTree(new BTree());
-        at.setHashTable(new Hashtable());
+        at.setHashTable(new HashMap());
         at.setIndexType(Attribute.IndexType.NULL);
         
         /* Remove the index from the Table's index list */
