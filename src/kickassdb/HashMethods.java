@@ -3,7 +3,6 @@ package kickassdb;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.ListIterator;
 
 public class HashMethods 
 {

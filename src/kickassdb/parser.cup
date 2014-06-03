@@ -286,7 +286,7 @@ insert_record ::= INSERT INTO ID:table_name attributes VALUES PARLEFT record_val
                                         }                                            
                                     }
 
-                                    inserting_table.printTuples();
+                                    //inserting_table.printTuples();
 
                                     /* add the data to the file */
                                     /* Check first if the schema is stored */

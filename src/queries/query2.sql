@@ -1,5 +1,16 @@
-SELECT P.person_name, V.model
-FROM Person AS P, Vehicle AS V
-WHERE P.vehicle_id = V.vehicle_id
-AND P.person_name = 'Paul';
+create table user1(
+  attr1 int primary key,
+  attr2 varchar(20),
+  attr3 int,
+  attr4 int, 
+  attr5 int
+);
+
+create table trans (
+  attr1 varchar(20) primary key,
+  attr2 int,
+  attr3 int, 
+  attr4 int, 
+  attr5 int
+);
 

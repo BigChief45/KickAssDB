@@ -62,7 +62,7 @@ public class MainWindow extends javax.swing.JFrame
         
         //Test
         KickAssDB.mainwindow = this;
-        this.loadTest();               
+        //this.loadTest();               
                         
     }//End MainWindow()
 
@@ -687,6 +687,7 @@ public class MainWindow extends javax.swing.JFrame
     private void clearOutputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearOutputActionPerformed
         
         getOutputText().setText("");
+        executionTime.setText(("Execution Time: "));
     }//GEN-LAST:event_clearOutputActionPerformed
 
     private void queryTextKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_queryTextKeyTyped

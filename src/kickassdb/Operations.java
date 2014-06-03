@@ -2,7 +2,6 @@ package kickassdb;
 
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import kickassdb.BPlusTree.Node;
 
 public class Operations
 {
@@ -172,33 +171,157 @@ public class Operations
     public static void select(ArrayList<Table> tables, ArrayList<QueryFilter> filters, ArrayList<String> field_names, ArrayList<String> field_aliases)
     {                        
         //Table where we will store the result of the query
-        Table new_table = new Table();
+        Table new_table = tables.get(0);
+        Table new_table2 = new Table();
         
         //We get the number of filters
         int numberFilters = filters.size();
         //We get the number of tables        
         int numberTables = tables.size();
         
-        switch (numberTables) {
+        QueryFilter filterR = filters.get(0);
+        QueryFilter filterL = new QueryFilter();
+        
+        if ( filters.size() > 1 ){
+
+            filterL = filters.get(1);
+        
+        }//End if ( filters.size() > 1 )
+        
+        //We get table 1
+        if ( tables.size() > 1 ){
+
+            new_table2 = tables.get(1);
+
+        }//End if ( filters.size() > 1 )        
+                
+        Attribute.IndexType indexType = getAttributeIndexType(new_table, filterR);
+        
+        Attribute attr = new Attribute();
+        
+        if ( !"NULL".equals(indexType.toString()))                   
+            attr = new_table.getAttributeByName(filterR.getLeftFilter().getFieldName());
+            
+        int value  = Integer.parseInt(filterR.getRightFilter().getValue().toString());        
+        
+        //We initialize the arraylist and tables when we execute an index search
+        ArrayList results = new ArrayList();
+        Table resultTable = new Table();
+        
+        switch ( numberTables ) 
+        {
             
             case 1:
-                new_table = tables.get(0); // Only one table
-                
-                QueryFilter filterL = filters.get(0);
-                //QueryFilter filterR = filters.get(1);
-                
-                Attribute.IndexType indexType = getAttributeIndexType(new_table, filterL);
-                Attribute attr = new_table.getAttributeByName(filterL.getLeftFilter().getFieldName());
-                
-                int value  = Integer.parseInt(filterL.getRightFilter().getValue().toString());
+                new_table = tables.get(0); // Only one table                
                 
                 //We create the complete domain if it exists
                 if ( field_aliases.size() > 0  )
                     new_table.createCompleteDomain();
                 
+                //We initialize the operand
                 String operand;
-                ArrayList results = new ArrayList();
-                Table resultTable = new Table();
+
+                switch (indexType.toString()) 
+                {                                        
+                    case "HASH_TYPE_INDEXING":
+                        operand = filterR.getOperand();
+                        results = new ArrayList();
+                        
+                        switch ( operand )
+                        {
+                            case "=":
+                                results.add( HashMethods.search(attr.getHashTable(), value));
+                                break;
+                                
+                            case "<":
+                                results = HashMethods.searchLess(attr.getHashTable(), value);
+                                break;
+                                
+                            case ">":
+                                results = HashMethods.searchGreater(attr.getHashTable(), value);
+                                break;
+                                
+                            case "<>":
+                                results = HashMethods.searchDifferent(attr.getHashTable(), value);
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                        
+                        resultTable = new Table();
+                        resultTable.setTable_tuples(results);
+                        resultTable.setTable_domain(new_table.getTable_domain());
+                        resultTable.setTable_complete_domain(new_table.getTable_complete_domain());
+                        
+                        new_table = QueryFilter.newFilterTable(resultTable, filters);
+                                                
+                        break;
+                        
+                    case "TREE_TYPE_INDEXING":                        
+                        operand = filterR.getOperand();                        
+                        results = new ArrayList();
+                        
+                        switch (operand) 
+                        {
+                            case "=":
+                                results.add((Tuple)attr.getBPlusTree().search(value));
+                                break;
+                                
+                            case "<":
+                                results = (ArrayList<Tuple>)attr.getBPlusTree().getLess(value);
+                                break;
+
+                            case ">":
+                                results = (ArrayList<Tuple>)attr.getBPlusTree().getGreater(value);
+                                break;
+
+                            case "<>":
+                                results = (ArrayList<Tuple>)attr.getBPlusTree().getDifferent(value);
+                                break;
+                                
+                            default:
+                                break;
+                        }//End switch (operand)
+                        
+                        resultTable = new Table();
+                        resultTable.setTable_tuples(results);
+                        resultTable.setTable_domain(new_table.getTable_domain());
+                        resultTable.setTable_complete_domain(new_table.getTable_complete_domain());
+                        
+                        new_table = QueryFilter.newFilterTable(resultTable, filters);
+                        
+                        break;
+                        
+                    default:
+                        new_table = QueryFilter.newFilterTable(new_table, filters);
+                        break;
+                        
+                }//End switch (indexType.toString())
+                break;
+                
+            case 2:                
+                //We get the first and the second table
+                Table table1, table2;
+                table1 = tables.get(0);
+                table2 = tables.get(1);
+
+                /* Check if there are ambiguous fields */
+                int i = 0;
+                for ( String s : field_names )
+                {
+                    if ( (field_aliases.get(i).equals("")) && Validations.isFieldAmbiguous(s, table1, table2) == true)
+                    {
+                        JOptionPane.showMessageDialog(KickAssDB.mainwindow, "One or more fields are ambiguous. Please use table aliases to specify the field.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    i++;
+                }
+                i = 0;
+                
+                //Now we obtain the bool_type
+                String boolType = filterL.getBoolValue();
+                
                 switch (indexType.toString()) 
                 {                                        
                     case "HASH_TYPE_INDEXING":
@@ -267,42 +390,46 @@ public class Operations
                         resultTable.setTable_domain(new_table.getTable_domain());
                         resultTable.setTable_complete_domain(new_table.getTable_complete_domain());
                         
-                        new_table = QueryFilter.newFilterTable(resultTable, filters);
+                        //new_table = QueryFilter.newFilterTable(resultTable, filters);
                         
                         break;
                         
                     default:
-                        new_table = QueryFilter.newFilterTable(new_table, filters);
                         break;
                         
                 }//End switch (indexType.toString())
-                break;
                 
-            case 2:                
-                //We get the first and the second table
-                Table table1, table2;
-                table1 = tables.get(0);
-                table2 = tables.get(1);
+                if ( !"NULL".equals(indexType.toString())){                                
+                                                            
+                    switch (boolType) {
+                        case "AND":
+                            //We merge two tables into 1
+                            new_table = Table.mergeTables(resultTable, table2); // More than 1 table
 
-                /* Check if there are ambiguous fields */
-                int i = 0;
-                for ( String s : field_names )
-                {
-                    if ( (field_aliases.get(i).equals("")) && Validations.isFieldAmbiguous(s, table1, table2) == true)
-                    {
-                        JOptionPane.showMessageDialog(KickAssDB.mainwindow, "One or more fields are ambiguous. Please use table aliases to specify the field.", "Error", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    i++;
-                }
-                i = 0;
+                            // If we have filters we apply them
+                            //if ( numberFilters > 0 )                            
+                            new_table = QueryFilter.newFilterTable(new_table, filters);                            
+                            break;
+
+                        case "OR":                            
+                            break;
+                                                        
+                        default:
+                            break;
+                            
+                    }//End switch (boolType)
                 
-                //We merge two tables into 1
-                new_table = Table.mergeTables(table1, table2); // More than 1 table
+                }//End if ( !"NULL".equals(indexType.toString()))                    
+                else {
 
-                // If we have filters we apply them
-                //if ( numberFilters > 0 )
-                new_table = QueryFilter.newFilterTable(new_table, filters);                
+                    //We merge two tables into 1
+                    new_table = Table.mergeTables(table1, table2); // More than 1 table
+
+                    // If we have filters we apply them
+                    //if ( numberFilters > 0 )
+                    new_table = QueryFilter.newFilterTable(new_table, filters);
+                                    
+                }//End else                                
                 break;                
                 
             default:
@@ -391,10 +518,10 @@ public class Operations
             
             //And we set the domain
             int counter2 = 0;
-            for (Attribute attr : new_table.getTable_domain()) {
+            for (Attribute tempAttr : new_table.getTable_domain()) {
                 
                 if ( visiblesColumnsIndexes.contains(counter2) )
-                    tempTable.getTable_domain().add(attr);
+                    tempTable.getTable_domain().add(tempAttr);
                 
                 counter2++;
                 
