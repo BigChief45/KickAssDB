@@ -264,7 +264,6 @@ public class MainWindow extends javax.swing.JFrame
         jSeparator2 = new javax.swing.JToolBar.Separator();
         compileLexer = new javax.swing.JButton();
         compileCup = new javax.swing.JButton();
-        btnPrintTrees = new javax.swing.JButton();
         queryTabs = new javax.swing.JTabbedPane();
         queryScrollPane = new javax.swing.JScrollPane();
         queryText = new javax.swing.JTextPane();
@@ -436,17 +435,6 @@ public class MainWindow extends javax.swing.JFrame
             }
         });
         jToolBar1.add(compileCup);
-
-        btnPrintTrees.setText("Print Trees");
-        btnPrintTrees.setFocusable(false);
-        btnPrintTrees.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnPrintTrees.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnPrintTrees.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPrintTreesActionPerformed(evt);
-            }
-        });
-        jToolBar1.add(btnPrintTrees);
 
         queryText.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         queryText.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -750,35 +738,6 @@ public class MainWindow extends javax.swing.JFrame
         
     }//GEN-LAST:event_indexesButtonActionPerformed
 
-    private void btnPrintTreesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrintTreesActionPerformed
-        // TODO add your handling code here:
-        //We load the schema just for testing purposes   
-        
-        for (Table table : this.getDefault_schema().getSchema()) {
-            
-            for (Attribute attr : table.getTable_domain()) {
-                               
-                //We verify if it contains an index
-                if ( attr.getIndexType().equals(Attribute.IndexType.HASH_TYPE_INDEXING) ){
-                
-                    System.out.println("Table = " + table.getTable_name());
-                    System.out.println(attr.getHashTable().size());
-                    
-                }
-                                        
-                if ( attr.getIndexType().equals(Attribute.IndexType.TREE_TYPE_INDEXING) ){
-
-                    System.out.println("Table = " + table.getTable_name());
-                    System.out.println(attr.getBPlusTree().toString());
-                                        
-                }
-                                    
-            }//End for (Attribute attr : table.getTable_domain())
-            
-        }//End for (Object object : col) 
-        
-    }//GEN-LAST:event_btnPrintTreesActionPerformed
-
     
     protected static Schema getDefaultSchema()
     {
@@ -817,7 +776,6 @@ public class MainWindow extends javax.swing.JFrame
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private static javax.swing.JPanel ResultsPanel;
     protected static javax.swing.JTabbedPane ReviewTab;
-    private javax.swing.JButton btnPrintTrees;
     private javax.swing.JButton clearOutput;
     private javax.swing.JButton compileCup;
     private javax.swing.JButton compileLexer;

@@ -398,7 +398,7 @@ public class Operations
                         break;
                         
                 }//End switch (indexType.toString())
-                
+               
                 if ( !"NULL".equals(indexType.toString())){                                
                                                             
                     switch (boolType) {
