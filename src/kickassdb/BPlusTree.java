@@ -15,23 +15,23 @@ public class BPlusTree {
                 public int mNumKeys = 0;
                 public int[] mKeys = new int[2 * T - 1];
                 public Object[] mObjects = new Object[2 * T - 1];
-                public Node[] mChildNodes = new Node[2 * T];
+                public BPlusTree.Node[] mChildNodes = new BPlusTree.Node[2 * T];
                 public boolean mIsLeafNode;
-                public Node mNextNode;
+                public BPlusTree.Node mNextNode;
         }
         
-        private Node mRootNode;
+        private BPlusTree.Node mRootNode;
         private static final int T = 4;
         
         public BPlusTree() {
-                mRootNode = new Node();
+                mRootNode = new BPlusTree.Node();
                 mRootNode.mIsLeafNode = true;           
         }
         
         public void add(int key, Object object) {
-                Node rootNode = mRootNode;
+                BPlusTree.Node rootNode = mRootNode;
                 if (rootNode.mNumKeys == (2 * T - 1)) {
-                        Node newRootNode = new Node();
+                        BPlusTree.Node newRootNode = new BPlusTree.Node();
                         mRootNode = newRootNode;
                         newRootNode.mIsLeafNode = false;
                         mRootNode.mChildNodes[0] = rootNode;
@@ -45,8 +45,8 @@ public class BPlusTree {
         // Split the node, node, of a B-Tree into two nodes that contain T-1 (and T) elements and move node's median key up to the parentNode.
         // This method will only be called if node is full; node is the i-th child of parentNode.
         // All internal keys (elements) will have duplicates within the leaf nodes.
-        void splitChildNode(Node parentNode, int i, Node node) {
-                Node newNode = new Node();
+        void splitChildNode(BPlusTree.Node parentNode, int i, BPlusTree.Node node) {
+                BPlusTree.Node newNode = new BPlusTree.Node();
                 newNode.mIsLeafNode = node.mIsLeafNode;
                 newNode.mNumKeys = T;
                 for (int j = 0; j < T; j++) { // Copy the last T elements of node into newNode. Keep the median key as duplicate in the first key of newNode.
@@ -86,7 +86,7 @@ public class BPlusTree {
         }
         
         // Insert an element into a B-Tree. (The element will ultimately be inserted into a leaf node). 
-        void insertIntoNonFullNode(Node node, int key, Object object) {
+        void insertIntoNonFullNode(BPlusTree.Node node, int key, Object object) {
                 int i = node.mNumKeys - 1;
                 if (node.mIsLeafNode) {
                         // Since node is not a full node insert the new element into its proper place within node.
@@ -117,7 +117,7 @@ public class BPlusTree {
         }       
         
         // Recursive search method.
-        public Object search(Node node, int key) {              
+        public Object search(BPlusTree.Node node, int key) {              
                 int i = 0;
                 while (i < node.mNumKeys && key > node.mKeys[i]) {
                         i++;
@@ -137,7 +137,7 @@ public class BPlusTree {
         }
         
         // Recursive search method.
-        public Node searchNode(Node node, int key) {              
+        public BPlusTree.Node searchNode(BPlusTree.Node node, int key) {              
                 int i = 0;
                 while (i < node.mNumKeys && key > node.mKeys[i]) {
                         i++;
@@ -152,12 +152,12 @@ public class BPlusTree {
                 }       
         }        
         
-        public Node searchNode(int key) {
+        public BPlusTree.Node searchNode(int key) {
                 return searchNode(mRootNode, key);
         }                
         
         // Iterative search method.
-        public Object search2(Node node, int key) {
+        public Object search2(BPlusTree.Node node, int key) {
                 while (node != null) {
                         int i = 0;
                         while (i < node.mNumKeys && key > node.mKeys[i]) {
@@ -183,7 +183,7 @@ public class BPlusTree {
         
             ArrayList result = new ArrayList();
             
-            Node node = mRootNode;
+            BPlusTree.Node node = mRootNode;
             while (!node.mIsLeafNode) {
                 
                 node = node.mChildNodes[0];
@@ -194,7 +194,7 @@ public class BPlusTree {
 
                 //We iterate in all the keys of the node
                 for (int i = 0; i < node.mNumKeys; i++){
-                                                                                       
+                    
                     int temp = node.mKeys[i];
                     
                     if ( temp < key  ) {
@@ -217,45 +217,58 @@ public class BPlusTree {
         
         }//End public ArrayList getLess()        
 
+        public ArrayList getEquals(int key){
+        
+            ArrayList result = new ArrayList();              
+            
+            BPlusTree.Node node = getLeafNodeForKey(key);
+            while (node != null) {
+                    for (int j = 0; j < node.mNumKeys; j++) {
+
+                            if (node.mKeys[j] != key) {
+                                    return result;
+                            }
+                            
+                            result.add(node.mObjects[j]);
+                            
+                    }
+                    node = node.mNextNode;
+            }
+            
+            return result;
+            
+        }//End public ArrayList getGreater()
+                
         public ArrayList getGreater(int key){
         
             ArrayList result = new ArrayList();              
             
-            //First we locate the element
-            Node element = searchNode(key);            
-            
-            while (element != null) {
+            BPlusTree.Node node = getLeafNodeForKey(key);
+            while (node != null) {
+                    for (int j = 0; j < node.mNumKeys; j++) {
 
-                //We iterate in all the keys of the node
-                for (int i = 0; i < element.mNumKeys; i++){
-                    
-                    int temp = element.mKeys[i];
-                    
-                    if ( temp > key  ) {
-                    
-                        result.add(element.mObjects[i]);
-                        
-                    } else {
-                    
-                        break;
-                    
-                    }//End else
-                        
-                }//End for (int i = 0; i < node.mNumKeys; i++)
-                
-                element = element.mNextNode;
-                
-            }//End while (node != null)
+                            if (node.mKeys[j] < key) {
+                                    return result;
+                            }
+                            
+                            if (node.mKeys[j] == key) {
+                            } else {
+                                result.add(node.mObjects[j]);
+                            }
+                            
+                    }
+                    node = node.mNextNode;
+            }
             
-            return result;            
-                    
+            return result;
+            
         }//End public ArrayList getGreater()
         
         public ArrayList getDifferent(int key){
         
             ArrayList result = new ArrayList();
             
-            Node node = mRootNode;
+            BPlusTree.Node node = mRootNode;
             while (!node.mIsLeafNode) {
                 
                 node = node.mChildNodes[0];
@@ -289,7 +302,7 @@ public class BPlusTree {
         @Override
         public String toString() {
                 String string = "";
-                Node node = mRootNode;          
+                BPlusTree.Node node = mRootNode;          
                 while (!node.mIsLeafNode) {                     
                         node = node.mChildNodes[0];
                 }               
@@ -305,7 +318,7 @@ public class BPlusTree {
         // Inorder walk over parts of the tree.
         public String toString(int fromKey, int toKey) {
                 String string = "";
-                Node node = getLeafNodeForKey(fromKey);
+                BPlusTree.Node node = getLeafNodeForKey(fromKey);
                 while (node != null) {
                         for (int j = 0; j < node.mNumKeys; j++) {
                                 string += node.mObjects[j] + ", ";
@@ -318,8 +331,8 @@ public class BPlusTree {
                 return string;
         }
         
-        Node getLeafNodeForKey(int key) {
-                Node node = mRootNode;
+        BPlusTree.Node getLeafNodeForKey(int key) {
+                BPlusTree.Node node = mRootNode;
                 while (node != null) {
                         int i = 0;
                         while (i < node.mNumKeys && key > node.mKeys[i]) {
