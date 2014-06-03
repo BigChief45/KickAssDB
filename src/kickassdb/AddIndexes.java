@@ -6,6 +6,7 @@
 
 package kickassdb;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -283,7 +284,7 @@ public class AddIndexes extends javax.swing.JFrame {
             
             at.setIndexType(Attribute.IndexType.HASH_TYPE_INDEXING);
             
-            HashMap<Integer, Object> hm = new HashMap<Integer, Object>();            
+            HashMap<Integer, Tuple> hm = new HashMap<>();            
             Table selectedTable = (Table) tableList.getSelectedValue();
                         
             int position = selectedTable.getFieldPosition(at.getAttribute_name());

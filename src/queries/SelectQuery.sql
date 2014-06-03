@@ -1,3 +1,2 @@
-SELECT *
-FROM Person
-WHERE person_id = 5
+SELECT Count(*) 
+FROM trans AS T

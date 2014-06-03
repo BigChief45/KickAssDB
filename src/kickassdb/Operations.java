@@ -176,48 +176,54 @@ public class Operations
         
         //We get the number of filters
         int numberFilters = filters.size();
+        
         //We get the number of tables        
         int numberTables = tables.size();
         
-        QueryFilter filterR = filters.get(0);
-        QueryFilter filterL = new QueryFilter();
-        
-        if ( filters.size() > 1 ){
-
-            filterL = filters.get(1);
-        
-        }//End if ( filters.size() > 1 )
+        QueryFilter filterR = new QueryFilter();
+        QueryFilter filterL = new QueryFilter();               
         
         //We get table 1
-        if ( tables.size() > 1 ){
-
+        if ( tables.size() > 1 )
+        {
             new_table2 = tables.get(1);
-
         }//End if ( filters.size() > 1 )        
                 
-        Attribute.IndexType indexType = getAttributeIndexType(new_table, filterR);
+        Attribute.IndexType indexType = Attribute.IndexType.NULL;
+        if ( filters.size() >= 1 )
+        {
+            filterR = filters.get(0);
+            
+            if ( filters.size() > 1 )
+                filterL = filters.get(1); 
+            
+        }//End if ( filters.size() > 1 )        
+        
+        //indexType = getAttributeIndexType(new_table, filterR);        
         
         Attribute attr = new Attribute();
         
-        if ( !"NULL".equals(indexType.toString()))                   
-            attr = new_table.getAttributeByName(filterR.getLeftFilter().getFieldName());
+//        if ( !"NULL".equals(indexType.toString()))                   
+//            attr = new_table.getAttributeByName(filterR.getLeftFilter().getFieldName());
             
-        int value  = Integer.parseInt(filterR.getRightFilter().getValue().toString());        
+        int value  = 0;
+        //Integer.parseInt(filterR.getRightFilter().getValue().toString());        
         
         //We initialize the arraylist and tables when we execute an index search
         ArrayList results = new ArrayList();
         Table resultTable = new Table();
         
         switch ( numberTables ) 
-        {
-            
+        {            
             case 1:
                 new_table = tables.get(0); // Only one table                
                 
                 //We create the complete domain if it exists
-                if ( field_aliases.size() > 0  )
-                    new_table.createCompleteDomain();
-                
+//                if ( (field_aliases.size() > 0) ){
+//                    if ( !((field_aliases.size() == 1) &&  ("".equals(field_aliases.get(0))) ))
+//                        new_table.createCompleteDomain();                
+//                }
+                                    
                 //We initialize the operand
                 String operand;
 
@@ -396,41 +402,46 @@ public class Operations
                         break;
                         
                     default:
+                        new_table = Table.mergeTables(resultTable, table2); // More than 1 table
+
+                        // If we have filters we apply them
+                        //if ( numberFilters > 0 )                            
+                        new_table = QueryFilter.newFilterTable(new_table, filters);                         
                         break;
                         
                 }//End switch (indexType.toString())
                
-                if ( !"NULL".equals(indexType.toString())){                                
-                                                            
-                    switch (boolType) {
-                        case "AND":
-                            //We merge two tables into 1
-                            new_table = Table.mergeTables(resultTable, table2); // More than 1 table
-
-                            // If we have filters we apply them
-                            //if ( numberFilters > 0 )                            
-                            new_table = QueryFilter.newFilterTable(new_table, filters);                            
-                            break;
-
-                        case "OR":                            
-                            break;
-                                                        
-                        default:
-                            break;
-                            
-                    }//End switch (boolType)
-                
-                }//End if ( !"NULL".equals(indexType.toString()))                    
-                else {
-
-                    //We merge two tables into 1
-                    new_table = Table.mergeTables(table1, table2); // More than 1 table
-
-                    // If we have filters we apply them
-                    //if ( numberFilters > 0 )
-                    new_table = QueryFilter.newFilterTable(new_table, filters);
-                                    
-                }//End else                                
+//                if ( !"NULL".equals(indexType.toString())){                                
+//                                                            
+//                    switch (boolType) {
+//                        case "AND":
+//                            //We merge two tables into 1
+//                            new_table = Table.mergeTables(resultTable, table2); // More than 1 table
+//
+//                            // If we have filters we apply them
+//                            //if ( numberFilters > 0 )                            
+//                            new_table = QueryFilter.newFilterTable(new_table, filters);                            
+//                            break;
+//
+//                        case "OR":                            
+//                            break;
+//                                                        
+//                        default:
+//                            break;
+//                            
+//                    }//End switch (boolType)
+//                
+//                }//End if ( !"NULL".equals(indexType.toString()))                    
+//                else {
+//
+//                    //We merge two tables into 1
+//                    new_table = Table.mergeTables(table1, table2); // More than 1 table
+//
+//                    // If we have filters we apply them
+//                    //if ( numberFilters > 0 )
+//                    new_table = QueryFilter.newFilterTable(new_table, filters);
+//                                    
+//                }//End else                                
                 break;                
                 
             default:
@@ -538,21 +549,20 @@ public class Operations
     }//End public static void selectAll(ArrayList<Table> tables, ArrayList<QueryFilter> filters)
 
     public static Table select(ArrayList<Table> tables, ArrayList<QueryFilter> filters)
-    {
-        
+    {        
         //Table where we will store the result of the query
         Table new_table = new Table();
         
         //We get the number of tables        
         int numberTables = tables.size();
         
-        switch (numberTables) {
-            
+        switch (numberTables) 
+        {            
             case 1:
                 new_table = tables.get(0); // Only one table
 
                 //If we have filters we apply them                
-                new_table = QueryFilter.newFilterTable(new_table, filters);                
+                new_table = QueryFilter.newFilterTable(new_table, filters);             
                 break;
                 
             case 2:
@@ -561,6 +571,11 @@ public class Operations
                 table1 = tables.get(0);
                 table2 = tables.get(1);
 
+                //pendejada(tables, filters);
+                
+                pendejada2(tables, filters);
+                System.exit(0);
+                
                 //We merge two tables into 1
                 new_table = Table.mergeTables(table1, table2); // More than 1 table
 
@@ -599,5 +614,134 @@ public class Operations
         
     }//End private void hasAttributeAnIndex()
             
+    private static void pendejada(ArrayList<Table> tables, ArrayList<QueryFilter> filters)
+    {
+        Table t1 = tables.get(0);
+        Table t2 = tables.get(1);
+        
+        Table r1 = new Table();
+        r1.setTable_domain(t1.getTable_domain());
+        Table r2 = new Table();
+        r2.setTable_domain(t2.getTable_domain());
+        
+        Table r = new Table();
+        
+        /* Loop through table 1 */
+        for ( Tuple tp : t1.getTable_tuples() )
+        {
+            Value v1 = tp.getValue(0);
+            for ( Tuple tp2 : t2.getTable_tuples() )
+            {                
+                Value v2 = tp2.getValue(1);
+                
+                if ( Integer.parseInt(v1.getValue().toString()) == Integer.parseInt(v2.getValue().toString()) )
+                {
+                    r1.addTuple(tp);
+                    break;
+                }
+            }
+        }
+        
+        for ( Tuple tp : t1.getTable_tuples() )
+        {
+            if ( Integer.parseInt(tp.getValue(4).getValue().toString()) > 50000 )
+                r2.addTuple(tp);
+        }
+        
+        /* Merge Tuples */
+        r = Table.mergeTables(r1, r2);
+        
+        r.printTuples();
+    }
+    
+    private static void pendejada2(ArrayList<Table> tables, ArrayList<QueryFilter> filters){
+        
+        Table crossproduct = new Table();
+        Table crossproduct2 = new Table();
+        
+        Table table1 = tables.get(0);
+        Table table2 = tables.get(1);
+        
+        //First we set the table domain
+        ArrayList<Attribute> table1_domain = table1.getTable_domain();
+        ArrayList<Attribute> table2_domain = table2.getTable_domain();
+        ArrayList<Attribute> domain = new ArrayList();
+        ArrayList<Attribute> completeDomain = new ArrayList();        
+        
+        for (Attribute attr : table1_domain) {
+            domain.add(attr);
+            
+            //Now we will add the name before the attribute for table1
+            Attribute new_attribute = new Attribute();
+            
+            new_attribute.setAttributeSize(attr.getAttributeSize());
+            new_attribute.setAttribute_name(attr.getAttribute_name());
+            new_attribute.setType(attr.getType());            
+            
+            String attrName = new_attribute.getAttribute_name();
+            new_attribute.setAttribute_name(table1.getTable_name()+attrName);
+            
+            //We add the attribute to the complete domain
+            completeDomain.add(new_attribute);
+            
+        }//End for (Attribute attr : table1_domain)
+        
+        for (Attribute attr : table2_domain) {
+            domain.add(attr);
+            
+            //Now we will add the name before the attribute for table1
+            Attribute new_attribute = new Attribute();
+            
+            new_attribute.setAttributeSize(attr.getAttributeSize());
+            new_attribute.setAttribute_name(attr.getAttribute_name());
+            new_attribute.setType(attr.getType());  
+            
+            String attrName = new_attribute.getAttribute_name();
+            new_attribute.setAttribute_name(table2.getTable_name()+attrName);
+            
+            //We add the attribute to the complete domain
+            completeDomain.add(new_attribute);            
+            
+        }//End for (Attribute attr : table2_domain)
+                        
+        crossproduct.setTable_domain(domain);
+        crossproduct.setTable_complete_domain(completeDomain);
+        
+        for ( Tuple tuple : table1.getTable_tuples() )
+        {
+            Value v1 = tuple.getValue(0);
+            for ( Tuple tuple2 : table2.getTable_tuples() )
+            {
+                
+                Value v2 = tuple2.getValue(1);
+                
+                if ( Integer.parseInt(v1.getValue().toString()) == Integer.parseInt(v2.getValue().toString()) )
+                {
+                    Tuple new_tuple = new Tuple();
+
+                    for (Value v : tuple.getTuple_values()) {
+                        new_tuple.addValue(v);
+                    }//End for (Value v : tuple.getTuple_values())
+
+                    for (Value v : tuple2.getTuple_values()) {
+                        new_tuple.addValue(v);
+                    }//End for (Value v : tuple2.getTuple_values())
+
+                    //We add the tuple to the table crossproduct
+                    crossproduct.addTuple(new_tuple); 
+                }                                                   
+            }//End for ( Tuple tuple2 : table2.getTable_tuples() )            
+        }//End for ( Tuple tuple : table1.getTable_tuples() )        
+        
+        for ( Tuple tp : crossproduct.getTable_tuples() )
+        {
+            if ( Integer.parseInt(tp.getValue(4).getValue().toString()) > 50000 )
+                crossproduct2.addTuple(tp);
+        }        
+                
+        System.out.println("");
+        
+    }
+    
 }//End public class Operations
 
