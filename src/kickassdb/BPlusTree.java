@@ -225,12 +225,16 @@ public class BPlusTree {
             while (node != null) {
                     for (int j = 0; j < node.mNumKeys; j++) {
 
-                            if (node.mKeys[j] != key) {
-                                    return result;
-                            }
-                            
+                        if (key == node.mKeys[j]){
+                        
                             result.add(node.mObjects[j]);
                             
+                        }else if (node.mKeys[j] > key){
+                        
+                            return result;
+                            
+                        }
+                                                    
                     }
                     node = node.mNextNode;
             }
@@ -247,12 +251,7 @@ public class BPlusTree {
             while (node != null) {
                     for (int j = 0; j < node.mNumKeys; j++) {
 
-                            if (node.mKeys[j] < key) {
-                                    return result;
-                            }
-                            
-                            if (node.mKeys[j] == key) {
-                            } else {
+                            if (node.mKeys[j] > key) {
                                 result.add(node.mObjects[j]);
                             }
                             

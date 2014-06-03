@@ -265,7 +265,8 @@ public class Operations
                         switch (operand) 
                         {
                             case "=":
-                                results.add((Tuple)attr.getBPlusTree().search(value));
+                                BPlusTree t = attr.getBPlusTree();
+                                results = (ArrayList<Tuple>)attr.getBPlusTree().getEquals(value);
                                 break;
                                 
                             case "<":
