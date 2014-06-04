@@ -63,6 +63,12 @@ public class MainWindow extends javax.swing.JFrame
         //Test
         KickAssDB.mainwindow = this;
         //this.loadTest();
+        
+        //Get the jvm heap size.
+        long heapSize = Runtime.getRuntime().totalMemory();
+         
+        //Print the jvm heap size.
+        System.out.println("Heap Size = " + heapSize);
                         
     }//End MainWindow()
 

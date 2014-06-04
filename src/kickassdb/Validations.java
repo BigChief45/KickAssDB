@@ -74,9 +74,9 @@ public class Validations
         {
             int len = value.getValue().toString().length();
             //System.out.println("len: " + len);
-            if (len > 40) 
+            if (len > 1000) 
             {
-                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Can't exceed the max size 40!", "Error", JOptionPane.ERROR_MESSAGE);                                         
+                JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Can't exceed the max size 1000!", "Error", JOptionPane.ERROR_MESSAGE);                                         
                 return false;
             }
         }
@@ -134,8 +134,9 @@ public class Validations
             {
                 /* If the Attribute type is VARCHAR, Proceed to check the size */
                 int value_size = tuple.getValue(i).getValue().toString().length();                
+                int attributeSize = table_domain.get(i).getAttributeSize();
                 
-                if ( value_size > table_domain.get(i).getAttributeSize() )
+                if ( value_size > attributeSize )
                 {
                     /* Value to be inserted in tuple exceeds the size specified in the domain,
                        display error

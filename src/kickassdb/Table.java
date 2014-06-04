@@ -276,6 +276,15 @@ public class Table implements Serializable
         System.out.println("");
     }
     
+    public static Table filterAndMerge(Table table1, Table table2, ArrayList<QueryFilter> filters)
+    {
+        /* Obtain the Filter 1 data */
+        QueryFilter filter1 = filters.get(0);
+                
+        
+        return null;
+    }
+    
     public static Table mergeTables(Table table1, Table table2)
     {
         /* Merges the recieved tables into one single table. Merging all the domains
@@ -291,7 +300,8 @@ public class Table implements Serializable
         ArrayList<Attribute> domain = new ArrayList();
         ArrayList<Attribute> completeDomain = new ArrayList();        
         
-        for (Attribute attr : table1_domain) {
+        for (Attribute attr : table1_domain) 
+        {
             domain.add(attr);
             
             //Now we will add the name before the attribute for table1
@@ -332,7 +342,6 @@ public class Table implements Serializable
         
         for ( Tuple tuple : table1.getTable_tuples() )
         {
-
             for ( Tuple tuple2 : table2.getTable_tuples() )
             {
                 Tuple new_tuple = new Tuple();

@@ -7,7 +7,6 @@
 package kickassdb;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import java.util.HashMap;
@@ -284,7 +283,7 @@ public class AddIndexes extends javax.swing.JFrame {
             
             at.setIndexType(Attribute.IndexType.HASH_TYPE_INDEXING);
             
-            HashMap<Integer, Tuple> hm = new HashMap<>();            
+            HashMap<Integer, ArrayList<Tuple>> hm = new HashMap<>();            
             Table selectedTable = (Table) tableList.getSelectedValue();
                         
             int position = selectedTable.getFieldPosition(at.getAttribute_name());
@@ -293,24 +292,37 @@ public class AddIndexes extends javax.swing.JFrame {
             if ( at.getType() == Attribute.Type.INTEGER )
             {
                 /* Iterate through all the tuples */
-                for ( Tuple tuple : selectedTable.getTable_tuples() )                
-                    hm.put( Integer.parseInt(tuple.getValue(position).getValue().toString()), tuple);                
+                for ( Tuple tuple : selectedTable.getTable_tuples() )
+                {
+                    Object current_key = tuple.getValue(position).getValue();                    
+                    
+                    if ( hm.get( Integer.parseInt(current_key.toString())) == null )
+                        hm.put( Integer.parseInt(current_key.toString()), new ArrayList<Tuple>());
+                    else
+                        hm.get(Integer.parseInt(current_key.toString())).add(tuple);
+                }
             }
             else if ( at.getType() == Attribute.Type.VARCHAR )
             {
-                /* Iterate through all the tuples */
-                for ( Tuple tuple : selectedTable.getTable_tuples() )                
-                    hm.put( tuple.getValue(position).getValue().toString().length(), tuple);                
-            }
-            
-            at.setHashTable(hm);
-        }
+                for ( Tuple tuple : selectedTable.getTable_tuples() )
+                {
+                    Object current_key = tuple.getValue(position).getValue();                    
+                    
+                    if ( hm.get( current_key.toString().length()) == null )
+                        hm.put( current_key.toString().length(), new ArrayList<Tuple>());
+                    else
+                        hm.get(current_key.toString().length()).add(tuple);
+                }                        
+            }            
+            at.setHashTable(hm);                        
+        }                
         
         /* Add the index to the table */
         Table indexed_table = (Table) this.tableList.getSelectedValue();
         indexed_table.addIndex(at);
         
         JOptionPane.showMessageDialog(this, "Index created on attribute " + at.getAttribute_name() + " on table " + indexed_table.getTable_name(), "Indexed Added Succesfully", JOptionPane.INFORMATION_MESSAGE);
+                
     }//GEN-LAST:event_addIndexActionPerformed
 
     private void removeIndexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeIndexActionPerformed

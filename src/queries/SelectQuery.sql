@@ -1,2 +1,2 @@
-SELECT Count(*) 
-FROM trans AS T
+SELECT *
+FROM Stopword, Abstract

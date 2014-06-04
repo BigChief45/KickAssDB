@@ -402,7 +402,7 @@ public class Operations
                         break;
                         
                     default:
-                        new_table = Table.mergeTables(resultTable, table2); // More than 1 table
+                        new_table = Table.mergeTables(table1, table2); // More than 1 table
 
                         // If we have filters we apply them
                         //if ( numberFilters > 0 )                            
@@ -573,8 +573,8 @@ public class Operations
 
                 //pendejada(tables, filters);
                 
-                pendejada2(tables, filters);
-                System.exit(0);
+                //pendejada2(tables, filters);
+                //System.exit(0);
                 
                 //We merge two tables into 1
                 new_table = Table.mergeTables(table1, table2); // More than 1 table
@@ -734,12 +734,12 @@ public class Operations
         }//End for ( Tuple tuple : table1.getTable_tuples() )        
         
         for ( Tuple tp : crossproduct.getTable_tuples() )
-        {
-            if ( Integer.parseInt(tp.getValue(4).getValue().toString()) > 50000 )
+        {                        
+            if ( Integer.parseInt(tp.getValue(4).getValue().toString()) > 15 )
                 crossproduct2.addTuple(tp);
-        }        
+        }
                 
-        System.out.println("");
+        //crossproduct2.printTuples();
         
     }
     

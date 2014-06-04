@@ -193,14 +193,17 @@ create_table ::= CREATE TABLE ID:id PARLEFT table_attribute PARRIGHT
 
                                     /* Get the attribute's size */
                                     /* Check if it doesn't exceed max size */
-                                    if ( Integer.parseInt(size.toString()) <= max_varchar_size )
+                                    current_attribute_size = Integer.parseInt(size.toString());
+                                    
+
+                                    /*if ( Integer.parseInt(size.toString()) <= max_varchar_size )
                                     {
                                         current_attribute_size = Integer.parseInt(size.toString());
                                     }
                                     else
                                     {
                                         //JOptionPane.showMessageDialog(KickAssDB.mainwindow, "Varchar type can't exceed a max size of 40.", "Error", JOptionPane.ERROR_MESSAGE);                                         
-                                    }
+                                    }*/
                                :};
 
                 coma ::= COMA table_attribute

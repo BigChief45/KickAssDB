@@ -1,16 +1,15 @@
-create table user1(
-  attr1 int primary key,
-  attr2 varchar(20),
-  attr3 int,
-  attr4 int, 
-  attr5 int
+CREATE TABLE Stopword (
+stopwordId int PRIMARY KEY,
+stopwordText varchar(50),
+tfidf int,
+counts int,
+freq int
 );
 
-create table trans (
-  attr1 varchar(20) primary key,
-  attr2 int,
-  attr3 int, 
-  attr4 int, 
-  attr5 int
+CREATE TABLE Abstract (
+abstractId int PRIMARY KEY,
+text varchar(50),
+wordcount int,
+source int,
+stopwordId int
 );
-
