@@ -64,14 +64,30 @@ public class Tuple implements Serializable
             }
             valIndex++;
             
-        }
-        
-       
-        
-        
+        }                               
         return new_tuple;
     }
  
+
+    public static Tuple mergeTuples(Tuple tuple1, Tuple tuple2)
+    {
+        /* MERGES TWO TUPLES INTO ONE (ONLY VALUES) */
+        Tuple result = new Tuple();
+        ArrayList<Value> new_values = new ArrayList<>();
+        
+        /* Add tuple 1 values */
+        for ( Value v : tuple1.getTuple_values() )
+            new_values.add(v);
+        
+        /* Add tuple 2 values */
+        for ( Value v : tuple2.getTuple_values() )
+            new_values.add(v);
+        
+        result.setTuple_values(new_values);
+        
+        return result;
+    }
+    
     @Override
     public String toString(){
     

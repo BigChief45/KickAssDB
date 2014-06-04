@@ -276,13 +276,164 @@ public class Table implements Serializable
         System.out.println("");
     }
     
+    private static Table indexSearch(BPlusTree tree, Value v, String operation)
+    {
+        Table result = new Table();
+        
+        switch ( operation )
+        {
+            case "=":
+                result.setTable_tuples(tree.getEquals(Integer.parseInt(v.getValue().toString())));
+                break;
+            case ">":
+                result.setTable_tuples(tree.getGreater(Integer.parseInt(v.getValue().toString())));
+                break;
+            case "<":
+                result.setTable_tuples(tree.getLess(Integer.parseInt(v.getValue().toString())));
+                break;
+            case "<>":
+                result.setTable_tuples(tree.getLess(Integer.parseInt(v.getValue().toString())));
+                break;                
+        }
+                        
+        return result;
+    }
+    
     public static Table filterAndMerge(Table table1, Table table2, ArrayList<QueryFilter> filters)
     {
         /* Obtain the Filter 1 data */
         QueryFilter filter1 = filters.get(0);
-                
+        Table result_left = new Table();
         
-        return null;
+        FilterPart lPart = filter1.getLeftFilter();
+        FilterPart rPart = filter1.getRightFilter();        
+        
+        Table left_dataset = new Table();
+        Table right_dataset = new Table();
+        
+        boolean left_attribute_exists = false;
+        boolean right_attribute_exists = false;
+        
+        if ( !lPart.getFieldName().equals(""))
+            left_attribute_exists = true;
+        if ( !rPart.getFieldName().equals(""))
+            right_attribute_exists = true;
+        
+        /* CHECK LEFT PART */
+        if ( left_attribute_exists == true )
+        {
+            /* Check if this attribute is indexed */
+            if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.NULL )
+            {
+                /* Attribute is not indexed */
+                /* Data set is the whole table */
+                left_dataset = lPart.getTable();                
+            }
+            else if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.TREE_TYPE_INDEXING )
+            {
+                /* Tree Type Indexing */                
+                left_dataset = lPart.getTable();       
+            }
+            else if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.HASH_TYPE_INDEXING )
+            {
+                /* Hash Type Indexing */
+                
+            }
+        }
+        else
+        {
+            /* There is a fixed value, no index */
+            left_dataset = right_dataset;
+        }
+        
+        /* Check RIGHT PART */
+        if ( right_attribute_exists == true )
+        {            
+            /* Check if this attribute is indexed */
+            if ( Operations.getAttributeIndexType(rPart.getTable(), rPart) == Attribute.IndexType.NULL )
+            {
+                /* Attribute is not indexed */
+                /* Data set is the whole table */
+                right_dataset = rPart.getTable();                
+            }
+            else if ( Operations.getAttributeIndexType(rPart.getTable(), rPart) == Attribute.IndexType.TREE_TYPE_INDEXING )
+            {
+                /* Tree Type Indexing */
+            }
+            else if ( Operations.getAttributeIndexType(rPart.getTable(), rPart) == Attribute.IndexType.HASH_TYPE_INDEXING )
+            {
+                /* Hash Type Indexing */
+                
+            }
+        }
+        else
+        {
+            /* Fixed value, no index */
+            right_dataset = left_dataset;
+        }
+        
+        /* FILTER both datasets */
+        for ( Tuple t : left_dataset.getTable_tuples() )
+        {                        
+            Value lv;
+            if ( left_attribute_exists == true )
+                lv = t.getValue(lPart.getFieldPosition());
+            else
+                lv = new Value(lPart.getValue());
+                     
+            if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.TREE_TYPE_INDEXING )
+            {
+                BPlusTree tree = lPart.getTable().getAttributeByName(lPart.getFieldName()).getBPlusTree();
+                right_dataset = indexSearch(tree, lv, filter1.getOperand());
+            }
+            
+            
+            for ( Tuple t2 : right_dataset.getTable_tuples() )
+            {
+                Value rv;
+                if ( right_attribute_exists == true )
+                    rv = t2.getValue(rPart.getFieldPosition());
+                else
+                    rv = new Value(rPart.getValue());
+                
+                if ( compareValues(lv, rv, filter1.getOperand()) == true )
+                {
+                    /* Merge both tuples into one */ 
+                    Tuple merged_tuple = Tuple.mergeTuples(t, t2);
+                    
+                    /* Add this tuple to a result table */
+                    result_left.addTuple(merged_tuple);
+                }
+            }
+        }
+            
+        return result_left;
+    }
+    
+    private static boolean compareValues(Value lv, Value rv, String operator)
+    {
+        /* Compares 2 values using the specified operator */
+        switch ( operator )
+        {
+            case "=":
+                if ( Integer.parseInt(lv.getValue().toString()) == Integer.parseInt(rv.getValue().toString()) )
+                    return true;
+                break;
+            case ">":
+                if ( Integer.parseInt(lv.getValue().toString()) > Integer.parseInt(rv.getValue().toString()) )
+                    return true;
+                break;
+            case "<":
+                if ( Integer.parseInt(lv.getValue().toString()) < Integer.parseInt(rv.getValue().toString()) )
+                    return true;
+                break;
+            case "<>":
+                if ( Integer.parseInt(lv.getValue().toString()) != Integer.parseInt(rv.getValue().toString()) )
+                    return true;
+                break;                
+        }
+        
+        return false;
     }
     
     public static Table mergeTables(Table table1, Table table2)

@@ -4,6 +4,7 @@ public class FilterPart
 {
     private String field_alias;
     private String field_name;
+    private Table table;
     private int field_position;
     private Object value;
 
@@ -58,6 +59,23 @@ public class FilterPart
         this.field_name = field_name;
     }
 
+    public void setTable(Table t)
+    {
+        table = t;
+    }
+    
+    public void setTable(String tableName)
+    {
+        for ( Table t : MainWindow.getDefaultSchema().getSchema() )
+            if ( t.getTable_name().equals(tableName) )
+                table = t;
+    }
+    
+    public Table getTable()
+    {
+        return table;
+    }
+    
     /**
      * @return the field_position
      */

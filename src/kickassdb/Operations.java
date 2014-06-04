@@ -556,7 +556,7 @@ public class Operations
         //We get the number of tables        
         int numberTables = tables.size();
         
-        switch (numberTables) 
+        switch ( numberTables ) 
         {            
             case 1:
                 new_table = tables.get(0); // Only one table
@@ -571,29 +571,30 @@ public class Operations
                 table1 = tables.get(0);
                 table2 = tables.get(1);
 
+                new_table = Table.filterAndMerge(table1, table2, filters);
+                
                 //pendejada(tables, filters);
                 
                 //pendejada2(tables, filters);
                 //System.exit(0);
                 
                 //We merge two tables into 1
-                new_table = Table.mergeTables(table1, table2); // More than 1 table
+                //new_table = Table.mergeTables(table1, table2); // More than 1 table
 
                 // If we have filters we apply them
-                new_table = QueryFilter.newFilterTable(new_table, filters);                
+                //new_table = QueryFilter.newFilterTable(new_table, filters);                
                 break;                
                 
             default:
                 break;
                 
         }//End switch (numberFilters)
-                                                      
-        /* Display output */
+                                                              
         return new_table;
         
     }//End public static void selectAll(ArrayList<Table> tables, ArrayList<QueryFilter> filters)    
     
-    private static Attribute.IndexType getAttributeIndexType(Table table, QueryFilter filter){    
+    public static Attribute.IndexType getAttributeIndexType(Table table, QueryFilter filter){    
         
         String tableName = table.getTable_name();
                 
@@ -613,7 +614,21 @@ public class Operations
         return indexType;
         
     }//End private void hasAttributeAnIndex()
-            
+
+    public static Attribute.IndexType getAttributeIndexType(Table table, FilterPart filter){    
+        
+        String filterType = filter.getFilterType_type().toString();
+                
+        Attribute attr = new Attribute();
+        if ( "ALIAS_ATTRIBUTE".equals(filterType) || "ATTRIBUTE".equals(filterType) )
+            attr = table.getAttributeByName(filter.getFieldName());            
+        
+        Attribute.IndexType indexType = attr.getIndexType();                
+        
+        return indexType;
+        
+    }//End private void hasAttributeAnIndex()   
+    
     private static void pendejada(ArrayList<Table> tables, ArrayList<QueryFilter> filters)
     {
         Table t1 = tables.get(0);

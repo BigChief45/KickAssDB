@@ -603,6 +603,8 @@ select ::= SELECT select_fields:type FROM select_tables where
                                     FilterPart fp = new FilterPart();
                                     fp.setFieldName(field_name);
                                     fp.setFieldAlias(alias_id);
+                                    fp.setTable(alias_id);
+                                    fp.setFieldPosition(fp.getTable().getFieldPosition(field_name));
 
                                     RESULT = fp;
                                 :}

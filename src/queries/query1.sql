@@ -1,14 +1,16 @@
-CREATE TABLE Person (
-person_id INT PRIMARY KEY ,
-person_name varchar(20),
-person_last varchar(30),
-country varchar(30),
-vehicle_id int
+create table user1(
+  attr1 int primary key,
+  attr2 varchar(20),
+  attr3 int,
+  attr4 int, 
+  attr5 int
 );
 
-CREATE TABLE Vehicle (
-vehicle_id INT PRIMARY KEY,
-model varchar(20),
-plate_number varchar(30),
-country varchar(20)
-)
+create table trans (
+  attr1 varchar(20) primary key,
+  attr2 int,
+  attr3 int, 
+  attr4 int, 
+  attr5 int
+);
+
