@@ -2,6 +2,7 @@ package kickassdb;
 
 import java.util.ArrayList;
 import java.io.*;
+import java.util.HashMap;
 
 public class Table implements Serializable
 {
@@ -283,16 +284,43 @@ public class Table implements Serializable
         switch ( operation )
         {
             case "=":
+                ArrayList res = tree.getEquals(Integer.parseInt(v.getValue().toString()));
                 result.setTable_tuples(tree.getEquals(Integer.parseInt(v.getValue().toString())));
                 break;
             case ">":
+                ArrayList res2 = tree.getGreater(Integer.parseInt(v.getValue().toString()));
                 result.setTable_tuples(tree.getGreater(Integer.parseInt(v.getValue().toString())));
                 break;
             case "<":
+                ArrayList res3 = tree.getLess(Integer.parseInt(v.getValue().toString()));
                 result.setTable_tuples(tree.getLess(Integer.parseInt(v.getValue().toString())));
                 break;
             case "<>":
-                result.setTable_tuples(tree.getLess(Integer.parseInt(v.getValue().toString())));
+                ArrayList res4 = tree.getDifferent(Integer.parseInt(v.getValue().toString()));
+                result.setTable_tuples(tree.getDifferent(Integer.parseInt(v.getValue().toString())));
+                break;                
+        }
+                        
+        return result;
+    }
+    
+    private static Table indexSearch(HashMap hm, Value v, String operation)
+    {
+        Table result = new Table();
+        
+        switch ( operation )
+        {
+            case "=":
+                result.setTable_tuples(HashMethods.search(hm, Integer.parseInt(v.getValue().toString())));
+                break;
+            case ">":
+                //result.setTable_tuples(tree.getGreater(Integer.parseInt(v.getValue().toString())));
+                break;
+            case "<":
+                //result.setTable_tuples(tree.getLess(Integer.parseInt(v.getValue().toString())));
+                break;
+            case "<>":
+                //result.setTable_tuples(tree.getLess(Integer.parseInt(v.getValue().toString())));
                 break;                
         }
                         
@@ -337,7 +365,7 @@ public class Table implements Serializable
             else if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.HASH_TYPE_INDEXING )
             {
                 /* Hash Type Indexing */
-                
+                left_dataset = lPart.getTable();
             }
         }
         else
@@ -381,13 +409,17 @@ public class Table implements Serializable
             else
                 lv = new Value(lPart.getValue());
                      
-            if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.TREE_TYPE_INDEXING )
+            if ( Operations.getAttributeIndexType(rPart.getTable(), rPart) == Attribute.IndexType.TREE_TYPE_INDEXING )
             {
-                BPlusTree tree = lPart.getTable().getAttributeByName(lPart.getFieldName()).getBPlusTree();
+                BPlusTree tree = rPart.getTable().getAttributeByName(rPart.getFieldName()).getBPlusTree();
                 right_dataset = indexSearch(tree, lv, filter1.getOperand());
             }
-            
-            
+            else if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.HASH_TYPE_INDEXING )
+            {
+                HashMap hm = lPart.getTable().getAttributeByName(lPart.getFieldName()).getHashTable();                
+                right_dataset = indexSearch(hm, lv, filter1.getOperand());
+            } 
+                        
             for ( Tuple t2 : right_dataset.getTable_tuples() )
             {
                 Value rv;

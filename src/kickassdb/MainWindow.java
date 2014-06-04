@@ -548,7 +548,8 @@ public class MainWindow extends javax.swing.JFrame
     private void executeQueryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_executeQueryActionPerformed
 
         /* Set Timer */
-        double startTime = System.nanoTime();
+        //double startTime = System.nanoTime();
+        double startTime = System.currentTimeMillis();
         
         /* Reset all aliases in the schema */
         default_schema.resetTableAliases();
@@ -571,8 +572,10 @@ public class MainWindow extends javax.swing.JFrame
             outputText.append("Query stopped. \n");
         }
         
-        double endTime = System.nanoTime();
-        double totalTime = (endTime - startTime) / 1000;
+        //double endTime = System.nanoTime();
+        double endTime = System.currentTimeMillis();
+        
+        double totalTime = (endTime - startTime) * 0.001;
         
         executionTime.setText("Execution Time: " + totalTime + " seconds. \n");
         outputText.append("Execution Time: " + totalTime + " seconds \n");

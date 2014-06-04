@@ -6,10 +6,10 @@ import java.util.Iterator;
 
 public class HashMethods 
 {
-    public static Tuple search(HashMap hm, int key)
+    public static ArrayList<Tuple> search(HashMap hm, int key)
     {
-        Tuple result;
-        result = (Tuple) hm.get(key);
+        ArrayList<Tuple> result;
+        result = (ArrayList<Tuple>) hm.get(key);
         
         return result;
     }
