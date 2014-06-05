@@ -286,6 +286,12 @@ public class Table implements Serializable
             case "=":
                 ArrayList res = tree.getEquals(Integer.parseInt(v.getValue().toString()));
                 result.setTable_tuples(tree.getEquals(Integer.parseInt(v.getValue().toString())));
+                
+//                if ( !result.getTable_tuples().isEmpty() )                    
+//                    System.out.println("No encontro nada");
+//                else
+//                    System.out.println("Encontro algo");
+                
                 break;
             case ">":
                 ArrayList res2 = tree.getGreater(Integer.parseInt(v.getValue().toString()));
