@@ -5,6 +5,7 @@
 package kickassdb;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -18,8 +19,8 @@ public class BPlusTree {
                 public Node[] mChildNodes = new Node[2 * T];
                 public boolean mIsLeafNode;
                 public Node mNextNode;
-        }
-        
+        }        
+                
         private Node mRootNode;
         private static final int T = 4;
         
@@ -218,21 +219,33 @@ public class BPlusTree {
         }//End public ArrayList getLess()        
 
         public ArrayList getEquals(int key){
-        
-            ArrayList result = new ArrayList();              
             
+            ArrayList result = new ArrayList();              
+                        
             Node node = searchNode(key);
-            while (node != null) {
-                    for (int j = 0; j < node.mNumKeys; j++) {
+            
+            if ( node != null ){
+            
+                while (!node.mIsLeafNode) {
 
-                            if (node.mKeys[j] > key) {
-                                    return result;
-                            } else if (node.mKeys[j] == key)
-                                result.add(node.mObjects[j]);
+                    node = node.mChildNodes[0];
+
+                }//End while (!node.mIsLeafNode)            
+                                
+            }//End if ( node != null )
+            else
+                return result;
+                        
+            while (node != null) {
+                    for (int j = 0; j < node.mNumKeys; j++) {                       
+                        
+                        if (node.mKeys[j] == key)
+                            result.add(node.mObjects[j]);
                             
-                    }
+                    }//End for (int j = 0; j < node.mNumKeys; j++)
                     node = node.mNextNode;
-            }
+                    
+            }//End while (node != null)
             
             return result;
             
@@ -242,18 +255,34 @@ public class BPlusTree {
         
             ArrayList result = new ArrayList();              
             
+            if (key == 266)
+                System.out.println("");
+            
             Node node = searchNode(key);
+            
+            if ( node != null ){
+            
+                while (!node.mIsLeafNode) {
+
+                    node = node.mChildNodes[0];
+
+                }//End while (!node.mIsLeafNode)            
+                                
+            }//End if ( node != null )
+            else
+                return result;
+            
             while (node != null) {
                     for (int j = 0; j < node.mNumKeys; j++) {
                             
-                            if (node.mKeys[j] <= key) {
-                            } else {
-                                result.add(node.mObjects[j]);
-                            }
+                            if (node.mKeys[j] > key)
+                                result.add(node.mObjects[j]);                                
                             
-                    }
+                    }//End for (int j = 0; j < node.mNumKeys; j++)
+                    
                     node = node.mNextNode;
-            }
+                    
+            }//Emd while (node != null)
             
             return result;
             
