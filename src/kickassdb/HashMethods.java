@@ -11,6 +11,9 @@ public class HashMethods
         ArrayList<Tuple> result;
         result = (ArrayList<Tuple>) hm.get(key);
         
+        if ( result == null )
+            result = new ArrayList<>();
+        
         return result;
     }
     

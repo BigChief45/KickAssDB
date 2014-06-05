@@ -297,7 +297,11 @@ public class AddIndexes extends javax.swing.JFrame {
                     Object current_key = tuple.getValue(position).getValue();                    
                     
                     if ( hm.get( Integer.parseInt(current_key.toString())) == null )
-                        hm.put( Integer.parseInt(current_key.toString()), new ArrayList<Tuple>());
+                    {
+                        ArrayList<Tuple> z = new ArrayList<>();
+                        z.add(tuple);
+                        hm.put( Integer.parseInt(current_key.toString()), z);
+                    }
                     else
                         hm.get(Integer.parseInt(current_key.toString())).add(tuple);
                 }

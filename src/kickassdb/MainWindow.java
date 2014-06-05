@@ -36,6 +36,7 @@ public class MainWindow extends javax.swing.JFrame
 {        
 	private Hashtable attributes;
         private File opened_file;
+        private File opened_schema_file;
         public String parserResult = "Parsing Successful";
         private static Schema default_schema;
                        
@@ -716,10 +717,10 @@ public class MainWindow extends javax.swing.JFrame
         if ( seleccion == JFileChooser.APPROVE_OPTION )
         {
             // Select the file
-            opened_file = fc.getSelectedFile();
+            opened_schema_file = fc.getSelectedFile();
             
             /* Deserialize it */
-            Storage.openSchema(opened_file);
+            Storage.openSchema(opened_schema_file);
             
             getOutputText().append("Opened schema: " + default_schema.getName() + "\n");
             saveSchema.setEnabled(false);

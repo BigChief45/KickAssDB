@@ -420,9 +420,9 @@ public class Table implements Serializable
                 BPlusTree tree = rPart.getTable().getAttributeByName(rPart.getFieldName()).getBPlusTree();
                 right_dataset = indexSearch(tree, lv, filter1.getOperand());
             }
-            else if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.HASH_TYPE_INDEXING )
+            else if ( Operations.getAttributeIndexType(rPart.getTable(), rPart) == Attribute.IndexType.HASH_TYPE_INDEXING )
             {
-                HashMap hm = lPart.getTable().getAttributeByName(lPart.getFieldName()).getHashTable();                
+                HashMap hm = rPart.getTable().getAttributeByName(rPart.getFieldName()).getHashTable();                
                 right_dataset = indexSearch(hm, lv, filter1.getOperand());
             } 
                         
