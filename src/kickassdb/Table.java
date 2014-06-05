@@ -337,102 +337,94 @@ public class Table implements Serializable
     {
         /* Obtain the Filter 1 data */
         QueryFilter filter1 = filters.get(0);
+        QueryFilter filter2 = filters.get(1);
         Table result_left = new Table();
         
         FilterPart lPart1 = filter1.getLeftFilter();
         FilterPart rPart1 = filter1.getRightFilter();        
+        FilterPart lPart2 = filter2.getLeftFilter();
+        FilterPart rPart2 = filter2.getRightFilter();
+                
+        Table left_dataset1 = new Table();
+        Table left_dataset2 = new Table();
+        Table right_dataset1 = new Table();
+        Table right_dataset2 = new Table();
         
-        Table left_dataset = new Table();
-        Table right_dataset = new Table();
-        
-        boolean left_attribute_exists = false;
-        boolean right_attribute_exists = false;
+        boolean left_attribute_exists1 = false;
+        boolean right_attribute_exists1 = false;
+        boolean left_attribute_exists2 = false;
+        boolean right_attribute_exists2 = false;
         
         if ( !lPart1.getFieldName().equals(""))
-            left_attribute_exists = true;
+            left_attribute_exists1 = true;
         if ( !rPart1.getFieldName().equals(""))
-            right_attribute_exists = true;
+            right_attribute_exists1 = true;
+        if ( !lPart2.getFieldName().equals(""))
+            left_attribute_exists2 = true;
+        if ( !rPart2.getFieldName().equals(""))
+            right_attribute_exists2 = true;
         
         /* CHECK LEFT PART */
-        if ( left_attribute_exists == true )
+        if ( left_attribute_exists1 == true )
         {
-            /* Check if this attribute is indexed */
-            if ( Operations.getAttributeIndexType(lPart1.getTable(), lPart1) == Attribute.IndexType.NULL )
-            {
-                /* Attribute is not indexed */
-                /* Data set is the whole table */
-                left_dataset = lPart1.getTable();                
-            }
-            else if ( Operations.getAttributeIndexType(lPart1.getTable(), lPart1) == Attribute.IndexType.TREE_TYPE_INDEXING )
-            {
-                /* Tree Type Indexing */                
-                left_dataset = lPart1.getTable();       
-            }
-            else if ( Operations.getAttributeIndexType(lPart1.getTable(), lPart1) == Attribute.IndexType.HASH_TYPE_INDEXING )
-            {
-                /* Hash Type Indexing */
-                left_dataset = lPart1.getTable();
-            }
+            /* There is an attribute value */
+            left_dataset1 = lPart1.getTable();
+            left_dataset2 = lPart2.getTable();
         }
         else
         {
             /* There is a fixed value, no index */
-            left_dataset = right_dataset;
+            left_dataset1 = right_dataset1;
         }
-        
+                                
         /* Check RIGHT PART */
-        if ( right_attribute_exists == true )
+        if ( right_attribute_exists1 == true )
         {            
             /* Check if this attribute is indexed */
             if ( Operations.getAttributeIndexType(rPart1.getTable(), rPart1) == Attribute.IndexType.NULL )
             {
                 /* Attribute is not indexed */
                 /* Data set is the whole table */
-                right_dataset = rPart1.getTable();                
-            }
-            else if ( Operations.getAttributeIndexType(rPart1.getTable(), rPart1) == Attribute.IndexType.TREE_TYPE_INDEXING )
-            {
-                /* Tree Type Indexing */
-            }
-            else if ( Operations.getAttributeIndexType(rPart1.getTable(), rPart1) == Attribute.IndexType.HASH_TYPE_INDEXING )
-            {
-                /* Hash Type Indexing */
-                
-            }
+                right_dataset1 = rPart1.getTable();
+                right_dataset2 = rPart2.getTable();
+            }            
         }
         else
         {
             /* Fixed value, no index */
-            right_dataset = left_dataset;
+            right_dataset1 = left_dataset1;
         }
-        
+                                
         /* FILTER both datasets */
-        for ( Tuple t : left_dataset.getTable_tuples() )
+        for ( Tuple t : left_dataset1.getTable_tuples() )
         {                        
             Value lv1;
-            if ( left_attribute_exists == true )
+            if ( left_attribute_exists1 == true )
                 lv1 = t.getValue(lPart1.getFieldPosition());
             else
                 lv1 = new Value(lPart1.getValue());
                      
             if ( Operations.getAttributeIndexType(rPart1.getTable(), rPart1) == Attribute.IndexType.TREE_TYPE_INDEXING )
             {
+                /* Obtain the data using Tree indexing */
                 BPlusTree tree = rPart1.getTable().getAttributeByName(rPart1.getFieldName()).getBPlusTree();
-                right_dataset = indexSearch(tree, lv1, filter1.getOperand());
+                right_dataset1 = indexSearch(tree, lv1, filter1.getOperand());
             }
             else if ( Operations.getAttributeIndexType(rPart1.getTable(), rPart1) == Attribute.IndexType.HASH_TYPE_INDEXING )
             {
+                /* Obtain the data using Hash indexing */
                 HashMap hm = rPart1.getTable().getAttributeByName(rPart1.getFieldName()).getHashTable();                
-                right_dataset = indexSearch(hm, lv1, filter1.getOperand());
+                right_dataset1 = indexSearch(hm, lv1, filter1.getOperand());
             } 
                         
-            for ( Tuple t2 : right_dataset.getTable_tuples() )
+            for ( Tuple t2 : right_dataset1.getTable_tuples() )
             {
                 Value rv1;
-                if ( right_attribute_exists == true )
+                if ( right_attribute_exists1 == true )
                     rv1 = t2.getValue(rPart1.getFieldPosition());
                 else
                     rv1 = new Value(rPart1.getValue());
+                
                 
                 if ( compareValues(lv1, rv1, filter1.getOperand()) == true )
                 {
