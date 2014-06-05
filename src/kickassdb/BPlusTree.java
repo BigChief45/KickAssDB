@@ -348,7 +348,176 @@ public class BPlusTree {
             return result;        
         
         }//End public ArrayList getLess()        
+
+        public ArrayList getLessKeys(int key){
+        
+            ArrayList result = new ArrayList();
+            
+            Node node = mRootNode;
+            while (!node.mIsLeafNode) {
                 
+                node = node.mChildNodes[0];
+                
+            }//End while (!node.mIsLeafNode)
+            
+            while (node != null) {
+
+                //We iterate in all the keys of the node
+                for (int i = 0; i < node.mNumKeys; i++){
+                    
+                    int temp = node.mKeys[i];
+                    
+                    if ( temp < key  ) {
+                    
+                        result.add(node.mKeys[i]);
+                        
+                    } else {
+                    
+                        break;
+                    
+                    }//End else
+                        
+                }//End for (int i = 0; i < node.mNumKeys; i++)
+                
+                node = node.mNextNode;
+                
+            }//End while (node != null)
+            
+            return result;
+        
+        }//End public ArrayList getLess()        
+
+        public ArrayList getEqualsKeys(int key){
+            
+            ArrayList result = new ArrayList();              
+                        
+            Node node = searchNode(key);
+            
+            if ( node != null ){
+            
+                while (!node.mIsLeafNode) {
+
+                    node = node.mChildNodes[0];
+
+                }//End while (!node.mIsLeafNode)            
+                                
+            }//End if ( node != null )
+            else
+                return result;
+                        
+            while (node != null) {
+                    for (int j = 0; j < node.mNumKeys; j++) {                       
+                        
+                        if (node.mKeys[j] == key)
+                            result.add(node.mKeys[j]);
+                            
+                    }//End for (int j = 0; j < node.mNumKeys; j++)
+                    node = node.mNextNode;
+                    
+            }//End while (node != null)
+            
+            return result;
+            
+        }//End public ArrayList getGreater()
+                
+        public ArrayList getGreaterKeys(int key){
+        
+            ArrayList result = new ArrayList();              
+            
+            if (key == 400)
+                System.out.println("");
+            
+            Node node = searchNode(key);
+            
+            if ( node != null ){
+            
+                while (!node.mIsLeafNode) {
+
+                    node = node.mChildNodes[0];
+
+                }//End while (!node.mIsLeafNode)
+                                
+                while (node != null) {
+                        for (int j = 0; j < node.mNumKeys; j++) {
+
+                                if (node.mKeys[j] > key)
+                                    result.add(node.mKeys[j]);                                
+
+                        }//End for (int j = 0; j < node.mNumKeys; j++)
+
+                        node = node.mNextNode;
+
+                }//Emd while (node != null)                
+                
+            }//End if ( node != null )
+            else {
+            
+                node = mRootNode;
+                while (!node.mIsLeafNode) {
+
+                    node = node.mChildNodes[0];
+
+                }//End while (!node.mIsLeafNode)
+
+                while (node != null) {
+
+                    //We iterate in all the keys of the node
+                    for (int i = 0; i < node.mNumKeys; i++){
+
+                        int temp = node.mKeys[i];
+
+                        if ( temp > key  ) {
+
+                            result.add(node.mKeys[i]);
+
+                        }//End if ( temp > key  )
+
+                    }//End for (int i = 0; i < node.mNumKeys; i++)
+
+                    node = node.mNextNode;
+
+                }//End while (node != null)                
+
+            }//End else
+                                        
+            return result;
+            
+        }//End public ArrayList getGreater()
+        
+        public ArrayList getDifferentKeys(int key){
+        
+            ArrayList result = new ArrayList();
+            
+            Node node = mRootNode;
+            while (!node.mIsLeafNode) {
+                
+                node = node.mChildNodes[0];
+                
+            }//End while (!node.mIsLeafNode)
+            
+            while (node != null) {
+
+                //We iterate in all the keys of the node
+                for (int i = 0; i < node.mNumKeys; i++){
+                    
+                    int temp = node.mKeys[i];
+                    
+                    if ( temp != key  ) {
+                    
+                        result.add(node.mKeys[i]);
+                        
+                    }
+                        
+                }//End for (int i = 0; i < node.mNumKeys; i++)
+                
+                node = node.mNextNode;
+                
+            }//End while (node != null)
+            
+            return result;        
+        
+        }//End public ArrayList getLess()                
+        
         // Inorder walk over the tree.
         @Override
         public String toString() {

@@ -2,6 +2,7 @@ package kickassdb;
 
 import java.util.ArrayList;
 import java.io.*;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class Table implements Serializable
@@ -300,6 +301,75 @@ public class Table implements Serializable
         return result;
     }
     
+    private static ArrayList indexSearch(BPlusTree tree, int v, String operation)
+    {
+        ArrayList result = new ArrayList();
+        
+        switch ( operation )
+        {
+            case "=":
+                result.add(tree.getEqualsKeys(v));                
+                break;
+            case ">":
+                result.add(tree.getLessKeys(v));
+                break;
+            case "<":
+                result.add(tree.getGreaterKeys(v));
+                break;
+            case "<>":
+                result.add(tree.getDifferentKeys(v));
+                break;                
+        }
+                        
+        return result;
+    }    
+    
+    private static ArrayList indexSearch2(BPlusTree tree, int v, String operation)
+    {
+        ArrayList result = new ArrayList();
+        
+        switch ( operation )
+        {
+            case "=":
+                result.add(tree.getEqualsKeys(v));                
+                break;
+            case ">":
+                result.add(tree.getGreaterKeys(v));
+                break;
+            case "<":
+                result.add(tree.getLessKeys(v));
+                break;
+            case "<>":
+                result.add(tree.getDifferentKeys(v));
+                break;                
+        }
+                        
+        return result;
+    }     
+    
+    private static ArrayList indexSearch(HashMap hm, int v, String operation)
+    {
+        ArrayList result = new ArrayList();
+        
+        switch ( operation )
+        {
+            case "=":
+                result.add(HashMethods.search(hm, v));
+                break;
+            case ">":
+                result.add(HashMethods.searchGreater(hm, v));
+                break;
+            case "<":
+                result.add(HashMethods.searchLess(hm, v));
+                break;
+            case "<>":
+                result.add(HashMethods.searchDifferent(hm, v));
+                break;                
+        }
+                        
+        return result;
+    }    
+    
     private static Table indexSearch(HashMap hm, Value v, String operation)
     {
         Table result = new Table();
@@ -325,15 +395,17 @@ public class Table implements Serializable
             
     public static Table filterAndMerge(Table table1, Table table2, ArrayList<QueryFilter> filters)
     {
+        Collections.reverse(filters);
+        
         /* Obtain the Filter 1 data */
         QueryFilter filter1 = filters.get(0);
-        //QueryFilter filter2 = filters.get(1);
+        QueryFilter filter2 = filters.get(1);
         Table result_left = new Table();
         
         FilterPart lPart1 = filter1.getLeftFilter();
-        FilterPart rPart1 = filter1.getRightFilter();        
-        //FilterPart lPart2 = filter2.getLeftFilter();
-        //FilterPart rPart2 = filter2.getRightFilter();
+        FilterPart rPart1 = filter1.getRightFilter();
+        FilterPart lPart2 = filter2.getLeftFilter();
+        FilterPart rPart2 = filter2.getRightFilter();
                 
         Table left_dataset1 = new Table();
         Table left_dataset2 = new Table();
@@ -349,17 +421,17 @@ public class Table implements Serializable
             left_attribute_exists1 = true;
         if ( !rPart1.getFieldName().equals(""))
             right_attribute_exists1 = true;
-//        if ( !lPart2.getFieldName().equals(""))
-//            left_attribute_exists2 = true;
-//        if ( !rPart2.getFieldName().equals(""))
-//            right_attribute_exists2 = true;
+        if ( !lPart2.getFieldName().equals(""))
+            left_attribute_exists2 = true;
+        if ( !rPart2.getFieldName().equals(""))
+            right_attribute_exists2 = true;
         
         /* CHECK LEFT PART */
         if ( left_attribute_exists1 == true )
         {
             /* There is an attribute value */
             left_dataset1 = lPart1.getTable();
-            //left_dataset2 = lPart2.getTable();
+            left_dataset2 = lPart2.getTable();
         }
         else
         {
@@ -376,7 +448,7 @@ public class Table implements Serializable
                 /* Attribute is not indexed */
                 /* Data set is the whole table */
                 right_dataset1 = rPart1.getTable();
-                //right_dataset2 = rPart2.getTable();
+                right_dataset2 = rPart2.getTable();
             }            
         }
         else
@@ -405,7 +477,7 @@ public class Table implements Serializable
                 /* Obtain the data using Hash indexing */
                 HashMap hm = rPart1.getTable().getAttributeByName(rPart1.getFieldName()).getHashTable();                
                 right_dataset1 = indexSearch(hm, lv1, filter1.getOperand());
-            } 
+            }
                         
             for ( Tuple t2 : right_dataset1.getTable_tuples() )
             {
@@ -426,7 +498,72 @@ public class Table implements Serializable
                 }
             }
         }
-                               
+                
+        //We merge the domains, this will simplify queries
+        mergeDomains(table1, table2, result_left);
+                        
+        Table finalTable = new Table();
+        
+        //We execute if there is a second filter
+        if ( !filter2.equals(null) ){
+        
+            //We get the bool value
+            String boolValue = filter2.getBoolValue();
+            
+            //We decide what to do with the bool value
+            switch (boolValue) {
+                
+                case "AND":                   
+                    
+                    int rv2 = Integer.parseInt(rPart2.getValue().toString());                   
+                    
+                    ArrayList indexResult = new ArrayList();
+                    
+                    if ( Operations.getAttributeIndexType(lPart2.getTable(), lPart2) == Attribute.IndexType.TREE_TYPE_INDEXING )
+                    {
+                        /* Obtain the data using Tree indexing */
+                        BPlusTree tree = lPart2.getTable().getAttributeByName(lPart2.getFieldName()).getBPlusTree();
+                        indexResult = indexSearch2(tree, rv2, filter2.getOperand());
+                    }
+                    else if ( Operations.getAttributeIndexType(lPart2.getTable(), lPart2) == Attribute.IndexType.HASH_TYPE_INDEXING )
+                    {
+                        /* Obtain the data using Hash indexing */
+                        HashMap hm = lPart2.getTable().getAttributeByName(lPart2.getFieldName()).getHashTable();                
+                        indexResult = indexSearch(hm, rv2, filter2.getOperand());
+                    }                    
+                    
+                    int positionMergeTuple = result_left.getFieldPositionCompleteDomain(lPart2.getTable().getTable_name()+lPart2.getFieldName());                                                                                
+                    
+                    for (Tuple tuple : result_left.getTable_tuples()) {
+                                                
+                        int vs = Integer.parseInt(tuple.getValue(positionMergeTuple).getValue().toString());
+                        
+                        ArrayList mocos = (ArrayList)indexResult.get(0);
+                        
+                        if ( mocos.contains(Integer.parseInt(tuple.getValue(positionMergeTuple).getValue().toString())) ){
+                        
+                            finalTable.addTuple(tuple);
+                            
+                        }
+                        
+                        
+                    }//End for (Tuple tuple : result_left.getTable_tuples())
+                    
+                    break;
+                    
+                case "OR":
+                    
+                    break;
+                                       
+                default:
+                    break;
+                    
+            }//End switch (boolValue)        
+        
+            return finalTable;
+            
+        }//End if ( !filter2.equals(null) )        
+        
         return result_left;
     }
             
@@ -455,6 +592,60 @@ public class Table implements Serializable
         
         return false;
     }
+
+    public static void mergeDomains(Table table1, Table table2, Table crossproduct){
+    
+        /* Merges the recieved tables into one single table. Merging all the domains
+           and data
+        */        
+                
+        //First we set the table domain
+        ArrayList<Attribute> table1_domain = table1.getTable_domain();
+        ArrayList<Attribute> table2_domain = table2.getTable_domain();
+        ArrayList<Attribute> domain = new ArrayList();
+        ArrayList<Attribute> completeDomain = new ArrayList();        
+        
+        for (Attribute attr : table1_domain) 
+        {
+            domain.add(attr);
+            
+            //Now we will add the name before the attribute for table1
+            Attribute new_attribute = new Attribute();
+            
+            new_attribute.setAttributeSize(attr.getAttributeSize());
+            new_attribute.setAttribute_name(attr.getAttribute_name());
+            new_attribute.setType(attr.getType());            
+            
+            String attrName = new_attribute.getAttribute_name();
+            new_attribute.setAttribute_name(table1.getTable_name()+attrName);
+            
+            //We add the attribute to the complete domain
+            completeDomain.add(new_attribute);
+            
+        }//End for (Attribute attr : table1_domain)
+        
+        for (Attribute attr : table2_domain) {
+            domain.add(attr);
+            
+            //Now we will add the name before the attribute for table1
+            Attribute new_attribute = new Attribute();
+            
+            new_attribute.setAttributeSize(attr.getAttributeSize());
+            new_attribute.setAttribute_name(attr.getAttribute_name());
+            new_attribute.setType(attr.getType());  
+            
+            String attrName = new_attribute.getAttribute_name();
+            new_attribute.setAttribute_name(table2.getTable_name()+attrName);
+            
+            //We add the attribute to the complete domain
+            completeDomain.add(new_attribute);            
+            
+        }//End for (Attribute attr : table2_domain)
+                        
+        crossproduct.setTable_domain(domain);
+        crossproduct.setTable_complete_domain(completeDomain);
+            
+    }//End public static void mergeDomains(Table table1, Table table2, Table crossproduct)    
     
     public static Table mergeTables(Table table1, Table table2)
     {
