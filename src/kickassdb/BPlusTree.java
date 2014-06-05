@@ -266,7 +266,7 @@ public class BPlusTree {
 
                     node = node.mChildNodes[0];
 
-                }//End while (!node.mIsLeafNode)            
+                }//End while (!node.mIsLeafNode)
                                 
             }//End if ( node != null )
             else
