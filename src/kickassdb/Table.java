@@ -320,27 +320,27 @@ public class Table implements Serializable
                 result.setTable_tuples(HashMethods.search(hm, Integer.parseInt(v.getValue().toString())));
                 break;
             case ">":
-                //result.setTable_tuples(tree.getGreater(Integer.parseInt(v.getValue().toString())));
+                result.setTable_tuples(HashMethods.searchGreater(hm, Integer.parseInt(v.getValue().toString())));
                 break;
             case "<":
-                //result.setTable_tuples(tree.getLess(Integer.parseInt(v.getValue().toString())));
+                result.setTable_tuples(HashMethods.searchLess(hm, Integer.parseInt(v.getValue().toString())));
                 break;
             case "<>":
-                //result.setTable_tuples(tree.getLess(Integer.parseInt(v.getValue().toString())));
+                result.setTable_tuples(HashMethods.searchDifferent(hm, Integer.parseInt(v.getValue().toString())));
                 break;                
         }
                         
         return result;
     }
-    
+            
     public static Table filterAndMerge(Table table1, Table table2, ArrayList<QueryFilter> filters)
     {
         /* Obtain the Filter 1 data */
         QueryFilter filter1 = filters.get(0);
         Table result_left = new Table();
         
-        FilterPart lPart = filter1.getLeftFilter();
-        FilterPart rPart = filter1.getRightFilter();        
+        FilterPart lPart1 = filter1.getLeftFilter();
+        FilterPart rPart1 = filter1.getRightFilter();        
         
         Table left_dataset = new Table();
         Table right_dataset = new Table();
@@ -348,30 +348,30 @@ public class Table implements Serializable
         boolean left_attribute_exists = false;
         boolean right_attribute_exists = false;
         
-        if ( !lPart.getFieldName().equals(""))
+        if ( !lPart1.getFieldName().equals(""))
             left_attribute_exists = true;
-        if ( !rPart.getFieldName().equals(""))
+        if ( !rPart1.getFieldName().equals(""))
             right_attribute_exists = true;
         
         /* CHECK LEFT PART */
         if ( left_attribute_exists == true )
         {
             /* Check if this attribute is indexed */
-            if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.NULL )
+            if ( Operations.getAttributeIndexType(lPart1.getTable(), lPart1) == Attribute.IndexType.NULL )
             {
                 /* Attribute is not indexed */
                 /* Data set is the whole table */
-                left_dataset = lPart.getTable();                
+                left_dataset = lPart1.getTable();                
             }
-            else if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.TREE_TYPE_INDEXING )
+            else if ( Operations.getAttributeIndexType(lPart1.getTable(), lPart1) == Attribute.IndexType.TREE_TYPE_INDEXING )
             {
                 /* Tree Type Indexing */                
-                left_dataset = lPart.getTable();       
+                left_dataset = lPart1.getTable();       
             }
-            else if ( Operations.getAttributeIndexType(lPart.getTable(), lPart) == Attribute.IndexType.HASH_TYPE_INDEXING )
+            else if ( Operations.getAttributeIndexType(lPart1.getTable(), lPart1) == Attribute.IndexType.HASH_TYPE_INDEXING )
             {
                 /* Hash Type Indexing */
-                left_dataset = lPart.getTable();
+                left_dataset = lPart1.getTable();
             }
         }
         else
@@ -384,17 +384,17 @@ public class Table implements Serializable
         if ( right_attribute_exists == true )
         {            
             /* Check if this attribute is indexed */
-            if ( Operations.getAttributeIndexType(rPart.getTable(), rPart) == Attribute.IndexType.NULL )
+            if ( Operations.getAttributeIndexType(rPart1.getTable(), rPart1) == Attribute.IndexType.NULL )
             {
                 /* Attribute is not indexed */
                 /* Data set is the whole table */
-                right_dataset = rPart.getTable();                
+                right_dataset = rPart1.getTable();                
             }
-            else if ( Operations.getAttributeIndexType(rPart.getTable(), rPart) == Attribute.IndexType.TREE_TYPE_INDEXING )
+            else if ( Operations.getAttributeIndexType(rPart1.getTable(), rPart1) == Attribute.IndexType.TREE_TYPE_INDEXING )
             {
                 /* Tree Type Indexing */
             }
-            else if ( Operations.getAttributeIndexType(rPart.getTable(), rPart) == Attribute.IndexType.HASH_TYPE_INDEXING )
+            else if ( Operations.getAttributeIndexType(rPart1.getTable(), rPart1) == Attribute.IndexType.HASH_TYPE_INDEXING )
             {
                 /* Hash Type Indexing */
                 
@@ -409,32 +409,32 @@ public class Table implements Serializable
         /* FILTER both datasets */
         for ( Tuple t : left_dataset.getTable_tuples() )
         {                        
-            Value lv;
+            Value lv1;
             if ( left_attribute_exists == true )
-                lv = t.getValue(lPart.getFieldPosition());
+                lv1 = t.getValue(lPart1.getFieldPosition());
             else
-                lv = new Value(lPart.getValue());
+                lv1 = new Value(lPart1.getValue());
                      
-            if ( Operations.getAttributeIndexType(rPart.getTable(), rPart) == Attribute.IndexType.TREE_TYPE_INDEXING )
+            if ( Operations.getAttributeIndexType(rPart1.getTable(), rPart1) == Attribute.IndexType.TREE_TYPE_INDEXING )
             {
-                BPlusTree tree = rPart.getTable().getAttributeByName(rPart.getFieldName()).getBPlusTree();
-                right_dataset = indexSearch(tree, lv, filter1.getOperand());
+                BPlusTree tree = rPart1.getTable().getAttributeByName(rPart1.getFieldName()).getBPlusTree();
+                right_dataset = indexSearch(tree, lv1, filter1.getOperand());
             }
-            else if ( Operations.getAttributeIndexType(rPart.getTable(), rPart) == Attribute.IndexType.HASH_TYPE_INDEXING )
+            else if ( Operations.getAttributeIndexType(rPart1.getTable(), rPart1) == Attribute.IndexType.HASH_TYPE_INDEXING )
             {
-                HashMap hm = rPart.getTable().getAttributeByName(rPart.getFieldName()).getHashTable();                
-                right_dataset = indexSearch(hm, lv, filter1.getOperand());
+                HashMap hm = rPart1.getTable().getAttributeByName(rPart1.getFieldName()).getHashTable();                
+                right_dataset = indexSearch(hm, lv1, filter1.getOperand());
             } 
                         
             for ( Tuple t2 : right_dataset.getTable_tuples() )
             {
-                Value rv;
+                Value rv1;
                 if ( right_attribute_exists == true )
-                    rv = t2.getValue(rPart.getFieldPosition());
+                    rv1 = t2.getValue(rPart1.getFieldPosition());
                 else
-                    rv = new Value(rPart.getValue());
+                    rv1 = new Value(rPart1.getValue());
                 
-                if ( compareValues(lv, rv, filter1.getOperand()) == true )
+                if ( compareValues(lv1, rv1, filter1.getOperand()) == true )
                 {
                     /* Merge both tuples into one */ 
                     Tuple merged_tuple = Tuple.mergeTuples(t, t2);
@@ -444,10 +444,10 @@ public class Table implements Serializable
                 }
             }
         }
-            
+                               
         return result_left;
     }
-    
+            
     private static boolean compareValues(Value lv, Value rv, String operator)
     {
         /* Compares 2 values using the specified operator */

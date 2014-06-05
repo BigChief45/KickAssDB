@@ -22,23 +22,21 @@ public class HashMethods
         /* In Order for this search to work, the HashTable NEEDS to be
            ORDERED
         */
-        ArrayList<Tuple> result = new ArrayList<Tuple>();
-        
+        ArrayList<Tuple> result = new ArrayList<>();                
         Iterator<Integer> keySetIterator = hm.keySet().iterator();
-        
-        Tuple t = new Tuple();
+        ArrayList<Tuple> current_list;
         
         while( keySetIterator.hasNext() )
         {
-            Integer hkey = keySetIterator.next();
+            Integer current_key = keySetIterator.next();
             
-            if ( hkey < key )
+            if ( key < current_key )
             {
-                t = (Tuple) hm.get(hkey);
-                result.add(t);
-            }
-            else
-                break;
+                current_list = (ArrayList<Tuple>) hm.get(current_key);                
+                /* Iterate through current list to add to the result */
+                for ( Tuple t : current_list )
+                    result.add(t);
+            }            
         }
         
         return result;
@@ -49,21 +47,21 @@ public class HashMethods
         /* In Order for this search to work, the HashTable NEEDS to be
            ORDERED
         */
-        ArrayList<Tuple> result = new ArrayList<Tuple>();
-        
-        Iterator<Integer> keySetIterator = hm.keySet().iterator();
-               
-        Tuple t = new Tuple();
+        ArrayList<Tuple> result = new ArrayList<>();                
+        Iterator<Integer> keySetIterator = hm.keySet().iterator();        
+        ArrayList<Tuple> current_list;
         
         while( keySetIterator.hasNext() )
         {
-            Integer hkey = keySetIterator.next();
-                                                
-            if ( hkey > key )
+            Integer current_key = keySetIterator.next();
+            
+            if ( key > current_key )
             {
-                t = (Tuple) hm.get(hkey);
-                result.add(t);
-            }
+                current_list = (ArrayList<Tuple>) hm.get(current_key);                
+                /* Iterate through current list to add to the result */
+                for ( Tuple t : current_list )
+                    result.add(t);
+            }            
         }
         
         return result;
@@ -74,19 +72,21 @@ public class HashMethods
         /* In Order for this search to work, the HashTable NEEDS to be
            ORDERED
         */
-        ArrayList<Tuple> result = new ArrayList<Tuple>();
+        ArrayList<Tuple> result = new ArrayList<>();                
+        Iterator<Integer> keySetIterator = hm.keySet().iterator();        
+        ArrayList<Tuple> current_list;
         
-        Iterator<Integer> keySetIterator = hm.keySet().iterator();
-        
-        Tuple t = new Tuple();
         while( keySetIterator.hasNext() )
         {
-            Integer hkey = keySetIterator.next();
-            if ( hkey != key )
+            Integer current_key = keySetIterator.next();
+            
+            if ( key != current_key )
             {
-                t = (Tuple) hm.get(hkey);
-                result.add(t);
-            }
+                current_list = (ArrayList<Tuple>) hm.get(current_key);                
+                /* Iterate through current list to add to the result */
+                for ( Tuple t : current_list )
+                    result.add(t);
+            }            
         }
         
         return result;
