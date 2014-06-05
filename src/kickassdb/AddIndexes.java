@@ -272,9 +272,7 @@ public class AddIndexes extends javax.swing.JFrame {
                     tree.add( tuple.getValue(position).getValue().toString().length(), tuple);                
             }
             
-            at.setBPlusTree(tree);
-            
-            System.out.println(tree.toString());
+            at.setBPlusTree(tree);            
             
         }
         else if ( hashRadio.isSelected() )

@@ -284,25 +284,15 @@ public class Table implements Serializable
         switch ( operation )
         {
             case "=":
-                ArrayList res = tree.getEquals(Integer.parseInt(v.getValue().toString()));
-                result.setTable_tuples(tree.getEquals(Integer.parseInt(v.getValue().toString())));
-                
-//                if ( !result.getTable_tuples().isEmpty() )                    
-//                    System.out.println("No encontro nada");
-//                else
-//                    System.out.println("Encontro algo");
-                
+                result.setTable_tuples(tree.getEquals(Integer.parseInt(v.getValue().toString())));                
                 break;
             case ">":
-                ArrayList res2 = tree.getGreater(Integer.parseInt(v.getValue().toString()));
-                result.setTable_tuples(tree.getGreater(Integer.parseInt(v.getValue().toString())));
-                break;
-            case "<":
-                ArrayList res3 = tree.getLess(Integer.parseInt(v.getValue().toString()));
                 result.setTable_tuples(tree.getLess(Integer.parseInt(v.getValue().toString())));
                 break;
+            case "<":
+                result.setTable_tuples(tree.getGreater(Integer.parseInt(v.getValue().toString())));
+                break;
             case "<>":
-                ArrayList res4 = tree.getDifferent(Integer.parseInt(v.getValue().toString()));
                 result.setTable_tuples(tree.getDifferent(Integer.parseInt(v.getValue().toString())));
                 break;                
         }
@@ -337,13 +327,13 @@ public class Table implements Serializable
     {
         /* Obtain the Filter 1 data */
         QueryFilter filter1 = filters.get(0);
-        QueryFilter filter2 = filters.get(1);
+        //QueryFilter filter2 = filters.get(1);
         Table result_left = new Table();
         
         FilterPart lPart1 = filter1.getLeftFilter();
         FilterPart rPart1 = filter1.getRightFilter();        
-        FilterPart lPart2 = filter2.getLeftFilter();
-        FilterPart rPart2 = filter2.getRightFilter();
+        //FilterPart lPart2 = filter2.getLeftFilter();
+        //FilterPart rPart2 = filter2.getRightFilter();
                 
         Table left_dataset1 = new Table();
         Table left_dataset2 = new Table();
@@ -359,17 +349,17 @@ public class Table implements Serializable
             left_attribute_exists1 = true;
         if ( !rPart1.getFieldName().equals(""))
             right_attribute_exists1 = true;
-        if ( !lPart2.getFieldName().equals(""))
-            left_attribute_exists2 = true;
-        if ( !rPart2.getFieldName().equals(""))
-            right_attribute_exists2 = true;
+//        if ( !lPart2.getFieldName().equals(""))
+//            left_attribute_exists2 = true;
+//        if ( !rPart2.getFieldName().equals(""))
+//            right_attribute_exists2 = true;
         
         /* CHECK LEFT PART */
         if ( left_attribute_exists1 == true )
         {
             /* There is an attribute value */
             left_dataset1 = lPart1.getTable();
-            left_dataset2 = lPart2.getTable();
+            //left_dataset2 = lPart2.getTable();
         }
         else
         {
@@ -386,7 +376,7 @@ public class Table implements Serializable
                 /* Attribute is not indexed */
                 /* Data set is the whole table */
                 right_dataset1 = rPart1.getTable();
-                right_dataset2 = rPart2.getTable();
+                //right_dataset2 = rPart2.getTable();
             }            
         }
         else

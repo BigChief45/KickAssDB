@@ -255,7 +255,7 @@ public class BPlusTree {
         
             ArrayList result = new ArrayList();              
             
-            if (key == 266)
+            if (key == 400)
                 System.out.println("");
             
             Node node = searchNode(key);
@@ -268,22 +268,49 @@ public class BPlusTree {
 
                 }//End while (!node.mIsLeafNode)
                                 
+                while (node != null) {
+                        for (int j = 0; j < node.mNumKeys; j++) {
+
+                                if (node.mKeys[j] > key)
+                                    result.add(node.mObjects[j]);                                
+
+                        }//End for (int j = 0; j < node.mNumKeys; j++)
+
+                        node = node.mNextNode;
+
+                }//Emd while (node != null)                
+                
             }//End if ( node != null )
-            else
-                return result;
+            else {
             
-            while (node != null) {
-                    for (int j = 0; j < node.mNumKeys; j++) {
-                            
-                            if (node.mKeys[j] > key)
-                                result.add(node.mObjects[j]);                                
-                            
-                    }//End for (int j = 0; j < node.mNumKeys; j++)
-                    
+                node = mRootNode;
+                while (!node.mIsLeafNode) {
+
+                    node = node.mChildNodes[0];
+
+                }//End while (!node.mIsLeafNode)
+
+                while (node != null) {
+
+                    //We iterate in all the keys of the node
+                    for (int i = 0; i < node.mNumKeys; i++){
+
+                        int temp = node.mKeys[i];
+
+                        if ( temp > key  ) {
+
+                            result.add(node.mObjects[i]);
+
+                        }//End if ( temp > key  )
+
+                    }//End for (int i = 0; i < node.mNumKeys; i++)
+
                     node = node.mNextNode;
-                    
-            }//Emd while (node != null)
-            
+
+                }//End while (node != null)                
+
+            }//End else
+                                        
             return result;
             
         }//End public ArrayList getGreater()

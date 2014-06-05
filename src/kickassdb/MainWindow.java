@@ -67,10 +67,7 @@ public class MainWindow extends javax.swing.JFrame
         
         //Get the jvm heap size.
         long heapSize = Runtime.getRuntime().totalMemory();
-         
-        //Print the jvm heap size.
-        System.out.println("Heap Size = " + heapSize);
-                        
+        
     }//End MainWindow()
 
     private void loadTest (){     
