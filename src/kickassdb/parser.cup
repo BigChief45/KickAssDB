@@ -441,7 +441,7 @@ select ::= SELECT select_fields:type FROM select_tables where
                     case 4:
                         /* SELECT SUM() */
                         Operations.selectSum(field_names, from_tables, where_filters);
-                        break;
+                        break;                    
                 }
 
                 /* Reset ArrayLists Names */
@@ -493,6 +493,11 @@ select ::= SELECT select_fields:type FROM select_tables where
                              :}
                              | COUNT PARLEFT ID:field_id PARRIGHT
                              {:                                
+                                field_names.add(field_id);
+                                RESULT = 3;
+                             :}
+                             | COUNT PARLEFT ID:alias_name POINT ID:field_id PARRIGHT
+                             {:
                                 field_names.add(field_id);
                                 RESULT = 3;
                              :}

@@ -1,3 +1,3 @@
-SELECT text
-FROM Stopword, Abstract
-WHERE Stopword.stopwordId = Abstract.stopwordId AND counts < 15
+SELECT COUNT(Stopword.stopwordId)
+FROM Abstract, Stopword
+WHERE Abstract.stopwordId = Stopword.stopwordId AND wordcount <> 50
