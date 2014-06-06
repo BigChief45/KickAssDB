@@ -524,6 +524,11 @@ public class Table implements Serializable
                 
                 case "AND":                   
                     
+                    if(lPart2.getTable() == null) {
+                        lPart2.setTable(MainWindow.getDefaultSchema().getTableWithAttributeName(lPart2.getFieldName()));            
+                    }
+
+                    
                     int rv2 = Integer.parseInt(rPart2.getValue().toString());                   
                     
                     ArrayList indexResult = new ArrayList();
