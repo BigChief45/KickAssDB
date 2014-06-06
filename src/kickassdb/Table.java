@@ -399,13 +399,22 @@ public class Table implements Serializable
         
         /* Obtain the Filter 1 data */
         QueryFilter filter1 = filters.get(0);
-        QueryFilter filter2 = filters.get(1);
+        QueryFilter filter2 = new QueryFilter();
+                
         Table result_left = new Table();
         
         FilterPart lPart1 = filter1.getLeftFilter();
         FilterPart rPart1 = filter1.getRightFilter();
-        FilterPart lPart2 = filter2.getLeftFilter();
-        FilterPart rPart2 = filter2.getRightFilter();
+        FilterPart lPart2 = new FilterPart();
+        FilterPart rPart2 = new FilterPart();
+        
+        /* Check if there is a 2nd filter */
+        if ( filters.size() > 1 )
+        {
+            filter2 = filters.get(1);
+            lPart2 = filter2.getLeftFilter();
+            rPart2 = filter2.getRightFilter();
+        }
                 
         Table left_dataset1 = new Table();
         Table left_dataset2 = new Table();
@@ -505,7 +514,7 @@ public class Table implements Serializable
         Table finalTable = new Table();
         
         //We execute if there is a second filter
-        if ( !filter2.equals(null) ){
+        if ( filters.size() > 1 ){
         
             //We get the bool value
             String boolValue = filter2.getBoolValue();
@@ -542,22 +551,15 @@ public class Table implements Serializable
                         
                         if ( mocos.contains(Integer.parseInt(tuple.getValue(positionMergeTuple).getValue().toString())) ){
                         
-                            finalTable.addTuple(tuple);
-                            
-                        }
-                        
-                        
-                    }//End for (Tuple tuple : result_left.getTable_tuples())
-                    
-                    break;
-                    
-                case "OR":
-                    
+                            finalTable.addTuple(tuple);                            
+                        }                                                
+                    }//End for (Tuple tuple : result_left.getTable_tuples())                    
+                    break;                    
+                case "OR":                    
                     break;
                                        
                 default:
-                    break;
-                    
+                    break;                    
             }//End switch (boolValue)        
         
             return finalTable;
