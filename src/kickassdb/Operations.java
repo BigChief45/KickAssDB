@@ -124,7 +124,8 @@ public class Operations
             Table table2 = tables.get(1);
                                                 
             /* Merge both tables */
-            query_table = Table.mergeTables(table1, table2);
+            //query_table = Table.mergeTables(table1, table2);
+            query_table = Table.filterAndMerge(table1, table2, filters);
         }
         
         /* Get the field to perform the SUM, since SUM only operates with one

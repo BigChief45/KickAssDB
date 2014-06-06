@@ -511,11 +511,13 @@ public class Table implements Serializable
         //We merge the domains, this will simplify queries
         mergeDomains(table1, table2, result_left);
                         
-        Table finalTable = new Table();
+        Table finalTable = new Table();        
         
         //We execute if there is a second filter
         if ( filters.size() > 1 ){
-        
+
+            mergeDomains(table1, table2, finalTable);            
+            
             //We get the bool value
             String boolValue = filter2.getBoolValue();
             
