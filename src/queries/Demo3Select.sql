@@ -1,3 +1,3 @@
 SELECT COUNT(*)
-FROM Stopword, Abstract
-WHERE Stopword.stopwordId = Abstract.stopwordId AND Stopword.freq > 17
+FROM Stopword, Abstract AS A 
+WHERE Stopword.stopwordId = A.stopwordId

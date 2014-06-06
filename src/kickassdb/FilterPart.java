@@ -67,7 +67,7 @@ public class FilterPart
     public void setTable(String tableName)
     {
         for ( Table t : MainWindow.getDefaultSchema().getSchema() )
-            if ( t.getTable_name().equals(tableName) )
+            if ( t.getTable_name().equals(tableName) || t.getTable_alias().getName().equals(tableName) )
                 table = t;
     }
     
