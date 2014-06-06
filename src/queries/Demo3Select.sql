@@ -1,3 +1,4 @@
-SELECT COUNT(*)
-FROM Stopword, Abstract AS A 
-WHERE Stopword.stopwordId = A.stopwordId
+SELECT Sum(freq)
+FROM Stopword, Abstract
+WHERE Stopword.stopwordId = Abstract.stopwordId
+ 
