@@ -420,12 +420,12 @@ select ::= SELECT select_fields:type FROM select_tables where
                 {
                     case 0:
                         /* SELECT * */
-                        Operations.select(from_tables, where_filters, field_names, field_aliases);
+                        Operations.selectNew(from_tables, where_filters, field_names, field_aliases);
                         break;
 
                     case 1:
                         /* SELECT -fields- */
-                        Operations.select(from_tables, where_filters, field_names, field_aliases);
+                        Operations.selectNew(from_tables, where_filters, field_names, field_aliases);
                         break;
 
                     case 2:
